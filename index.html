@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DSA Visualizer</title>
+    <link rel="stylesheet" href="/src/static/css/main.css">
+</head>
+<body>
+    <header class="controls-bar">
+        <div class="controls-group">
+            <label for="algorithm-select">Algorithm</label>
+            <select id="algorithm-select">
+                <optgroup label="Sorting">
+                    <option value="bubbleSort">Bubble Sort</option>
+                    <option value="selectionSort">Selection Sort</option>
+                    <option value="insertionSort">Insertion Sort</option>
+                    <option value="mergeSort">Merge Sort</option>
+                    <option value="quickSort">Quick Sort</option>
+                    <option value="heapSort">Heap Sort</option>
+                    <option value="shellSort">Shell Sort</option>
+                    <option value="countingSort">Counting Sort</option>
+                    <option value="gnomeSort">Gnome Sort</option>
+                    <option value="cocktailShakerSort">Cocktail Shaker Sort</option>
+                    <option value="pancakeSort">Pancake Sort</option>
+                </optgroup>
+                <optgroup label="Fun Sorting">
+                    <option value="bogoSort">Bogo Sort</option>
+                    <option value="thanosSort">Thanos Sort</option>
+                    <option value="stalinSort">Stalin Sort</option>
+                </optgroup>
+                <optgroup label="Searching">
+                    <option value="linearSearch">Linear Search</option>
+                    <option value="binarySearch">Binary Search</option>
+                    <option value="jumpSearch">Jump Search</option>
+                    <option value="ternarySearch">Ternary Search</option>
+                    <option value="fibonacciSearch">Fibonacci Search</option>
+                </optgroup>
+                <optgroup label="Trees (BST)">
+                    <option value="bstInsert">BST Insert</option>
+                    <option value="bstSearch">BST Search</option>
+                    <option value="bstInorder">In-Order Traversal</option>
+                    <option value="bstPreorder">Pre-Order Traversal</option>
+                    <option value="bstPostorder">Post-Order Traversal</option>
+                </optgroup>
+                <optgroup label="Graphs">
+                    <option value="bfs">BFS (Breadth-First)</option>
+                    <option value="dfs">DFS (Depth-First)</option>
+                    <option value="dijkstra">Dijkstra's Shortest Path</option>
+                </optgroup>
+            </select>
+        </div>
+
+        <div class="controls-group">
+            <label for="array-size">Size: <span id="size-display">30</span></label>
+            <input type="range" id="array-size" min="5" max="100" value="30">
+        </div>
+
+        <div class="controls-group search-target-group" style="display:none;">
+            <label for="search-target">Target</label>
+            <input type="number" id="search-target" min="1" max="100" value="50">
+        </div>
+
+        <div class="controls-group">
+            <label for="speed-slider">Speed</label>
+            <input type="range" id="speed-slider" min="1" max="100" value="50">
+        </div>
+
+        <div class="controls-group">
+            <label for="array-type">Array Type</label>
+            <select id="array-type">
+                <option value="random">Random</option>
+                <option value="nearlySorted">Nearly Sorted</option>
+                <option value="reversed">Reversed</option>
+                <option value="fewUnique">Few Unique</option>
+            </select>
+        </div>
+
+        <div class="controls-group">
+            <button id="btn-compare" title="Compare two algorithms">Compare</button>
+        </div>
+
+        <div class="controls-group buttons">
+            <button id="btn-generate" title="Generate new array">Generate</button>
+            <button id="btn-play" title="Start visualization">Play</button>
+            <button id="btn-pause" title="Pause visualization" disabled>Pause</button>
+            <button id="btn-step" title="Step through one operation">Step</button>
+            <button id="btn-reset" title="Reset to initial state">Reset</button>
+        </div>
+
+        <div class="controls-group">
+            <button id="btn-sound" title="Toggle sound">Sound: ON</button>
+            <label for="volume-slider">Vol</label>
+            <input type="range" id="volume-slider" min="0" max="100" value="30">
+        </div>
+
+        <div class="controls-group">
+            <button id="btn-layout" title="Toggle vertical layout for recording">Landscape</button>
+        </div>
+
+        <div class="controls-group">
+            <select id="record-quality" title="Recording quality">
+                <option value="shorts-1080">Shorts 1080p</option>
+                <option value="shorts-720">Shorts 720p</option>
+                <option value="shorts-4k">Shorts 4K</option>
+                <option value="landscape-1080" selected>Landscape 1080p</option>
+                <option value="landscape-720">Landscape 720p</option>
+                <option value="landscape-4k">Landscape 4K</option>
+            </select>
+            <button id="btn-record" title="Start/stop recording">Record</button>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <!-- Left panel: Algorithm info (scrollable) -->
+        <section class="info-panel">
+            <h2 class="info-panel-title" id="algo-name">Bubble Sort</h2>
+
+            <div class="info-section">
+                <h3 class="info-section-heading">How It Works</h3>
+                <p class="info-description" id="algo-description-text"></p>
+            </div>
+
+            <div class="info-section">
+                <h3 class="info-section-heading">Best Used For</h3>
+                <p class="info-description" id="algo-usecase-text"></p>
+            </div>
+
+            <div class="info-section">
+                <h3 class="info-section-heading">When to Avoid</h3>
+                <p class="info-description" id="algo-avoid-text"></p>
+            </div>
+
+            <div class="info-section">
+                <h3 class="info-section-heading">Time Complexity</h3>
+                <table class="complexity-table">
+                    <tr>
+                        <td class="complexity-label">Best</td>
+                        <td class="complexity-value" id="best-time">O(n)</td>
+                    </tr>
+                    <tr>
+                        <td class="complexity-label">Average</td>
+                        <td class="complexity-value" id="avg-time">O(n^2)</td>
+                    </tr>
+                    <tr>
+                        <td class="complexity-label">Worst</td>
+                        <td class="complexity-value" id="worst-time">O(n^2)</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="info-section">
+                <h3 class="info-section-heading">Space Complexity</h3>
+                <span class="complexity-value-large" id="space-complexity">O(1)</span>
+            </div>
+
+            <div class="info-section">
+                <h3 class="info-section-heading">Live Stats</h3>
+                <table class="complexity-table">
+                    <tr>
+                        <td class="complexity-label">Comparisons</td>
+                        <td class="complexity-value" id="comparisons-count">0</td>
+                    </tr>
+                    <tr>
+                        <td class="complexity-label">Swaps</td>
+                        <td class="complexity-value" id="swaps-count">0</td>
+                    </tr>
+                    <tr>
+                        <td class="complexity-label">Elapsed</td>
+                        <td class="complexity-value" id="elapsed-time">0.000s</td>
+                    </tr>
+                </table>
+            </div>
+
+        </section>
+
+        <!-- Center panel: Code with language tabs -->
+        <section class="code-panel">
+            <div class="language-tabs" id="language-tabs">
+                <button class="lang-tab active" data-lang="pseudo">Pseudo</button>
+                <button class="lang-tab" data-lang="python">Python</button>
+                <button class="lang-tab" data-lang="java">Java</button>
+                <button class="lang-tab" data-lang="cpp">C++</button>
+                <button class="lang-tab" data-lang="c">C</button>
+                <button class="lang-tab" data-lang="csharp">C#</button>
+                <button class="lang-tab" data-lang="javascript">JavaScript</button>
+                <button class="lang-tab" data-lang="typescript">TypeScript</button>
+                <button class="lang-tab" data-lang="go">Go</button>
+                <button class="lang-tab" data-lang="rust">Rust</button>
+            </div>
+            <pre class="code-display" id="code-display"></pre>
+        </section>
+
+        <!-- Center panel: Compare mode selection and stats (hidden by default) -->
+        <section class="compare-panel compare-hidden" id="compare-panel">
+            <h3 class="compare-panel-title">Compare Algorithms</h3>
+            <div class="compare-selectors">
+                <div class="compare-selector">
+                    <label for="compare-category">Category</label>
+                    <select id="compare-category"></select>
+                </div>
+                <div class="compare-selector">
+                    <label for="compare-select-a">Algorithm A</label>
+                    <select id="compare-select-a"></select>
+                </div>
+                <div class="compare-selector">
+                    <label for="compare-select-b">Algorithm B</label>
+                    <select id="compare-select-b"></select>
+                </div>
+            </div>
+            <div class="compare-stats" id="compare-stats">
+                <table class="compare-table">
+                    <thead>
+                        <tr><th></th><th id="cmp-name-a">A</th><th id="cmp-name-b">B</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="compare-label">Time</td>
+                            <td id="cmp-time-a">0.000s</td>
+                            <td id="cmp-time-b">0.000s</td>
+                        </tr>
+                        <tr>
+                            <td class="compare-label">Comparisons</td>
+                            <td id="cmp-comps-a">0</td>
+                            <td id="cmp-comps-b">0</td>
+                        </tr>
+                        <tr>
+                            <td class="compare-label">Swaps</td>
+                            <td id="cmp-swaps-a">0</td>
+                            <td id="cmp-swaps-b">0</td>
+                        </tr>
+                        <tr>
+                            <td class="compare-label">Avg Time</td>
+                            <td id="cmp-avg-a">-</td>
+                            <td id="cmp-avg-b">-</td>
+                        </tr>
+                        <tr>
+                            <td class="compare-label">Space</td>
+                            <td id="cmp-space-a">-</td>
+                            <td id="cmp-space-b">-</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Right panel: Visualization (single or split) -->
+        <section class="viz-panel" id="viz-panel">
+            <div class="viz-single" id="viz-single">
+                <div class="bars-container" id="bars-container"></div>
+                <div class="tree-graph-container compare-hidden" id="tree-graph-container"></div>
+            </div>
+            <div class="viz-compare compare-hidden" id="viz-compare">
+                <div class="viz-compare-top">
+                    <div class="viz-half">
+                        <div class="viz-half-label" id="compare-label-a">Bubble Sort</div>
+                        <div class="bars-container" id="bars-container-a"></div>
+                    </div>
+                    <div class="viz-half">
+                        <div class="viz-half-label" id="compare-label-b">Selection Sort</div>
+                        <div class="bars-container" id="bars-container-b"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Cheat Sheet: collapsible bottom drawer -->
+    <div class="cheat-drawer" id="cheat-drawer">
+        <button class="cheat-drawer-tab" id="cheat-toggle">Cheat Sheet</button>
+        <div class="cheat-drawer-body" id="cheat-content">
+            <div class="cheat-columns">
+                <div class="cheat-col">
+                    <h4 class="cheat-subheading">Sorting Algorithms</h4>
+                    <table class="cheat-table">
+                        <thead>
+                            <tr><th>Name</th><th>Best</th><th>Avg</th><th>Worst</th><th>Space</th><th>Stable</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Bubble</td><td>n</td><td>n^2</td><td>n^2</td><td>1</td><td>Yes</td></tr>
+                            <tr><td>Selection</td><td>n^2</td><td>n^2</td><td>n^2</td><td>1</td><td>No</td></tr>
+                            <tr><td>Insertion</td><td>n</td><td>n^2</td><td>n^2</td><td>1</td><td>Yes</td></tr>
+                            <tr><td>Merge</td><td>n log n</td><td>n log n</td><td>n log n</td><td>n</td><td>Yes</td></tr>
+                            <tr><td>Quick</td><td>n log n</td><td>n log n</td><td>n^2</td><td>log n</td><td>No</td></tr>
+                            <tr><td>Heap</td><td>n log n</td><td>n log n</td><td>n log n</td><td>1</td><td>No</td></tr>
+                            <tr><td>Shell</td><td>n log n</td><td>n^(4/3)</td><td>n^(3/2)</td><td>1</td><td>No</td></tr>
+                            <tr><td>Counting</td><td>n+k</td><td>n+k</td><td>n+k</td><td>k</td><td>Yes</td></tr>
+                            <tr><td>Gnome</td><td>n</td><td>n^2</td><td>n^2</td><td>1</td><td>Yes</td></tr>
+                            <tr><td>Cocktail</td><td>n</td><td>n^2</td><td>n^2</td><td>1</td><td>Yes</td></tr>
+                            <tr><td>Pancake</td><td>n</td><td>n^2</td><td>n^2</td><td>1</td><td>No</td></tr>
+                            <tr><td>Bogo</td><td>n</td><td>n*n!</td><td>inf</td><td>1</td><td>No</td></tr>
+                            <tr><td>Stalin</td><td>n</td><td>n</td><td>n</td><td>1</td><td>Yes</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="cheat-col">
+                    <h4 class="cheat-subheading">Searching Algorithms</h4>
+                    <table class="cheat-table">
+                        <thead>
+                            <tr><th>Name</th><th>Best</th><th>Avg</th><th>Worst</th><th>Needs</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Linear</td><td>1</td><td>n</td><td>n</td><td>Nothing</td></tr>
+                            <tr><td>Binary</td><td>1</td><td>log n</td><td>log n</td><td>Sorted</td></tr>
+                            <tr><td>Jump</td><td>1</td><td>sqrt(n)</td><td>sqrt(n)</td><td>Sorted</td></tr>
+                            <tr><td>Ternary</td><td>1</td><td>log n</td><td>log n</td><td>Sorted</td></tr>
+                            <tr><td>Fibonacci</td><td>1</td><td>log n</td><td>log n</td><td>Sorted</td></tr>
+                        </tbody>
+                    </table>
+                    <h4 class="cheat-subheading">Key Ideas</h4>
+                    <ul class="cheat-tips">
+                        <li>O(1) = instant, O(log n) = fast, O(n) = once each, O(n^2) = slow</li>
+                        <li>"In-place" = no extra list needed (space O(1))</li>
+                        <li>"Stable" = equal items keep their original order</li>
+                        <li>Small lists (&lt;20): Insertion Sort is fastest</li>
+                        <li>Large lists: Merge Sort or Quick Sort</li>
+                        <li>Binary Search needs sorted data but is much faster</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="/src/static/js/main.js"></script>
+</body>
+</html>
