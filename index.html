@@ -39,14 +39,35 @@
                 <optgroup label="Trees (BST)">
                     <option value="bstInsert">BST Insert</option>
                     <option value="bstSearch">BST Search</option>
+                    <option value="bstDelete">BST Delete</option>
+                    <option value="bstLevelOrder">Level-Order (BFS) Traversal</option>
                     <option value="bstInorder">In-Order Traversal</option>
                     <option value="bstPreorder">Pre-Order Traversal</option>
                     <option value="bstPostorder">Post-Order Traversal</option>
+                </optgroup>
+                <optgroup label="Trees (AVL)">
+                    <option value="avlInsert">AVL Insert</option>
+                </optgroup>
+                <optgroup label="Heaps">
+                    <option value="heapInsertMin">Min-Heap Insert</option>
+                    <option value="heapExtractMin">Min-Heap Extract</option>
                 </optgroup>
                 <optgroup label="Graphs">
                     <option value="bfs">BFS (Breadth-First)</option>
                     <option value="dfs">DFS (Depth-First)</option>
                     <option value="dijkstra">Dijkstra's Shortest Path</option>
+                </optgroup>
+                <optgroup label="Linked Lists">
+                    <option value="llInsertHead">Insert at Head</option>
+                    <option value="llInsertTail">Insert at Tail</option>
+                    <option value="llInsertPos">Insert at Position</option>
+                    <option value="llDeleteHead">Delete Head</option>
+                    <option value="llDeleteTail">Delete Tail</option>
+                    <option value="llDeletePos">Delete at Position</option>
+                    <option value="llDeleteVal">Delete by Value</option>
+                    <option value="llSearch">Search Value</option>
+                    <option value="llTraverse">Traverse All</option>
+                    <option value="llReverse">Reverse List</option>
                 </optgroup>
             </select>
         </div>
@@ -59,6 +80,11 @@
         <div class="controls-group search-target-group" style="display:none;">
             <label for="search-target">Target</label>
             <input type="number" id="search-target" min="1" max="100" value="50">
+        </div>
+
+        <div class="controls-group ll-position-group" style="display:none;">
+            <label for="ll-position">Position</label>
+            <input type="number" id="ll-position" min="0" max="99" value="0">
         </div>
 
         <div class="controls-group">
@@ -249,6 +275,7 @@
             <div class="viz-single" id="viz-single">
                 <div class="bars-container" id="bars-container"></div>
                 <div class="tree-graph-container compare-hidden" id="tree-graph-container"></div>
+                <div class="linked-list-container compare-hidden" id="linked-list-container"></div>
             </div>
             <div class="viz-compare compare-hidden" id="viz-compare">
                 <div class="viz-compare-top">

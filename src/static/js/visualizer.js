@@ -33,14 +33,20 @@ const Visualizer = (() => {
         bars = [];
         const maxVal = Math.max(...arr);
 
+        const showLabels = arr.length <= 40;
+
         for (let i = 0; i < arr.length; i++) {
             const bar = document.createElement('div');
             bar.className = 'bar';
             bar.style.height = `${(arr[i] / maxVal) * 100}%`;
+            if (showLabels) {
+                bar.setAttribute('data-value', arr[i]);
+            }
             container.appendChild(bar);
             bars.push(bar);
         }
     }
+
 
     /**
      * Update bar heights to reflect current array state without recreating DOM elements.
@@ -53,6 +59,9 @@ const Visualizer = (() => {
         for (let i = 0; i < arr.length; i++) {
             if (bars[i]) {
                 bars[i].style.height = `${(arr[i] / maxVal) * 100}%`;
+                if (bars[i].hasAttribute('data-value')) {
+                    bars[i].setAttribute('data-value', arr[i]);
+                }
             }
         }
     }

@@ -63,7 +63,7 @@
 - [x] Toggle button to enter/exit compare mode
 - [x] Second algorithm dropdown
 - [x] Split visualizer into two side-by-side panels
-- [x] Both algorithms run on the same starting array
+- [x] Both algorithms run on same starting array
 - [x] Stats comparison table: name, time, comparisons, swaps, avg time, space
 
 ### 1.10 Reference
@@ -80,17 +80,38 @@
 - [x] Captures audio (sound effects) when available
 - [x] Record/Stop button with pulse animation
 
-## Phase 2 - Trees and Graphs (Partial)
+## Phase 2 - Trees, Graphs, and Linked Lists (Partial)
 
 ### 2.1 Tree Visualizations
 - [x] BST insert and search
-- [x] Tree traversals (in-order, pre-order, post-order)
-- [ ] BST delete
-- [ ] AVL Tree rotations and balancing
-- [ ] Heap (Min/Max) insert and extract
-- [ ] Level-order traversal
+- [x] Tree traversals (in-order, pre-order, post-order, level-order)
+- [x] Bug Fix #1: Generator return value handling - tree algorithms now properly re-render after completion
+- [x] Bug Fix #2: Step object property variability - fixed undefined indices error in processStepStats
+- [x] Added: countNodes() helper function for debugging
+- [x] BST delete (with visualization for leaf, one-child, and two-child cases)
+- [x] AVL Tree insert with self-balancing and rotation visualization
+- [x] Heap (Min) insert and extract with visualization
+- [x] Level-order (BFS) traversal
 
-### 2.2 Graph Visualizations
+### 2.2 Linked List Visualizers
+
+See [docs/linked-lists.md](../docs/linked-lists.md) for complete implementation guide.
+
+- [x] Create linked list renderer (SVG-based, horizontal/vertical layouts)
+- [x] Implement basic operations (insert at head, delete head, search, traverse, reverse)
+- [x] Implement additional insert operations (at tail)
+- [x] Implement additional delete operations (at tail)
+- [x] Implement additional insert operations (at position)
+- [x] Implement additional delete operations (at position, by value)
+- [x] Integrate UI (position input control shown/hidden per algorithm)
+- [x] Implement ambiguity for delete by value (80% picks existing value, 20% picks missing)
+- [x] Test and verify all operations work correctly
+- [ ] Implement insert after value
+- [ ] Implement advanced operations (detect cycle, merge sorted lists)
+- [ ] Implement linked list Merge Sort (natural O(n log n) for linked lists)
+- [ ] Update cheat sheet with linked list complexity table
+
+### 2.3 Graph Visualizations
 - [x] BFS (Breadth-First Search)
 - [x] DFS (Depth-First Search)
 - [x] Dijkstra's shortest path
@@ -99,13 +120,13 @@
 - [ ] Kruskal's / Prim's minimum spanning tree
 - [ ] Topological sort
 
-### 2.3 Graph Representations and Matrices
+### 2.4 Graph Representations and Matrices
 - [ ] Adjacency matrix visualization (grid with weighted edges)
 - [ ] Adjacency list visualization (linked nodes)
-- [ ] Side-by-side matrix vs list comparison for the same graph
+- [ ] Side-by-side matrix vs list comparison for same graph
 - [ ] Interactive graph builder (add/remove nodes and edges)
 
-### 2.4 Tree/Graph Rendering
+### 2.5 Tree/Graph Rendering
 - [x] SVG node-and-edge renderer (tree-renderer.js, graph-renderer.js)
 - [x] Step-by-step traversal highlighting
 - [x] Weighted edge labels

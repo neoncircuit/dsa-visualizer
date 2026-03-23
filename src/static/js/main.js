@@ -17,6 +17,8 @@ import TreeRenderer from './tree-renderer.js';
 import GraphRenderer from './graph-renderer.js';
 import TreeAlgorithms from './algorithms/trees.js';
 import GraphAlgorithms from './algorithms/graphs.js';
+import LinkedListAlgorithms from './algorithms/linked-lists.js';
+import LinkedListRenderer from './linked-list-renderer.js';
 
 (() => {
     'use strict';
@@ -37,6 +39,10 @@ import GraphAlgorithms from './algorithms/graphs.js';
     const searchTargetInput = document.getElementById('search-target');
     /** @type {HTMLDivElement} */
     const searchTargetGroup = document.querySelector('.search-target-group');
+    /** @type {HTMLInputElement} */
+    const llPositionInput = document.getElementById('ll-position');
+    /** @type {HTMLDivElement} */
+    const llPositionGroup = document.querySelector('.ll-position-group');
 
     /** @type {HTMLButtonElement} */
     const btnGenerate = document.getElementById('btn-generate');
@@ -110,18 +116,26 @@ import GraphAlgorithms from './algorithms/graphs.js';
     const SEARCH_ALGORITHMS = ['linearSearch', 'binarySearch', 'jumpSearch', 'ternarySearch', 'fibonacciSearch'];
 
     /** @type {string[]} */
-    const TREE_ALGORITHMS = ['bstInsert', 'bstSearch', 'bstInorder', 'bstPreorder', 'bstPostorder'];
+    const TREE_ALGORITHMS = ['bstInsert', 'bstSearch', 'bstDelete', 'avlInsert', 'bstInorder', 'bstPreorder', 'bstPostorder', 'bstLevelOrder', 'heapInsertMin', 'heapExtractMin'];
     /** @type {string[]} */
     const GRAPH_ALGORITHMS = ['bfs', 'dfs', 'dijkstra'];
+    /** @type {string[]} */
+    const LINKED_LIST_ALGORITHMS = ['llInsertHead', 'llInsertTail', 'llDeleteHead', 'llDeleteTail', 'llSearch', 'llTraverse', 'llReverse', 'llInsertPos', 'llDeletePos', 'llDeleteVal'];
 
-    // ─── Tree/Graph State ───
+    // ─── Tree/Graph/Linked List State ───
 
     /** @type {HTMLDivElement} */
     const treeGraphContainer = document.getElementById('tree-graph-container');
+    /** @type {HTMLDivElement} */
+    const linkedListContainer = document.getElementById('linked-list-container');
     /** @type {object|null} */
     let currentTree = null;
     /** @type {object|null} */
     let currentGraph = null;
+    /** @type {object|null} */
+    let currentLinkedList = null;
+    /** @type {number[]} */
+    let currentHeap = [];
 
     // ─── Layout State ───
 
@@ -134,6 +148,7 @@ import GraphAlgorithms from './algorithms/graphs.js';
     CodeHighlighter.init(codeDisplay);
     TreeRenderer.init(treeGraphContainer);
     GraphRenderer.init(treeGraphContainer);
+    LinkedListRenderer.init(linkedListContainer);
 
     generateArray();
     loadAlgorithm();
@@ -200,6 +215,50 @@ import GraphAlgorithms from './algorithms/graphs.js';
     }
 
     /**
+     * Generate random unique values for a BST.
+     * Picks 9-13 unique values between 5 and 95, shuffled so the tree
+     * shape varies each time.
+     *
+     * @returns {number[]} Random values for BST insertion.
+     */
+    function generateRandomTreeValues() {
+        const count = 9 + Math.floor(Math.random() * 5);
+        const pool = [];
+        for (let i = 5; i <= 95; i += 5) pool.push(i);
+        const shuffled = fisherYatesShuffle([...pool]);
+        return shuffled.slice(0, count);
+    }
+
+    /**
+     * Generate random unique values for a heap.
+     * Picks 7-11 unique values between 5 and 95.
+     *
+     * @returns {number[]} Random values for heap building.
+     */
+    function generateRandomHeapValues() {
+        const count = 7 + Math.floor(Math.random() * 5);
+        const pool = [];
+        for (let i = 5; i <= 95; i += 5) pool.push(i);
+        const shuffled = fisherYatesShuffle([...pool]);
+        return shuffled.slice(0, count);
+    }
+
+    /**
+     * Generate random unique values for a linked list.
+     * Picks 6-10 unique values between 5 and 95, shuffled so the list
+     * order varies each time.
+     *
+     * @returns {number[]} Random values for linked list.
+     */
+    function generateRandomLinkedListValues() {
+        const count = 6 + Math.floor(Math.random() * 5);
+        const pool = [];
+        for (let i = 5; i <= 95; i += 5) pool.push(i);
+        const shuffled = fisherYatesShuffle([...pool]);
+        return shuffled.slice(0, count);
+    }
+
+    /**
      * Perform an in-place Fisher-Yates shuffle on an array.
      * Guarantees a uniformly random permutation of the input.
      *
@@ -228,18 +287,25 @@ import GraphAlgorithms from './algorithms/graphs.js';
         const isSearch = isSearchAlgorithm(algoKey);
         const isTree = isTreeAlgorithm(algoKey);
         const isGraph = isGraphAlgorithm(algoKey);
+        const isHeap = algoKey.startsWith('heap');
 
-        // Show/hide search target input and auto-set a valid target
+        // Show/hide search target input
         const needsTarget = isSearch || algoKey === 'bstSearch';
         searchTargetGroup.style.display = needsTarget ? 'flex' : 'none';
-        if (needsTarget && currentArray.length > 0) {
-            const randomIdx = Math.floor(Math.random() * currentArray.length);
-            searchTargetInput.value = currentArray[randomIdx];
-        }
+
+        // Show/hide linked list position input
+        const needsPosition = algoKey === 'llInsertPos' || algoKey === 'llDeletePos';
+        llPositionGroup.style.display = needsPosition ? 'flex' : 'none';
 
         // Determine code and complexity source
         let codeSource, complexitySource;
-        if (isTree) {
+        if (algoKey === 'bstLevelOrder') {
+            codeSource = TreeAlgorithms.LEVEL_ORDER_CODE;
+            complexitySource = TreeAlgorithms.LEVEL_ORDER_COMPLEXITY;
+        } else if (isHeap) {
+            codeSource = TreeAlgorithms.HEAP_CODE;
+            complexitySource = TreeAlgorithms.HEAP_COMPLEXITY;
+        } else if (isTree) {
             codeSource = TreeAlgorithms.CODE;
             complexitySource = TreeAlgorithms.COMPLEXITY;
         } else if (isGraph) {
@@ -276,8 +342,20 @@ import GraphAlgorithms from './algorithms/graphs.js';
             if (isVertical) updateVizOverlay();
         }
 
-        // Switch viz mode
+        // Switch viz mode (builds tree/graph if needed)
         switchVizMode(algoKey);
+
+        // Auto-set search target after tree is built
+        if (needsTarget) {
+            if (algoKey === 'bstSearch' && currentTree) {
+                const treeValues = TreeAlgorithms.getValues(currentTree);
+                const randomIdx = Math.floor(Math.random() * treeValues.length);
+                searchTargetInput.value = treeValues[randomIdx];
+            } else if (currentArray.length > 0) {
+                const randomIdx = Math.floor(Math.random() * currentArray.length);
+                searchTargetInput.value = currentArray[randomIdx];
+            }
+        }
     }
 
     /**
@@ -311,22 +389,46 @@ import GraphAlgorithms from './algorithms/graphs.js';
     }
 
     /**
+     * Check if an algorithm key is a linked list algorithm.
+     *
+     * @param {string} key - The algorithm key.
+     * @returns {boolean} True if it is a linked list algorithm.
+     */
+    function isLinkedListAlgorithm(key) {
+        return LINKED_LIST_ALGORITHMS.includes(key);
+    }
+
+    /**
      * Switch the visualization between bars and tree/graph modes.
      *
      * @param {string} algoKey - The selected algorithm key.
      * @returns {void}
      */
     function switchVizMode(algoKey) {
-        const isTG = isTreeAlgorithm(algoKey) || isGraphAlgorithm(algoKey);
-        barsContainer.classList.toggle('compare-hidden', isTG);
+        const isLL = isLinkedListAlgorithm(algoKey);
+        const isHeap = algoKey.startsWith('heap');
+        const isTG = isTreeAlgorithm(algoKey) || isGraphAlgorithm(algoKey) || isHeap;
+        barsContainer.classList.toggle('compare-hidden', isLL || isTG);
         treeGraphContainer.classList.toggle('compare-hidden', !isTG);
+        linkedListContainer.classList.toggle('compare-hidden', !isLL);
 
-        if (isTreeAlgorithm(algoKey)) {
-            currentTree = TreeAlgorithms.buildSampleBST([50, 30, 70, 20, 40, 60, 80, 10, 25, 35, 45]);
+        if (isHeap) {
+            TreeAlgorithms.resetIds();
+            const heapData = TreeAlgorithms.buildSampleHeap(generateRandomHeapValues(), 'min');
+            currentHeap = heapData.heap;
+            currentTree = heapData.tree;
+            TreeRenderer.render(currentTree);
+        } else if (isTreeAlgorithm(algoKey)) {
+            TreeAlgorithms.resetIds();
+            currentTree = TreeAlgorithms.buildSampleBST(generateRandomTreeValues());
             TreeRenderer.render(currentTree);
         } else if (isGraphAlgorithm(algoKey)) {
             currentGraph = GraphAlgorithms.buildSampleGraph();
             GraphRenderer.render(currentGraph.nodes, currentGraph.edges);
+        } else if (isLinkedListAlgorithm(algoKey)) {
+            LinkedListAlgorithms.resetIds();
+            currentLinkedList = LinkedListAlgorithms.buildSampleLinkedList(generateRandomLinkedListValues());
+            LinkedListRenderer.render(currentLinkedList);
         }
     }
 
@@ -375,12 +477,63 @@ import GraphAlgorithms from './algorithms/graphs.js';
             } else if (algoKey === 'bstSearch') {
                 const target = parseInt(searchTargetInput.value, 10) || 40;
                 generator = TreeAlgorithms.bstSearch(currentTree, target);
+            } else if (algoKey === 'bstDelete') {
+                const treeValues = TreeAlgorithms.getValues(currentTree);
+                const randomIdx = Math.floor(Math.random() * treeValues.length);
+                generator = TreeAlgorithms.bstDelete(currentTree, treeValues[randomIdx]);
+            } else if (algoKey === 'avlInsert') {
+                const val = Math.floor(Math.random() * 90) + 5;
+                generator = TreeAlgorithms.avlInsert(currentTree, val);
+            } else if (algoKey === 'bstLevelOrder') {
+                generator = TreeAlgorithms.bstLevelOrder(currentTree);
+            } else if (algoKey === 'heapInsertMin') {
+                const val = Math.floor(Math.random() * 90) + 5;
+                generator = TreeAlgorithms.heapInsert(currentHeap, val, 'min');
+            } else if (algoKey === 'heapExtractMin') {
+                generator = TreeAlgorithms.heapExtract(currentHeap, 'min');
             } else {
                 generator = TreeAlgorithms[algoKey](currentTree);
             }
-        } else if (isGraphAlgorithm(algoKey)) {
+        } else         if (isGraphAlgorithm(algoKey)) {
             GraphRenderer.clearAllStates();
             generator = GraphAlgorithms[algoKey](currentGraph.adj, currentGraph.nodes[0], currentGraph.nodes);
+        } else if (isLinkedListAlgorithm(algoKey)) {
+            LinkedListRenderer.clearAllStates();
+            if (algoKey === 'llInsertHead') {
+                const val = Math.floor(Math.random() * 90) + 5;
+                generator = LinkedListAlgorithms.llInsertHead(currentLinkedList, val);
+            } else if (algoKey === 'llInsertTail') {
+                const val = Math.floor(Math.random() * 90) + 5;
+                generator = LinkedListAlgorithms.llInsertTail(currentLinkedList, val);
+            } else if (algoKey === 'llDeleteHead') {
+                generator = LinkedListAlgorithms.llDeleteHead(currentLinkedList);
+            } else if (algoKey === 'llDeleteTail') {
+                generator = LinkedListAlgorithms.llDeleteTail(currentLinkedList);
+            } else if (algoKey === 'llSearch') {
+                const target = Math.floor(Math.random() * 90) + 5;
+                generator = LinkedListAlgorithms.llSearch(currentLinkedList, target);
+            } else if (algoKey === 'llTraverse') {
+                generator = LinkedListAlgorithms.llTraverse(currentLinkedList);
+            } else if (algoKey === 'llReverse') {
+                generator = LinkedListAlgorithms.llReverse(currentLinkedList);
+            } else if (algoKey === 'llInsertPos') {
+                const pos = Math.max(0, parseInt(llPositionInput.value, 10) || 0);
+                const val = Math.floor(Math.random() * 90) + 5;
+                generator = LinkedListAlgorithms.llInsertPos(currentLinkedList, pos, val);
+            } else if (algoKey === 'llDeletePos') {
+                const pos = Math.max(0, parseInt(llPositionInput.value, 10) || 0);
+                generator = LinkedListAlgorithms.llDeletePos(currentLinkedList, pos);
+            } else if (algoKey === 'llDeleteVal') {
+                // Pick a random existing value for ambiguity (occasionally pick non-existent)
+                const values = LinkedListAlgorithms.getValues(currentLinkedList);
+                const pickExisting = Math.random() < 0.8 && values.length > 0;
+                const target = pickExisting
+                    ? values[Math.floor(Math.random() * values.length)]
+                    : Math.floor(Math.random() * 90) + 5;
+                generator = LinkedListAlgorithms.llDeleteVal(currentLinkedList, target);
+            } else {
+                generator = LinkedListAlgorithms[algoKey](currentLinkedList);
+            }
         } else if (isSearchAlgorithm(algoKey)) {
             if (algoKey !== 'linearSearch') {
                 currentArray.sort((a, b) => a - b);
@@ -420,6 +573,21 @@ import GraphAlgorithms from './algorithms/graphs.js';
 
         const result = generator.next();
         if (result.done) {
+            const updatedValue = result.value;
+            if (updatedValue !== undefined) {
+                const algoKey = algorithmSelect.value;
+                if (algoKey.startsWith('heap')) {
+                    currentHeap = updatedValue.heap;
+                    currentTree = TreeAlgorithms.heapToTree(currentHeap);
+                    TreeRenderer.render(currentTree);
+                } else if (isTreeAlgorithm(algoKey)) {
+                    currentTree = updatedValue;
+                    TreeRenderer.render(currentTree);
+                } else if (isLinkedListAlgorithm(algoKey)) {
+                    currentLinkedList = updatedValue;
+                    LinkedListRenderer.render(currentLinkedList);
+                }
+            }
             onComplete();
             return true;
         }
@@ -428,10 +596,18 @@ import GraphAlgorithms from './algorithms/graphs.js';
         const algoKey = algorithmSelect.value;
         processStepStats(step);
 
-        if (isTreeAlgorithm(algoKey)) {
+        if (algoKey.startsWith('heap')) {
+            if (step.indices && step.indices[0] >= 0 && step.indices[0] < currentHeap.length) {
+                Visualizer.processStep(step, currentHeap);
+            }
+            currentTree = TreeAlgorithms.heapToTree(currentHeap);
+            TreeRenderer.render(currentTree);
+        } else if (isTreeAlgorithm(algoKey)) {
             TreeRenderer.processStep(step);
         } else if (isGraphAlgorithm(algoKey)) {
             GraphRenderer.processStep(step);
+        } else if (isLinkedListAlgorithm(algoKey)) {
+            LinkedListRenderer.processStep(step);
         } else {
             Visualizer.processStep(step, currentArray);
         }
@@ -444,19 +620,19 @@ import GraphAlgorithms from './algorithms/graphs.js';
      * Update comparison and swap counters based on step type.
      * Also triggers the appropriate sound effect for the operation.
      *
-     * @param {{type: string, indices: number[], codeLine: number}} step - The algorithm step object.
+     * @param {{type: string, indices?: number[], nodeId?: number, codeLine: number}} step - The algorithm step object.
      * @returns {void}
      */
     function processStepStats(step) {
         if (step.type === 'compare' || step.type === 'check') {
             comparisons++;
-            if (step.indices.length > 0) {
+            if (step.indices && step.indices.length > 0) {
                 SoundEngine.playCompare(currentArray[step.indices[0]], cachedMaxVal);
             }
         }
         if (step.type === 'swap' || step.type === 'overwrite') {
             swapCount++;
-            if (step.indices.length > 0) {
+            if (step.indices && step.indices.length > 0) {
                 SoundEngine.playSwap(currentArray[step.indices[0]], cachedMaxVal);
             }
         }
@@ -524,6 +700,10 @@ import GraphAlgorithms from './algorithms/graphs.js';
         startTime = null;
         isPlaying = false;
         elapsedTimeEl.textContent = '0.000s';
+        const algoKey = algorithmSelect.value;
+        if (isTreeAlgorithm(algoKey) || isGraphAlgorithm(algoKey)) {
+            switchVizMode(algoKey);
+        }
         generateArray();
         CodeHighlighter.clearHighlight();
     }

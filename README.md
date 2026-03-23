@@ -27,6 +27,7 @@ graph TD
 ### Features
 
 - Real-time visualization of 14 sorting, 5 searching, 5 tree, and 3 graph algorithms
+- Linked list operations and algorithms are planned (see [docs/linked-lists.md](docs/linked-lists.md))
 - 3-panel layout: algorithm info (left), code (center), visualization (right)
 - Synchronized code highlighting with step-numbered inline comments
 - Multi-language code display: Pseudocode, Python, Java, C++, C, C#, JavaScript, TypeScript, Go, Rust
@@ -114,41 +115,14 @@ graph TD
 
 ### Getting Started
 
-#### Prerequisites
+See [docs/setup.md](docs/setup.md) for full setup instructions, Docker deployment, and troubleshooting.
 
-- Node.js 18+
-- pnpm
-
-#### Setup
+Quick start:
 
 ```bash
 chmod +x setup.sh && ./setup.sh
-```
-
-#### Development
-
-```bash
 pnpm dev
 ```
-
-Opens the application at `http://localhost:3000`.
-
-#### Production Build
-
-```bash
-pnpm build
-pnpm preview
-```
-
-#### Docker
-
-Build and run:
-
-```bash
-docker compose up --build
-```
-
-Access at `http://localhost:8080`.
 
 ### Project Structure
 
@@ -169,6 +143,7 @@ dsa-visualizer/
                 visualizer.js       Bar rendering engine
                 tree-renderer.js    SVG tree node/edge renderer
                 graph-renderer.js   SVG graph node/edge renderer
+                linked-list-renderer.js  # Planned: Linked list node/arrow renderer
                 code-highlighter.js Code display with comment coloring
                 sound-engine.js     Web Audio API tones and effects
                 compare-mode.js     Side-by-side algorithm comparison
@@ -178,6 +153,7 @@ dsa-visualizer/
                     searching.js    5 search generators + 10-language code
                     trees.js        5 BST generators + 10-language code
                     graphs.js       3 graph generators + 10-language code
+                    linked-lists.js # Planned: Linked list operations + 10-language code
     tasks/
         todo.md                     Phased task tracking
         lessons.md                  Lessons learned across sessions
@@ -200,18 +176,53 @@ graph LR
         B --> U[graphs.js]
         B --> V[tree-renderer.js]
         B --> W[graph-renderer.js]
+        B --> LL[linked-lists.js - Planned]
+        B --> Z[linked-list-renderer.js - Planned]
     end
     subgraph Algorithm Engine
         H --> J[Generator yields steps]
         I --> J
         T --> J
         U --> J
+        LL --> J
     end
     J --> C
     J --> V
     J --> W
+    J --> Z
     J --> D
     J --> E
-```
+    ```
 
 Each algorithm is implemented as a JavaScript generator function that yields step objects containing the operation type, affected indices or node IDs, and the corresponding code line number. The main controller consumes these steps on a timer, updating the visualization (bars for sorting/searching, SVG for trees/graphs), code highlight, and sound in lockstep. In compare mode, two generators run in parallel on copies of the same array. The recorder captures the browser tab via the MediaRecorder API with configurable quality presets.
+
+### Adding New Algorithms
+
+See [docs/adding-algorithms.md](docs/adding-algorithms.md) for full step-by-step guide with templates and examples.
+
+For new data structure types (like linked lists), implementation plans are documented in `docs/<structure>s.md` and tracked via task checklists in `tasks/todo.md`. Lessons learned are recorded in `tasks/lessons.md`.
+
+### Credits and References
+
+#### Algorithm References
+
+- [GeeksforGeeks](https://www.geeksforgeeks.org/) - Algorithm explanations, pseudocode references, and complexity analysis
+- [Wikipedia - Sorting Algorithms](https://en.wikipedia.org/wiki/Sorting_algorithm) - Comprehensive sorting algorithm descriptions and properties
+- [Wikipedia - Search Algorithms](https://en.wikipedia.org/wiki/Search_algorithm) - Search algorithm theory and complexity
+- [Visualgo](https://visualgo.net/) - Inspiration for step-by-step algorithm visualization
+- [CLRS - Introduction to Algorithms](https://mitpress.mit.edu/books/introduction-algorithms-fourth-edition) - Canonical algorithm reference (Cormen, Leiserson, Rivest, Stein)
+
+#### Tools and Libraries
+
+- [Vite](https://vitejs.dev/) - Frontend build tool and development server
+- [pnpm](https://pnpm.io/) - Fast, disk space efficient package manager
+- [Docker](https://www.docker.com/) - Containerization for production deployment
+- [nginx](https://nginx.org/) - Production web server used in Docker image
+- [Web Audio API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API) - Browser API used for sound effects
+- [MediaRecorder API](https://developer.mozilla.org/en-US/docs/Web/API/MediaRecorder) - Browser API used for built-in recording
+
+#### Design Inspiration
+
+- [Sorting Visualizer by Clement Mihailescu](https://github.com/clementmihailescu/Sorting-Visualizer) - Inspiration for bar-based sorting visualization
+- [The Sound of Sorting](https://panthema.net/2013/sound-of-sorting/) - Inspiration for mapping sound to array values
+- [Algorithm Visualizer](https://algorithm-visualizer.org/) - Inspiration for multi-language code display

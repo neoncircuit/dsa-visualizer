@@ -12,7 +12,7 @@ const TreeAlgorithms = (() => {
     let nodeIdCounter = 0;
 
     function createNode(value) {
-        return { value, left: null, right: null, id: nodeIdCounter++ };
+        return { value, left: null, right: null, id: nodeIdCounter++, height: 1 };
     }
 
     function resetIds() {
@@ -51,6 +51,55 @@ const TreeAlgorithms = (() => {
             root = insertNode(root, v);
         }
         return root;
+    }
+
+    /**
+     * Count the number of nodes in a tree.
+     *
+     * @param {object|null} node - Current node.
+     * @returns {number} Number of nodes.
+     */
+    function countNodes(node) {
+        if (!node) return 0;
+        return 1 + countNodes(node.left) + countNodes(node.right);
+    }
+
+    function getHeight(node) {
+        return node ? node.height : 0;
+    }
+
+    function updateHeight(node) {
+        node.height = 1 + Math.max(getHeight(node.left), getHeight(node.right));
+    }
+
+    function getBalanceFactor(node) {
+        return node ? getHeight(node.left) - getHeight(node.right) : 0;
+    }
+
+    function rotateRight(y) {
+        const x = y.left;
+        const T2 = x.right;
+
+        x.right = y;
+        y.left = T2;
+
+        updateHeight(y);
+        updateHeight(x);
+
+        return x;
+    }
+
+    function rotateLeft(x) {
+        const y = x.right;
+        const T2 = y.left;
+
+        y.left = x;
+        x.right = T2;
+
+        updateHeight(x);
+        updateHeight(y);
+
+        return y;
     }
 
     // ─── Code Snippets ───
@@ -571,6 +620,471 @@ const TreeAlgorithms = (() => {
                 '}',
             ],
         },
+
+        bstDelete: {
+            pseudo: [
+                '# Step 1: Delete a value from a Binary Search Tree',
+                'procedure bstDelete(root, value):',
+                '',
+                '    if root is null:  # [2] If we reached an empty spot, value is not found',
+                '        return not found  # [3] The value does not exist in the tree',
+                '',
+                '    if value < root.value:  # [4] If the value is smaller, go left',
+                '        root.left = bstDelete(root.left, value)  # [5] Delete from the left subtree',
+                '    elif value > root.value:  # [6] If the value is larger, go right',
+                '        root.right = bstDelete(root.right, value)  # [7] Delete from the right subtree',
+                '    else:  # [8] This is the node to delete',
+                '        if root.left is null:  # [9] Node has only right child',
+                '            return root.right  # [10] Replace with right child (may be null)',
+                '        elif root.right is null:  # [11] Node has only left child',
+                '            return root.left  # [12] Replace with left child',
+                '        else:  # [13] Node has two children',
+                '            temp = findMin(root.right)  # [14] Find inorder successor',
+                '            root.value = temp.value  # [15] Replace value with successor',
+                '            root.right = bstDelete(root.right, temp.value)  # [16] Delete successor',
+                '    return root  # [17] Return the (possibly modified) root',
+            ],
+            python: [
+                '# Step 1: Delete a value from a Binary Search Tree',
+                'def bst_delete(root: Optional[Node], value: int) -> Optional[Node]:',
+                '',
+                '    if root is None:  # [2] If we reached an empty spot, value is not found',
+                '        return None  # [3] The value does not exist in the tree',
+                '',
+                '    if value < root.value:  # [4] If the value is smaller, go left',
+                '        root.left = bst_delete(root.left, value)  # [5] Delete from the left subtree',
+                '    elif value > root.value:  # [6] If the value is larger, go right',
+                '        root.right = bst_delete(root.right, value)  # [7] Delete from the right subtree',
+                '    else:  # [8] This is the node to delete',
+                '        if root.left is None:  # [9] Node has only right child',
+                '            return root.right  # [10] Replace with right child (may be None)',
+                '        elif root.right is None:  # [11] Node has only left child',
+                '            return root.left  # [12] Replace with left child',
+                '        else:  # [13] Node has two children',
+                '            temp = find_min(root.right)  # [14] Find inorder successor',
+                '            root.value = temp.value  # [15] Replace value with successor',
+                '            root.right = bst_delete(root.right, temp.value)  # [16] Delete successor',
+                '    return root  # [17] Return the (possibly modified) root',
+            ],
+            java: [
+                '// Step 1: Delete a value from a Binary Search Tree',
+                'Node bstDelete(Node root, int value) {',
+                '',
+                '    if (root == null) { // [2] If we reached an empty spot, value is not found',
+                '        return null; // [3] The value does not exist in the tree',
+                '    }',
+                '',
+                '    if (value < root.value) { // [4] If the value is smaller, go left',
+                '        root.left = bstDelete(root.left, value); // [5] Delete from the left subtree',
+                '    } else if (value > root.value) { // [6] If the value is larger, go right',
+                '        root.right = bstDelete(root.right, value); // [7] Delete from the right subtree',
+                '    } else { // [8] This is the node to delete',
+                '        if (root.left == null) { // [9] Node has only right child',
+                '            return root.right; // [10] Replace with right child (may be null)',
+                '        } else if (root.right == null) { // [11] Node has only left child',
+                '            return root.left; // [12] Replace with left child',
+                '        } else { // [13] Node has two children',
+                '            Node temp = findMin(root.right); // [14] Find inorder successor',
+                '            root.value = temp.value; // [15] Replace value with successor',
+                '            root.right = bstDelete(root.right, temp.value); // [16] Delete successor',
+                '        }',
+                '    }',
+                '    return root; // [17] Return the (possibly modified) root',
+                '}',
+            ],
+            c: [
+                '// Step 1: Delete a value from a Binary Search Tree',
+                'struct Node* bstDelete(struct Node* root, int value) {',
+                '',
+                '    if (root == NULL) { // [2] If we reached an empty spot, value is not found',
+                '        return NULL; // [3] The value does not exist in the tree',
+                '    }',
+                '',
+                '    if (value < root->value) { // [4] If the value is smaller, go left',
+                '        root->left = bstDelete(root->left, value); // [5] Delete from the left subtree',
+                '    } else if (value > root->value) { // [6] If the value is larger, go right',
+                '        root->right = bstDelete(root->right, value); // [7] Delete from the right subtree',
+                '    } else { // [8] This is the node to delete',
+                '        if (root->left == NULL) { // [9] Node has only right child',
+                '            return root->right; // [10] Replace with right child (may be NULL)',
+                '        } else if (root->right == NULL) { // [11] Node has only left child',
+                '            return root->left; // [12] Replace with left child',
+                '        } else { // [13] Node has two children',
+                '            struct Node* temp = findMin(root->right); // [14] Find inorder successor',
+                '            root->value = temp->value; // [15] Replace value with successor',
+                '            root->right = bstDelete(root->right, temp->value); // [16] Delete successor',
+                '        }',
+                '    }',
+                '    return root; // [17] Return the (possibly modified) root',
+                '}',
+            ],
+            csharp: [
+                '// Step 1: Delete a value from a Binary Search Tree',
+                'Node? BstDelete(Node? root, int value) {',
+                '',
+                '    if (root == null) { // [2] If we reached an empty spot, value is not found',
+                '        return null; // [3] The value does not exist in the tree',
+                '    }',
+                '',
+                '    if (value < root.Value) { // [4] If the value is smaller, go left',
+                '        root.Left = BstDelete(root.Left, value); // [5] Delete from the left subtree',
+                '    } else if (value > root.Value) { // [6] If the value is larger, go right',
+                '        root.Right = BstDelete(root.Right, value); // [7] Delete from the right subtree',
+                '    } else { // [8] This is the node to delete',
+                '        if (root.Left == null) { // [9] Node has only right child',
+                '            return root.Right; // [10] Replace with right child (may be null)',
+                '        } else if (root.Right == null) { // [11] Node has only left child',
+                '            return root.Left; // [12] Replace with left child',
+                '        } else { // [13] Node has two children',
+                '            Node? temp = FindMin(root.Right); // [14] Find inorder successor',
+                '            root.Value = temp.Value; // [15] Replace value with successor',
+                '            root.Right = BstDelete(root.Right, temp.Value); // [16] Delete successor',
+                '        }',
+                '    }',
+                '    return root; // [17] Return the (possibly modified) root',
+                '}',
+            ],
+            typescript: [
+                '// Step 1: Delete a value from a Binary Search Tree',
+                'function bstDelete(root: Node | null, value: number): Node | null {',
+                '',
+                '    if (root === null) { // [2] If we reached an empty spot, value is not found',
+                '        return null; // [3] The value does not exist in the tree',
+                '    }',
+                '',
+                '    if (value < root.value) { // [4] If the value is smaller, go left',
+                '        root.left = bstDelete(root.left, value); // [5] Delete from the left subtree',
+                '    } else if (value > root.value) { // [6] If the value is larger, go right',
+                '        root.right = bstDelete(root.right, value); // [7] Delete from the right subtree',
+                '    } else { // [8] This is the node to delete',
+                '        if (root.left === null) { // [9] Node has only right child',
+                '            return root.right; // [10] Replace with right child (may be null)',
+                '        } else if (root.right === null) { // [11] Node has only left child',
+                '            return root.left; // [12] Replace with left child',
+                '        } else { // [13] Node has two children',
+                '            const temp = findMin(root.right); // [14] Find inorder successor',
+                '            root.value = temp.value; // [15] Replace value with successor',
+                '            root.right = bstDelete(root.right, temp.value); // [16] Delete successor',
+                '        }',
+                '    }',
+                '    return root; // [17] Return the (possibly modified) root',
+                '}',
+            ],
+            go: [
+                '// Step 1: Delete a value from a Binary Search Tree',
+                'func bstDelete(root *Node, value int) *Node {',
+                '',
+                '    if root == nil { // [2] If we reached an empty spot, value is not found',
+                '        return nil // [3] The value does not exist in the tree',
+                '    }',
+                '',
+                '    if value < root.Value { // [4] If the value is smaller, go left',
+                '        root.Left = bstDelete(root.Left, value) // [5] Delete from the left subtree',
+                '    } else if value > root.Value { // [6] If the value is larger, go right',
+                '        root.Right = bstDelete(root.Right, value) // [7] Delete from the right subtree',
+                '    } else { // [8] This is the node to delete',
+                '        if root.Left == nil { // [9] Node has only right child',
+                '            return root.Right // [10] Replace with right child (may be nil)',
+                '        } else if root.Right == nil { // [11] Node has only left child',
+                '            return root.Left // [12] Replace with left child',
+                '        } else { // [13] Node has two children',
+                '            temp := findMin(root.Right) // [14] Find inorder successor',
+                '            root.Value = temp.Value // [15] Replace value with successor',
+                '            root.Right = bstDelete(root.Right, temp.Value) // [16] Delete successor',
+                '        }',
+                '    }',
+                '    return root // [17] Return the (possibly modified) root',
+                '}',
+            ],
+            rust: [
+                '// Step 1: Delete a value from a Binary Search Tree',
+                'fn bst_delete(root: Option<Box<Node>>, value: i32) -> Option<Box<Node>> {',
+                '    match root {',
+                '        None => None, // [2] If we reached an empty spot, value is not found',
+                '                     // [3] The value does not exist in the tree',
+                '        Some(mut node) => {',
+                '            if value < node.value { // [4] If the value is smaller, go left',
+                '                node.left = bst_delete(node.left, value); // [5] Delete from the left subtree',
+                '            } else if value > node.value { // [6] If the value is larger, go right',
+                '                node.right = bst_delete(node.right, value); // [7] Delete from the right subtree',
+                '            } else { // [8] This is the node to delete',
+                '                return if node.left.is_none() { // [9] Node has only right child',
+                '                    node.right // [10] Replace with right child (may be None)',
+                '                } else if node.right.is_none() { // [11] Node has only left child',
+                '                    node.left // [12] Replace with left child',
+                '                } else { // [13] Node has two children',
+                '                    let temp = find_min(&node.right); // [14] Find inorder successor',
+                '                    node.value = temp.value; // [15] Replace value with successor',
+                '                    node.right = bst_delete(node.right, temp.value); // [16] Delete successor',
+                '                    Some(node)',
+                '                };',
+                '            }',
+                '            Some(node) // [17] Return the (possibly modified) root',
+                '        }',
+                '    }',
+                '}',
+            ],
+        },
+
+        avlInsert: {
+            pseudo: [
+                '# Step 1: Insert a value into an AVL Tree (self-balancing BST)',
+                'procedure avlInsert(root, value):',
+                '',
+                '    if root is null:  # [2] If the tree is empty here, we found the spot',
+                '        return new Node(value)  # [3] Create a new node with the value',
+                '',
+                '    if value < root.value:  # [4] If the value is smaller, go left',
+                '        root.left = avlInsert(root.left, value)  # [5] Insert into the left subtree',
+                '    else:  # [6] If the value is larger (or equal), go right',
+                '        root.right = avlInsert(root.right, value)  # [7] Insert into the right subtree',
+                '',
+                '    updateHeight(root)  # [8] Update the height of this node',
+                '',
+                '    balance = getBalance(root)  # [9] Get the balance factor',
+                '',
+                '    if balance > 1 and value < root.left.value:  # [10] Left-Left case',
+                '        return rotateRight(root)  # [11] Right rotation to fix',
+                '    elif balance < -1 and value > root.right.value:  # [12] Right-Right case',
+                '        return rotateLeft(root)  # [13] Left rotation to fix',
+                '    elif balance > 1 and value > root.left.value:  # [14] Left-Right case',
+                '        root.left = rotateLeft(root.left)  # [15] Left rotation on left child',
+                '        return rotateRight(root)  # [16] Right rotation on root',
+                '    elif balance < -1 and value < root.right.value:  # [17] Right-Left case',
+                '        root.right = rotateRight(root.right)  # [18] Right rotation on right child',
+                '        return rotateLeft(root)  # [19] Left rotation on root',
+                '',
+                '    return root  # [20] Return the (possibly rotated) root',
+            ],
+            python: [
+                '# Step 1: Insert a value into an AVL Tree (self-balancing BST)',
+                'def avl_insert(root: Optional[AVLNode], value: int) -> AVLNode:',
+                '',
+                '    if root is None:  # [2] If the tree is empty here, we found the spot',
+                '        return AVLNode(value)  # [3] Create a new node with the value',
+                '',
+                '    if value < root.value:  # [4] If the value is smaller, go left',
+                '        root.left = avl_insert(root.left, value)  # [5] Insert into the left subtree',
+                '    else:  # [6] If the value is larger (or equal), go right',
+                '        root.right = avl_insert(root.right, value)  # [7] Insert into the right subtree',
+                '',
+                '    update_height(root)  # [8] Update the height of this node',
+                '',
+                '    balance = get_balance(root)  # [9] Get the balance factor',
+                '',
+                '    if balance > 1 and value < root.left.value:  # [10] Left-Left case',
+                '        return rotate_right(root)  # [11] Right rotation to fix',
+                '    elif balance < -1 and value > root.right.value:  # [12] Right-Right case',
+                '        return rotate_left(root)  # [13] Left rotation to fix',
+                '    elif balance > 1 and value > root.left.value:  # [14] Left-Right case',
+                '        root.left = rotate_left(root.left)  # [15] Left rotation on left child',
+                '        return rotate_right(root)  # [16] Right rotation on root',
+                '    elif balance < -1 and value < root.right.value:  # [17] Right-Left case',
+                '        root.right = rotate_right(root.right)  # [18] Right rotation on right child',
+                '        return rotate_left(root)  # [19] Left rotation on root',
+                '',
+                '    return root  # [20] Return the (possibly rotated) root',
+            ],
+            java: [
+                '// Step 1: Insert a value into an AVL Tree (self-balancing BST)',
+                'AVLNode avlInsert(AVLNode root, int value) {',
+                '',
+                '    if (root == null) { // [2] If the tree is empty here, we found the spot',
+                '        return new AVLNode(value); // [3] Create a new node with the value',
+                '    }',
+                '',
+                '    if (value < root.value) { // [4] If the value is smaller, go left',
+                '        root.left = avlInsert(root.left, value); // [5] Insert into the left subtree',
+                '    } else { // [6] If the value is larger (or equal), go right',
+                '        root.right = avlInsert(root.right, value); // [7] Insert into the right subtree',
+                '    }',
+                '',
+                '    updateHeight(root); // [8] Update the height of this node',
+                '',
+                '    int balance = getBalance(root); // [9] Get the balance factor',
+                '',
+                '    if (balance > 1 && value < root.left.value) { // [10] Left-Left case',
+                '        return rotateRight(root); // [11] Right rotation to fix',
+                '    } else if (balance < -1 && value > root.right.value) { // [12] Right-Right case',
+                '        return rotateLeft(root); // [13] Left rotation to fix',
+                '    } else if (balance > 1 && value > root.left.value) { // [14] Left-Right case',
+                '        root.left = rotateLeft(root.left); // [15] Left rotation on left child',
+                '        return rotateRight(root); // [16] Right rotation on root',
+                '    } else if (balance < -1 && value < root.right.value) { // [17] Right-Left case',
+                '        root.right = rotateRight(root.right); // [18] Right rotation on right child',
+                '        return rotateLeft(root); // [19] Left rotation on root',
+                '    }',
+                '',
+                '    return root; // [20] Return the (possibly rotated) root',
+                '}',
+            ],
+            c: [
+                '// Step 1: Insert a value into an AVL Tree (self-balancing BST)',
+                'struct AVLNode* avlInsert(struct AVLNode* root, int value) {',
+                '',
+                '    if (root == NULL) { // [2] If the tree is empty here, we found the spot',
+                '        return createAVLNode(value); // [3] Create a new node with the value',
+                '    }',
+                '',
+                '    if (value < root->value) { // [4] If the value is smaller, go left',
+                '        root->left = avlInsert(root->left, value); // [5] Insert into the left subtree',
+                '    } else { // [6] If the value is larger (or equal), go right',
+                '        root->right = avlInsert(root->right, value); // [7] Insert into the right subtree',
+                '    }',
+                '',
+                '    updateHeight(root); // [8] Update the height of this node',
+                '',
+                '    int balance = getBalance(root); // [9] Get the balance factor',
+                '',
+                '    if (balance > 1 && value < root->left->value) { // [10] Left-Left case',
+                '        return rotateRight(root); // [11] Right rotation to fix',
+                '    } else if (balance < -1 && value > root->right->value) { // [12] Right-Right case',
+                '        return rotateLeft(root); // [13] Left rotation to fix',
+                '    } else if (balance > 1 && value > root->left->value) { // [14] Left-Right case',
+                '        root->left = rotateLeft(root->left); // [15] Left rotation on left child',
+                '        return rotateRight(root); // [16] Right rotation on root',
+                '    } else if (balance < -1 && value < root->right->value) { // [17] Right-Left case',
+                '        root->right = rotateRight(root->right); // [18] Right rotation on right child',
+                '        return rotateLeft(root); // [19] Left rotation on root',
+                '    }',
+                '',
+                '    return root; // [20] Return the (possibly rotated) root',
+                '}',
+            ],
+            csharp: [
+                '// Step 1: Insert a value into an AVL Tree (self-balancing BST)',
+                'AVLNode AvlInsert(AVLNode root, int value) {',
+                '',
+                '    if (root == null) { // [2] If the tree is empty here, we found the spot',
+                '        return new AVLNode(value); // [3] Create a new node with the value',
+                '    }',
+                '',
+                '    if (value < root.Value) { // [4] If the value is smaller, go left',
+                '        root.Left = AvlInsert(root.Left, value); // [5] Insert into the left subtree',
+                '    } else { // [6] If the value is larger (or equal), go right',
+                '        root.Right = AvlInsert(root.Right, value); // [7] Insert into the right subtree',
+                '    }',
+                '',
+                '    UpdateHeight(root); // [8] Update the height of this node',
+                '',
+                '    int balance = GetBalance(root); // [9] Get the balance factor',
+                '',
+                '    if (balance > 1 && value < root.Left.Value) { // [10] Left-Left case',
+                '        return RotateRight(root); // [11] Right rotation to fix',
+                '    } else if (balance < -1 && value > root.Right.Value) { // [12] Right-Right case',
+                '        return RotateLeft(root); // [13] Left rotation to fix',
+                '    } else if (balance > 1 && value > root.Left.Value) { // [14] Left-Right case',
+                '        root.Left = RotateLeft(root.Left); // [15] Left rotation on left child',
+                '        return RotateRight(root); // [16] Right rotation on root',
+                '    } else if (balance < -1 && value < root.Right.Value) { // [17] Right-Left case',
+                '        root.Right = RotateRight(root.Right); // [18] Right rotation on right child',
+                '        return RotateLeft(root); // [19] Left rotation on root',
+                '    }',
+                '',
+                '    return root; // [20] Return the (possibly rotated) root',
+                '}',
+            ],
+            typescript: [
+                '// Step 1: Insert a value into an AVL Tree (self-balancing BST)',
+                'function avlInsert(root: AVLNode | null, value: number): AVLNode {',
+                '',
+                '    if (root === null) { // [2] If the tree is empty here, we found the spot',
+                '        return new AVLNode(value); // [3] Create a new node with the value',
+                '    }',
+                '',
+                '    if (value < root.value) { // [4] If the value is smaller, go left',
+                '        root.left = avlInsert(root.left, value); // [5] Insert into the left subtree',
+                '    } else { // [6] If the value is larger (or equal), go right',
+                '        root.right = avlInsert(root.right, value); // [7] Insert into the right subtree',
+                '    }',
+                '',
+                '    updateHeight(root); // [8] Update the height of this node',
+                '',
+                '    const balance = getBalance(root); // [9] Get the balance factor',
+                '',
+                '    if (balance > 1 && value < root.left.value) { // [10] Left-Left case',
+                '        return rotateRight(root); // [11] Right rotation to fix',
+                '    } else if (balance < -1 && value > root.right.value) { // [12] Right-Right case',
+                '        return rotateLeft(root); // [13] Left rotation to fix',
+                '    } else if (balance > 1 && value > root.left.value) { // [14] Left-Right case',
+                '        root.left = rotateLeft(root.left); // [15] Left rotation on left child',
+                '        return rotateRight(root); // [16] Right rotation on root',
+                '    } else if (balance < -1 && value < root.right.value) { // [17] Right-Left case',
+                '        root.right = rotateRight(root.right); // [18] Right rotation on right child',
+                '        return rotateLeft(root); // [19] Left rotation on root',
+                '    }',
+                '',
+                '    return root; // [20] Return the (possibly rotated) root',
+                '}',
+            ],
+            go: [
+                '// Step 1: Insert a value into an AVL Tree (self-balancing BST)',
+                'func AvlInsert(root *AVLNode, value int) *AVLNode {',
+                '',
+                '    if root == nil { // [2] If the tree is empty here, we found the spot',
+                '        return &AVLNode{Value: value, Height: 1} // [3] Create a new node with the value',
+                '    }',
+                '',
+                '    if value < root.Value { // [4] If the value is smaller, go left',
+                '        root.Left = AvlInsert(root.Left, value) // [5] Insert into the left subtree',
+                '    } else { // [6] If the value is larger (or equal), go right',
+                '        root.Right = AvlInsert(root.Right, value) // [7] Insert into the right subtree',
+                '    }',
+                '',
+                '    UpdateHeight(root) // [8] Update the height of this node',
+                '',
+                '    balance := GetBalance(root) // [9] Get the balance factor',
+                '',
+                '    if balance > 1 && value < root.Left.Value { // [10] Left-Left case',
+                '        return RotateRight(root) // [11] Right rotation to fix',
+                '    } else if balance < -1 && value > root.Right.Value { // [12] Right-Right case',
+                '        return RotateLeft(root) // [13] Left rotation to fix',
+                '    } else if balance > 1 && value > root.Left.Value { // [14] Left-Right case',
+                '        root.Left = RotateLeft(root.Left) // [15] Left rotation on left child',
+                '        return RotateRight(root) // [16] Right rotation on root',
+                '    } else if balance < -1 && value < root.Right.Value { // [17] Right-Left case',
+                '        root.Right = RotateRight(root.Right) // [18] Right rotation on right child',
+                '        return RotateLeft(root) // [19] Left rotation on root',
+                '    }',
+                '',
+                '    return root // [20] Return the (possibly rotated) root',
+                '}',
+            ],
+            rust: [
+                '// Step 1: Insert a value into an AVL Tree (self-balancing BST)',
+                'fn avl_insert(root: Option<Box<AVLNode>>, value: i32) -> Box<AVLNode> {',
+                '    match root {',
+                '        None => Box::new(AVLNode::new(value)), // [2] If the tree is empty here, we found the spot',
+                '                                              // [3] Create a new node with the value',
+                '        Some(mut node) => {',
+                '            if value < node.value { // [4] If the value is smaller, go left',
+                '                node.left = Some(avl_insert(node.left, value)); // [5] Insert into the left subtree',
+                '            } else { // [6] If the value is larger (or equal), go right',
+                '                node.right = Some(avl_insert(node.right, value)); // [7] Insert into the right subtree',
+                '            }',
+                '',
+                '            node.update_height(); // [8] Update the height of this node',
+                '',
+                '            let balance = node.get_balance(); // [9] Get the balance factor',
+                '',
+                '            if balance > 1 && value < node.left.as_ref().unwrap().value { // [10] Left-Left case',
+                '                return node.rotate_right(); // [11] Right rotation to fix',
+                '            } else if balance < -1 && value > node.right.as_ref().unwrap().value { // [12] Right-Right case',
+                '                return node.rotate_left(); // [13] Left rotation to fix',
+                '            } else if balance > 1 && value > node.left.as_ref().unwrap().value { // [14] Left-Right case',
+                '                node.left = Some(node.left.take()?.rotate_left()?); // [15] Left rotation on left child',
+                '                return node.rotate_right(); // [16] Right rotation on root',
+                '            } else if balance < -1 && value < node.right.as_ref().unwrap().value { // [17] Right-Left case',
+                '                node.right = Some(node.right.take()?.rotate_right()?); // [18] Right rotation on right child',
+                '                return node.rotate_left(); // [19] Left rotation on root',
+                '            }',
+                '',
+                '            node // [20] Return the (possibly rotated) root',
+                '        }',
+                '    }',
+                '}',
+            ],
+        },
     };
 
     // ─── Complexity Information ───
@@ -677,6 +1191,53 @@ const TreeAlgorithms = (() => {
                 'Avoid when you need sorted output or when you want to process parents ' +
                 'before children. Use in-order for sorted output and pre-order for ' +
                 'top-down processing.',
+        },
+
+        bstDelete: {
+            name: 'BST Delete',
+            best: 'O(log n)',
+            average: 'O(log n)',
+            worst: 'O(n)',
+            space: 'O(log n)',
+            description:
+                'Search for the node to delete by comparing values and traversing left or right. ' +
+                'Three cases: (1) leaf node - simply remove it, (2) one child - replace with that child, ' +
+                '(3) two children - find inorder successor (minimum of right subtree), copy its value, ' +
+                'then delete the successor. On a balanced tree this takes about log n steps, ' +
+                'but a skewed tree can degrade to n steps.',
+            useCase:
+                'Use when maintaining a dynamic collection where items are removed. ' +
+                'Essential for implementing sets, maps, and symbol tables with delete operations. ' +
+                'Common in database indexing, file systems, and memory management.',
+            avoid:
+                'Avoid when the tree is not balanced, as operations can degrade to O(n). ' +
+                'For applications requiring guaranteed performance, use a self-balancing tree ' +
+                'such as AVL or Red-Black tree. If deletions are frequent, consider lazy deletion ' +
+                'or tombstone marking to improve performance.',
+        },
+
+        avlInsert: {
+            name: 'AVL Tree Insert',
+            best: 'O(log n)',
+            average: 'O(log n)',
+            worst: 'O(log n)',
+            space: 'O(log n)',
+            description:
+                'Insert a value like BST, then rebalance along the path from the new node to the root. ' +
+                'Track heights and compute balance factors (height(left) - height(right)). ' +
+                'If imbalance exceeds 1, perform rotations: LL (right rotate), RR (left rotate), ' +
+                'LR (left rotate left child, then right rotate), RL (right rotate right child, then left rotate). ' +
+                'Always maintains O(log n) height, guaranteeing consistent performance.',
+            useCase:
+                'Use when worst-case performance guarantees are critical. ' +
+                'Perfect for database indexes, memory allocators, and any system where ' +
+                'timing predictability matters. Also excellent for implementing ' +
+                'ordered sets and maps with strict O(log n) bounds.',
+            avoid:
+                'Avoid when memory overhead is a concern, as storing height per node ' +
+                'uses extra space. Also avoid when rotations are too expensive - ' +
+                'Red-Black trees require fewer rotations on average. For simple ' +
+                'applications without strict timing requirements, a regular BST may suffice.',
         },
     };
 
@@ -801,6 +1362,1092 @@ const TreeAlgorithms = (() => {
         yield { type: 'visit', nodeId: root.id, codeLine: 6 };
     }
 
+    /**
+     * Find the minimum value node in a subtree (for inorder successor).
+     *
+     * @param {object} node - The root of the subtree.
+     * @returns {object} The node with the minimum value.
+     */
+    function findMinNode(node) {
+        while (node.left !== null) {
+            node = node.left;
+        }
+        return node;
+    }
+
+    /**
+     * BST Delete generator. Yields visualization steps while deleting a value.
+     *
+     * @param {object|null} root - The root of the BST (or null for an empty tree).
+     * @param {number} value - The value to delete.
+     * @yields {{ type: string, nodeId: number, codeLine: number, deletedNodeId?: number }}
+     * @returns {object|null} The new root of the tree.
+     */
+    function* bstDelete(root, value) {
+        if (root === null) {
+            yield { type: 'notFound', nodeId: -1, codeLine: 3 };
+            return null;
+        }
+
+        yield { type: 'visit', nodeId: root.id, codeLine: 2 };
+        yield { type: 'compare', nodeId: root.id, codeLine: 4 };
+
+        if (value < root.value) {
+            yield { type: 'compare', nodeId: root.id, codeLine: 5 };
+            const gen = bstDelete(root.left, value);
+            let result = gen.next();
+            while (!result.done) {
+                yield result.value;
+                result = gen.next();
+            }
+            root.left = result.value;
+        } else if (value > root.value) {
+            yield { type: 'compare', nodeId: root.id, codeLine: 7 };
+            const gen = bstDelete(root.right, value);
+            let result = gen.next();
+            while (!result.done) {
+                yield result.value;
+                result = gen.next();
+            }
+            root.right = result.value;
+        } else {
+            yield { type: 'found', nodeId: root.id, codeLine: 8 };
+
+            if (root.left === null) {
+                yield { type: 'delete', nodeId: root.id, codeLine: 10, deletedNodeId: root.id };
+                return root.right;
+            }
+            yield { type: 'compare', nodeId: root.id, codeLine: 11 };
+
+            if (root.right === null) {
+                yield { type: 'delete', nodeId: root.id, codeLine: 12, deletedNodeId: root.id };
+                return root.left;
+            }
+
+            const successor = findMinNode(root.right);
+            yield { type: 'visit', nodeId: successor.id, codeLine: 14 };
+
+            yield { type: 'replace', nodeId: root.id, newValue: successor.value, codeLine: 15 };
+            const oldValue = root.value;
+            root.value = successor.value;
+
+            yield { type: 'compare', nodeId: root.id, codeLine: 16 };
+            const gen = bstDelete(root.right, successor.value);
+            let result = gen.next();
+            while (!result.done) {
+                yield result.value;
+                result = gen.next();
+            }
+            root.right = result.value;
+        }
+
+        return root;
+    }
+
+    /**
+     * AVL Insert generator. Yields visualization steps while inserting a value.
+     *
+     * @param {object|null} root - The root of the AVL tree (or null for an empty tree).
+     * @param {number} value - The value to insert.
+     * @yields {{ type: string, nodeId: number, codeLine: number }}
+     * @returns {object} The new root of the tree.
+     */
+    function* avlInsert(root, value) {
+        if (root === null) {
+            const newNode = createNode(value);
+            yield { type: 'insert', nodeId: newNode.id, codeLine: 3 };
+            return newNode;
+        }
+
+        yield { type: 'visit', nodeId: root.id, codeLine: 2 };
+        yield { type: 'compare', nodeId: root.id, codeLine: 4 };
+
+        if (value < root.value) {
+            yield { type: 'compare', nodeId: root.id, codeLine: 5 };
+            const gen = avlInsert(root.left, value);
+            let result = gen.next();
+            while (!result.done) {
+                yield result.value;
+                result = gen.next();
+            }
+            root.left = result.value;
+        } else {
+            yield { type: 'compare', nodeId: root.id, codeLine: 7 };
+            const gen = avlInsert(root.right, value);
+            let result = gen.next();
+            while (!result.done) {
+                yield result.value;
+                result = gen.next();
+            }
+            root.right = result.value;
+        }
+
+        updateHeight(root);
+        yield { type: 'updateHeight', nodeId: root.id, codeLine: 8 };
+
+        const balance = getBalanceFactor(root);
+        yield { type: 'checkBalance', nodeId: root.id, balance, codeLine: 9 };
+
+        if (balance > 1 && value < root.left.value) {
+            yield { type: 'rotate', nodeId: root.id, rotationType: 'right', codeLine: 11 };
+            return rotateRight(root);
+        }
+        if (balance < -1 && value > root.right.value) {
+            yield { type: 'rotate', nodeId: root.id, rotationType: 'left', codeLine: 13 };
+            return rotateLeft(root);
+        }
+        if (balance > 1 && value > root.left.value) {
+            yield { type: 'rotate', nodeId: root.left.id, rotationType: 'left', codeLine: 15 };
+            root.left = rotateLeft(root.left);
+            yield { type: 'rotate', nodeId: root.id, rotationType: 'right', codeLine: 16 };
+            return rotateRight(root);
+        }
+        if (balance < -1 && value < root.right.value) {
+            yield { type: 'rotate', nodeId: root.right.id, rotationType: 'right', codeLine: 18 };
+            root.right = rotateRight(root.right);
+            yield { type: 'rotate', nodeId: root.id, rotationType: 'left', codeLine: 19 };
+            return rotateLeft(root);
+        }
+
+        return root;
+    }
+
+    /**
+     * Collect all values in a BST via in-order traversal.
+     *
+     * @param {object|null} root - The root node.
+     * @returns {number[]} All values in the tree.
+     */
+    function getValues(root) {
+        if (!root) return [];
+        return [...getValues(root.left), root.value, ...getValues(root.right)];
+    }
+
+    // ─── Level-Order Traversal (BFS) Code Snippets ───
+
+    const LEVEL_ORDER_CODE = {
+        bstLevelOrder: {
+            pseudo: [
+                '# Step 1: Visit every node level by level (BFS)',
+                'procedure levelOrder(root):',
+                '',
+                '    if root is null:  # [2] If the tree is empty',
+                '        return  # [3] Nothing to traverse',
+                '',
+                '    queue = [root]  # [4] Initialize queue with root node',
+                '',
+                '    while queue is not empty:  # [5] Process all nodes',
+                '        node = queue.dequeue()  # [6] Remove front of queue',
+                '        visit(node)  # [7] Visit the current node',
+                '',
+                '        if node.left is not null:  # [8] If left child exists',
+                '            queue.enqueue(node.left)  # [9] Add left child to queue',
+                '        if node.right is not null:  # [10] If right child exists',
+                '            queue.enqueue(node.right)  # [11] Add right child to queue',
+            ],
+            python: [
+                '# Step 1: Visit every node level by level (BFS)',
+                'from collections import deque',
+                '',
+                'def level_order(root: Optional[Node]) -> None:',
+                '',
+                '    if root is None:  # [2] If the tree is empty',
+                '        return  # [3] Nothing to traverse',
+                '',
+                '    queue = deque([root])  # [4] Initialize queue with root node',
+                '',
+                '    while queue:  # [5] Process all nodes',
+                '        node = queue.popleft()  # [6] Remove front of queue',
+                '        visit(node)  # [7] Visit the current node',
+                '',
+                '        if node.left is not None:  # [8] If left child exists',
+                '            queue.append(node.left)  # [9] Add left child to queue',
+                '        if node.right is not None:  # [10] If right child exists',
+                '            queue.append(node.right)  # [11] Add right child to queue',
+            ],
+            java: [
+                '// Step 1: Visit every node level by level (BFS)',
+                'import java.util.LinkedList;',
+                'import java.util.Queue;',
+                '',
+                'void levelOrder(Node root) {',
+                '',
+                '    if (root == null) { // [2] If the tree is empty',
+                '        return; // [3] Nothing to traverse',
+                '    }',
+                '',
+                '    Queue<Node> queue = new LinkedList<>();',
+                '    queue.add(root); // [4] Initialize queue with root node',
+                '',
+                '    while (!queue.isEmpty()) { // [5] Process all nodes',
+                '        Node node = queue.poll(); // [6] Remove front of queue',
+                '        visit(node); // [7] Visit the current node',
+                '',
+                '        if (node.left != null) { // [8] If left child exists',
+                '            queue.add(node.left); // [9] Add left child to queue',
+                '        }',
+                '        if (node.right != null) { // [10] If right child exists',
+                '            queue.add(node.right); // [11] Add right child to queue',
+                '        }',
+                '    }',
+                '}',
+            ],
+            c: [
+                '// Step 1: Visit every node level by level (BFS)',
+                'typedef struct Node Node;',
+                'typedef struct Queue Queue;',
+                '',
+                'void levelOrder(Node* root) {',
+                '',
+                '    if (root == NULL) { // [2] If the tree is empty',
+                '        return; // [3] Nothing to traverse',
+                '    }',
+                '',
+                '    Queue* queue = createQueue();',
+                '    enqueue(queue, root); // [4] Initialize queue with root node',
+                '',
+                '    while (!isEmpty(queue)) { // [5] Process all nodes',
+                '        Node* node = dequeue(queue); // [6] Remove front of queue',
+                '        visit(node); // [7] Visit the current node',
+                '',
+                '        if (node->left != NULL) { // [8] If left child exists',
+                '            enqueue(queue, node->left); // [9] Add left child to queue',
+                '        }',
+                '        if (node->right != NULL) { // [10] If right child exists',
+                '            enqueue(queue, node->right); // [11] Add right child to queue',
+                '        }',
+                '    }',
+                '}',
+            ],
+            csharp: [
+                '// Step 1: Visit every node level by level (BFS)',
+                'using System.Collections.Generic;',
+                '',
+                'void LevelOrder(Node root) {',
+                '',
+                '    if (root == null) { // [2] If the tree is empty',
+                '        return; // [3] Nothing to traverse',
+                '    }',
+                '',
+                '    Queue<Node> queue = new Queue<Node>();',
+                '    queue.Enqueue(root); // [4] Initialize queue with root node',
+                '',
+                '    while (queue.Count > 0) { // [5] Process all nodes',
+                '        Node node = queue.Dequeue(); // [6] Remove front of queue',
+                '        Visit(node); // [7] Visit the current node',
+                '',
+                '        if (node.Left != null) { // [8] If left child exists',
+                '            queue.Enqueue(node.Left); // [9] Add left child to queue',
+                '        }',
+                '        if (node.Right != null) { // [10] If right child exists',
+                '            queue.Enqueue(node.Right); // [11] Add right child to queue',
+                '        }',
+                '    }',
+                '}',
+            ],
+            typescript: [
+                '// Step 1: Visit every node level by level (BFS)',
+                'function levelOrder(root: Node | null): void {',
+                '',
+                '    if (root === null) { // [2] If the tree is empty',
+                '        return; // [3] Nothing to traverse',
+                '    }',
+                '',
+                '    const queue: Node[] = [root]; // [4] Initialize queue with root node',
+                '',
+                '    while (queue.length > 0) { // [5] Process all nodes',
+                '        const node = queue.shift()!; // [6] Remove front of queue',
+                '        visit(node); // [7] Visit the current node',
+                '',
+                '        if (node.left !== null) { // [8] If left child exists',
+                '            queue.push(node.left); // [9] Add left child to queue',
+                '        }',
+                '        if (node.right !== null) { // [10] If right child exists',
+                '            queue.push(node.right); // [11] Add right child to queue',
+                '        }',
+                '    }',
+                '}',
+            ],
+            go: [
+                '// Step 1: Visit every node level by level (BFS)',
+                'func levelOrder(root *Node) {',
+                '',
+                '    if root == nil { // [2] If the tree is empty',
+                '        return // [3] Nothing to traverse',
+                '    }',
+                '',
+                '    queue := []*Node{root} // [4] Initialize queue with root node',
+                '',
+                '    for len(queue) > 0 { // [5] Process all nodes',
+                '        node := queue[0]',
+                '        queue = queue[1:] // [6] Remove front of queue',
+                '        visit(node) // [7] Visit the current node',
+                '',
+                '        if node.Left != nil { // [8] If left child exists',
+                '            queue = append(queue, node.Left) // [9] Add left child to queue',
+                '        }',
+                '        if node.Right != nil { // [10] If right child exists',
+                '            queue = append(queue, node.Right) // [11] Add right child to queue',
+                '        }',
+                '    }',
+                '}',
+            ],
+            rust: [
+                '// Step 1: Visit every node level by level (BFS)',
+                'use std::collections::VecDeque;',
+                '',
+                'fn level_order(root: &Option<Box<Node>>) {',
+                '',
+                '    let root = match root {',
+                '        None => return, // [2] If the tree is empty',
+                '                         // [3] Nothing to traverse',
+                '        Some(r) => r,',
+                '    };',
+                '',
+                '    let mut queue: VecDeque<*Node> = VecDeque::new();',
+                '    queue.push_back(root); // [4] Initialize queue with root node',
+                '',
+                '    while !queue.is_empty() { // [5] Process all nodes',
+                '        let node = queue.pop_front().unwrap(); // [6] Remove front of queue',
+                '        visit(node); // [7] Visit the current node',
+                '',
+                '        if let Some(left) = &node.left { // [8] If left child exists',
+                '            queue.push_back(left); // [9] Add left child to queue',
+                '        }',
+                '        if let Some(right) = &node.right { // [10] If right child exists',
+                '            queue.push_back(right); // [11] Add right child to queue',
+                '        }',
+                '    }',
+                '}',
+            ],
+        },
+    };
+
+    // ─── Level-Order Traversal Complexity Information ───
+
+    const LEVEL_ORDER_COMPLEXITY = {
+        bstLevelOrder: {
+            name: 'Level-Order Traversal',
+            best: 'O(n)',
+            average: 'O(n)',
+            worst: 'O(n)',
+            space: 'O(n)',
+            description:
+                'Use a queue to visit nodes level by level, starting from the root. ' +
+                'Enqueue the root, then repeatedly dequeue a node, visit it, and enqueue its children. ' +
+                'This processes all nodes at depth d before any nodes at depth d+1. ' +
+                'Every node is visited exactly once, so time is always O(n). ' +
+                'Space is O(n) for the queue in a full tree at the last level.',
+            useCase:
+                'Use when you need to process nodes level by level. ' +
+                'Perfect for finding the shortest path in unweighted graphs, ' +
+                'printing tree by level, or implementing BFS algorithms. ' +
+                'Also useful for finding the minimum depth or level of a node.',
+            avoid:
+                'Avoid when you need depth-first operations or when memory is constrained. ' +
+                'The queue can use significant space for wide trees. ' +
+                'For simple printing without level information, pre-order may be more memory efficient.',
+        },
+    };
+
+    /**
+     * Level-order (BFS) traversal generator.
+     *
+     * @param {object|null} root - The root of the BST.
+     * @yields {{ type: string, nodeId: number, codeLine: number }}
+     */
+    function* bstLevelOrder(root) {
+        if (root === null) {
+            return;
+        }
+
+        const queue = [root];
+
+        while (queue.length > 0) {
+            const node = queue.shift();
+            yield { type: 'visit', nodeId: node.id, codeLine: 7 };
+
+            if (node.left !== null) {
+                queue.push(node.left);
+            }
+            if (node.right !== null) {
+                queue.push(node.right);
+            }
+        }
+    }
+
+    // ─── Heap Helper Functions ───
+
+    /**
+     * Convert a heap array (0-indexed) to a binary tree structure for visualization.
+     *
+     * @param {number[]} heap - The heap array.
+     * @returns {object|null} The root node of the tree representation.
+     */
+    function heapToTree(heap) {
+        if (!heap || heap.length === 0) return null;
+
+        let heapIdCounter = nodeIdCounter;
+
+        function buildNode(index) {
+            if (index >= heap.length) return null;
+            const node = { value: heap[index], left: null, right: null, id: heapIdCounter++ };
+            node.left = buildNode(2 * index + 1);
+            node.right = buildNode(2 * index + 2);
+            return node;
+        }
+
+        return buildNode(0);
+    }
+
+    /**
+     * Build a sample heap from an array of values.
+     *
+     * @param {number[]} values - Values to insert.
+     * @param {string} type - 'min' or 'max' heap.
+     * @returns {{heap: number[], tree: object|null}} The heap array and its tree representation.
+     */
+    function buildSampleHeap(values, type = 'min') {
+        resetIds();
+        const heap = [];
+        for (const v of values) {
+            heapInsertHelper(heap, v, type);
+        }
+        const tree = heapToTree(heap);
+        return { heap, tree };
+    }
+
+    /**
+     * Non-generator heap insert helper (for building heaps without visualization).
+     *
+     * @param {number[]} heap - The heap array.
+     * @param {number} value - Value to insert.
+     * @param {string} type - 'min' or 'max' heap.
+     * @returns {void}
+     */
+    function heapInsertHelper(heap, value, type = 'min') {
+        heap.push(value);
+        let index = heap.length - 1;
+
+        while (index > 0) {
+            const parentIndex = Math.floor((index - 1) / 2);
+            if ((type === 'min' && heap[parentIndex] <= heap[index]) ||
+                (type === 'max' && heap[parentIndex] >= heap[index])) {
+                break;
+            }
+            [heap[parentIndex], heap[index]] = [heap[index], heap[parentIndex]];
+            index = parentIndex;
+        }
+    }
+
+    /**
+     * Non-generator heap extract helper (for building heaps without visualization).
+     *
+     * @param {number[]} heap - The heap array.
+     * @param {string} type - 'min' or 'max' heap.
+     * @returns {number|null} The extracted value.
+     */
+    function heapExtractHelper(heap, type = 'min') {
+        if (heap.length === 0) return null;
+
+        const result = heap[0];
+        heap[0] = heap[heap.length - 1];
+        heap.pop();
+
+        let index = 0;
+        const length = heap.length;
+
+        while (true) {
+            let bestIndex = index;
+            const leftChild = 2 * index + 1;
+            const rightChild = 2 * index + 2;
+
+            if (leftChild < length) {
+                if ((type === 'min' && heap[leftChild] < heap[bestIndex]) ||
+                    (type === 'max' && heap[leftChild] > heap[bestIndex])) {
+                    bestIndex = leftChild;
+                }
+            }
+
+            if (rightChild < length) {
+                if ((type === 'min' && heap[rightChild] < heap[bestIndex]) ||
+                    (type === 'max' && heap[rightChild] > heap[bestIndex])) {
+                    bestIndex = rightChild;
+                }
+            }
+
+            if (bestIndex === index) break;
+            [heap[index], heap[bestIndex]] = [heap[bestIndex], heap[index]];
+            index = bestIndex;
+        }
+
+        return result;
+    }
+
+    // ─── Heap Algorithm Code Snippets ───
+
+    const HEAP_CODE = {
+        heapInsertMin: {
+            pseudo: [
+                '# Step 1: Insert a value into a Min-Heap',
+                'procedure heapInsert(heap, value):',
+                '',
+                '    heap.push(value)  # [2] Add value to the end',
+                '    index = heap.length - 1  # [3] Start from the new node',
+                '',
+                '    while index > 0:  # [4] Bubble up until reaching root',
+                '        parent = floor((index - 1) / 2)  # [5] Find parent index',
+                '        if heap[parent] <= heap[index]:  # [6] If parent is smaller or equal',
+                '            break  # [7] Heap property is satisfied, stop',
+                '        swap(heap[parent], heap[index])  # [8] Swap with parent',
+                '        index = parent  # [9] Continue from parent position',
+            ],
+            python: [
+                '# Step 1: Insert a value into a Min-Heap',
+                'def heap_insert(heap: List[int], value: int) -> None:',
+                '',
+                '    heap.append(value)  # [2] Add value to the end',
+                '    index = len(heap) - 1  # [3] Start from the new node',
+                '',
+                '    while index > 0:  # [4] Bubble up until reaching root',
+                '        parent = (index - 1) // 2  # [5] Find parent index',
+                '        if heap[parent] <= heap[index]:  # [6] If parent is smaller or equal',
+                '            break  # [7] Heap property is satisfied, stop',
+                '        heap[parent], heap[index] = heap[index], heap[parent]  # [8] Swap with parent',
+                '        index = parent  # [9] Continue from parent position',
+            ],
+            java: [
+                '// Step 1: Insert a value into a Min-Heap',
+                'void heapInsert(int[] heap, int value) {',
+                '',
+                '    heap[heap.length] = value; // [2] Add value to the end (assuming dynamic array)',
+                '    int index = heap.length - 1; // [3] Start from the new node',
+                '',
+                '    while (index > 0) { // [4] Bubble up until reaching root',
+                '        int parent = (index - 1) / 2; // [5] Find parent index',
+                '        if (heap[parent] <= heap[index]) { // [6] If parent is smaller or equal',
+                '            break; // [7] Heap property is satisfied, stop',
+                '        }',
+                '        swap(heap[parent], heap[index]); // [8] Swap with parent',
+                '        index = parent; // [9] Continue from parent position',
+                '    }',
+                '}',
+            ],
+            c: [
+                '// Step 1: Insert a value into a Min-Heap',
+                'void heapInsert(int* heap, int* size, int value, int capacity) {',
+                '',
+                '    heap[*size] = value; // [2] Add value to the end',
+                '    int index = *size; // [3] Start from the new node',
+                '    (*size)++;',
+                '',
+                '    while (index > 0) { // [4] Bubble up until reaching root',
+                '        int parent = (index - 1) / 2; // [5] Find parent index',
+                '        if (heap[parent] <= heap[index]) { // [6] If parent is smaller or equal',
+                '            break; // [7] Heap property is satisfied, stop',
+                '        }',
+                '        int temp = heap[parent];',
+                '        heap[parent] = heap[index]; // [8] Swap with parent',
+                '        heap[index] = temp;',
+                '        index = parent; // [9] Continue from parent position',
+                '    }',
+                '}',
+            ],
+            csharp: [
+                '// Step 1: Insert a value into a Min-Heap',
+                'void HeapInsert(int[] heap, int value, ref int size) {',
+                '',
+                '    heap[size] = value; // [2] Add value to the end',
+                '    int index = size; // [3] Start from the new node',
+                '    size++;',
+                '',
+                '    while (index > 0) { // [4] Bubble up until reaching root',
+                '        int parent = (index - 1) / 2; // [5] Find parent index',
+                '        if (heap[parent] <= heap[index]) { // [6] If parent is smaller or equal',
+                '            break; // [7] Heap property is satisfied, stop',
+                '        }',
+                '        int temp = heap[parent];',
+                '        heap[parent] = heap[index]; // [8] Swap with parent',
+                '        heap[index] = temp;',
+                '        index = parent; // [9] Continue from parent position',
+                '    }',
+                '}',
+            ],
+            typescript: [
+                '// Step 1: Insert a value into a Min-Heap',
+                'function heapInsert(heap: number[], value: number): void {',
+                '',
+                '    heap.push(value); // [2] Add value to the end',
+                '    let index = heap.length - 1; // [3] Start from the new node',
+                '',
+                '    while (index > 0) { // [4] Bubble up until reaching root',
+                '        const parent = Math.floor((index - 1) / 2); // [5] Find parent index',
+                '        if (heap[parent] <= heap[index]) { // [6] If parent is smaller or equal',
+                '            break; // [7] Heap property is satisfied, stop',
+                '        }',
+                '        [heap[parent], heap[index]] = [heap[index], heap[parent]]; // [8] Swap with parent',
+                '        index = parent; // [9] Continue from parent position',
+                '    }',
+                '}',
+            ],
+            go: [
+                '// Step 1: Insert a value into a Min-Heap',
+                'func heapInsert(heap []int, value int) []int {',
+                '',
+                '    heap = append(heap, value) // [2] Add value to the end',
+                '    index := len(heap) - 1 // [3] Start from the new node',
+                '',
+                '    for index > 0 { // [4] Bubble up until reaching root',
+                '        parent := (index - 1) / 2 // [5] Find parent index',
+                '        if heap[parent] <= heap[index] { // [6] If parent is smaller or equal',
+                '            break // [7] Heap property is satisfied, stop',
+                '        }',
+                '        heap[parent], heap[index] = heap[index], heap[parent] // [8] Swap with parent',
+                '        index = parent // [9] Continue from parent position',
+                '    }',
+                '    return heap',
+                '}',
+            ],
+            rust: [
+                '// Step 1: Insert a value into a Min-Heap',
+                'fn heap_insert(heap: &mut Vec<i32>, value: i32) {',
+                '',
+                '    heap.push(value); // [2] Add value to the end',
+                '    let mut index = heap.len() - 1; // [3] Start from the new node',
+                '',
+                '    while index > 0 { // [4] Bubble up until reaching root',
+                '        let parent = (index - 1) / 2; // [5] Find parent index',
+                '        if heap[parent] <= heap[index] { // [6] If parent is smaller or equal',
+                '            break; // [7] Heap property is satisfied, stop',
+                '        }',
+                '        heap.swap(parent, index); // [8] Swap with parent',
+                '        index = parent; // [9] Continue from parent position',
+                '    }',
+                '}',
+            ],
+        },
+
+        heapExtractMin: {
+            pseudo: [
+                '# Step 1: Extract minimum value from Min-Heap',
+                'procedure heapExtract(heap):',
+                '',
+                '    if heap is empty:  # [2] Heap has no elements',
+                '        return null  # [3] Cannot extract from empty heap',
+                '',
+                '    result = heap[0]  # [4] Save the minimum value',
+                '    heap[0] = heap[heap.length - 1]  # [5] Move last element to root',
+                '    heap.pop()  # [6] Remove the last element',
+                '    index = 0  # [7] Start from root',
+                '',
+                '    while true:  # [8] Bubble down until heap property holds',
+                '        left = 2 * index + 1  # [9] Left child index',
+                '        right = 2 * index + 2  # [10] Right child index',
+                '        smallest = index  # [11] Assume current is smallest',
+                '',
+                '        if left < heap.length and heap[left] < heap[smallest]:  # [12] Left child is smaller',
+                '            smallest = left  # [13] Update smallest index',
+                '        if right < heap.length and heap[right] < heap[smallest]:  # [14] Right child is smaller',
+                '            smallest = right  # [15] Update smallest index',
+                '',
+                '        if smallest == index:  # [16] Heap property satisfied',
+                '            break  # [17] Stop bubbling down',
+                '        swap(heap[index], heap[smallest])  # [18] Swap with smallest child',
+                '        index = smallest  # [19] Continue from child position',
+                '',
+                '    return result  # [20] Return the minimum value',
+            ],
+            python: [
+                '# Step 1: Extract minimum value from Min-Heap',
+                'def heap_extract(heap: List[int]) -> Optional[int]:',
+                '',
+                '    if not heap:  # [2] Heap has no elements',
+                '        return None  # [3] Cannot extract from empty heap',
+                '',
+                '    result = heap[0]  # [4] Save the minimum value',
+                '    heap[0] = heap[-1]  # [5] Move last element to root',
+                '    heap.pop()  # [6] Remove the last element',
+                '    index = 0  # [7] Start from root',
+                '',
+                '    while True:  # [8] Bubble down until heap property holds',
+                '        left = 2 * index + 1  # [9] Left child index',
+                '        right = 2 * index + 2  # [10] Right child index',
+                '        smallest = index  # [11] Assume current is smallest',
+                '',
+                '        if left < len(heap) and heap[left] < heap[smallest]:  # [12] Left child is smaller',
+                '            smallest = left  # [13] Update smallest index',
+                '        if right < len(heap) and heap[right] < heap[smallest]:  # [14] Right child is smaller',
+                '            smallest = right  # [15] Update smallest index',
+                '',
+                '        if smallest == index:  # [16] Heap property satisfied',
+                '            break  # [17] Stop bubbling down',
+                '        heap[index], heap[smallest] = heap[smallest], heap[index]  # [18] Swap with smallest child',
+                '        index = smallest  # [19] Continue from child position',
+                '',
+                '    return result  # [20] Return the minimum value',
+            ],
+            java: [
+                '// Step 1: Extract minimum value from Min-Heap',
+                'int heapExtract(int[] heap, int[] size) {',
+                '',
+                '    if (size[0] == 0) { // [2] Heap has no elements',
+                '        return -1; // [3] Cannot extract from empty heap',
+                '    }',
+                '',
+                '    int result = heap[0]; // [4] Save the minimum value',
+                '    heap[0] = heap[size[0] - 1]; // [5] Move last element to root',
+                '    size[0]--; // [6] Decrease size',
+                '    int index = 0; // [7] Start from root',
+                '',
+                '    while (true) { // [8] Bubble down until heap property holds',
+                '        int left = 2 * index + 1; // [9] Left child index',
+                '        int right = 2 * index + 2; // [10] Right child index',
+                '        int smallest = index; // [11] Assume current is smallest',
+                '',
+                '        if (left < size[0] && heap[left] < heap[smallest]) { // [12] Left child is smaller',
+                '            smallest = left; // [13] Update smallest index',
+                '        }',
+                '        if (right < size[0] && heap[right] < heap[smallest]) { // [14] Right child is smaller',
+                '            smallest = right; // [15] Update smallest index',
+                '        }',
+                '',
+                '        if (smallest == index) { // [16] Heap property satisfied',
+                '            break; // [17] Stop bubbling down',
+                '        }',
+                '        swap(heap[index], heap[smallest]); // [18] Swap with smallest child',
+                '        index = smallest; // [19] Continue from child position',
+                '    }',
+                '',
+                '    return result; // [20] Return the minimum value',
+                '}',
+            ],
+            c: [
+                '// Step 1: Extract minimum value from Min-Heap',
+                'int heapExtract(int* heap, int* size) {',
+                '',
+                '    if (*size == 0) { // [2] Heap has no elements',
+                '        return -1; // [3] Cannot extract from empty heap',
+                '    }',
+                '',
+                '    int result = heap[0]; // [4] Save the minimum value',
+                '    heap[0] = heap[*size - 1]; // [5] Move last element to root',
+                '    (*size)--; // [6] Decrease size',
+                '    int index = 0; // [7] Start from root',
+                '',
+                '    while (1) { // [8] Bubble down until heap property holds',
+                '        int left = 2 * index + 1; // [9] Left child index',
+                '        int right = 2 * index + 2; // [10] Right child index',
+                '        int smallest = index; // [11] Assume current is smallest',
+                '',
+                '        if (left < *size && heap[left] < heap[smallest]) { // [12] Left child is smaller',
+                '            smallest = left; // [13] Update smallest index',
+                '        }',
+                '        if (right < *size && heap[right] < heap[smallest]) { // [14] Right child is smaller',
+                '            smallest = right; // [15] Update smallest index',
+                '        }',
+                '',
+                '        if (smallest == index) { // [16] Heap property satisfied',
+                '            break; // [17] Stop bubbling down',
+                '        }',
+                '        int temp = heap[index];',
+                '        heap[index] = heap[smallest]; // [18] Swap with smallest child',
+                '        heap[smallest] = temp;',
+                '        index = smallest; // [19] Continue from child position',
+                '    }',
+                '',
+                '    return result; // [20] Return the minimum value',
+                '}',
+            ],
+            csharp: [
+                '// Step 1: Extract minimum value from Min-Heap',
+                'int HeapExtract(int[] heap, ref int size) {',
+                '',
+                '    if (size == 0) { // [2] Heap has no elements',
+                '        return -1; // [3] Cannot extract from empty heap',
+                '    }',
+                '',
+                '    int result = heap[0]; // [4] Save the minimum value',
+                '    heap[0] = heap[size - 1]; // [5] Move last element to root',
+                '    size--; // [6] Decrease size',
+                '    int index = 0; // [7] Start from root',
+                '',
+                '    while (true) { // [8] Bubble down until heap property holds',
+                '        int left = 2 * index + 1; // [9] Left child index',
+                '        int right = 2 * index + 2; // [10] Right child index',
+                '        int smallest = index; // [11] Assume current is smallest',
+                '',
+                '        if (left < size && heap[left] < heap[smallest]) { // [12] Left child is smaller',
+                '            smallest = left; // [13] Update smallest index',
+                '        }',
+                '        if (right < size && heap[right] < heap[smallest]) { // [14] Right child is smaller',
+                '            smallest = right; // [15] Update smallest index',
+                '        }',
+                '',
+                '        if (smallest == index) { // [16] Heap property satisfied',
+                '            break; // [17] Stop bubbling down',
+                '        }',
+                '        int temp = heap[index];',
+                '        heap[index] = heap[smallest]; // [18] Swap with smallest child',
+                '        heap[smallest] = temp;',
+                '        index = smallest; // [19] Continue from child position',
+                '    }',
+                '',
+                '    return result; // [20] Return the minimum value',
+                '}',
+            ],
+            typescript: [
+                '// Step 1: Extract minimum value from Min-Heap',
+                'function heapExtract(heap: number[]): number | null {',
+                '',
+                '    if (heap.length === 0) { // [2] Heap has no elements',
+                '        return null; // [3] Cannot extract from empty heap',
+                '    }',
+                '',
+                '    const result = heap[0]; // [4] Save the minimum value',
+                '    heap[0] = heap[heap.length - 1]; // [5] Move last element to root',
+                '    heap.pop(); // [6] Remove the last element',
+                '    let index = 0; // [7] Start from root',
+                '',
+                '    while (true) { // [8] Bubble down until heap property holds',
+                '        const left = 2 * index + 1; // [9] Left child index',
+                '        const right = 2 * index + 2; // [10] Right child index',
+                '        let smallest = index; // [11] Assume current is smallest',
+                '',
+                '        if (left < heap.length && heap[left] < heap[smallest]) { // [12] Left child is smaller',
+                '            smallest = left; // [13] Update smallest index',
+                '        }',
+                '        if (right < heap.length && heap[right] < heap[smallest]) { // [14] Right child is smaller',
+                '            smallest = right; // [15] Update smallest index',
+                '        }',
+                '',
+                '        if (smallest === index) { // [16] Heap property satisfied',
+                '            break; // [17] Stop bubbling down',
+                '        }',
+                '        [heap[index], heap[smallest]] = [heap[smallest], heap[index]]; // [18] Swap with smallest child',
+                '        index = smallest; // [19] Continue from child position',
+                '    }',
+                '',
+                '    return result; // [20] Return the minimum value',
+                '}',
+            ],
+            go: [
+                '// Step 1: Extract minimum value from Min-Heap',
+                'func heapExtract(heap []int) ([]int, int) {',
+                '',
+                '    if len(heap) == 0 { // [2] Heap has no elements',
+                '        return heap, -1 // [3] Cannot extract from empty heap',
+                '    }',
+                '',
+                '    result := heap[0] // [4] Save the minimum value',
+                '    heap[0] = heap[len(heap)-1] // [5] Move last element to root',
+                '    heap = heap[:len(heap)-1] // [6] Remove the last element',
+                '    index := 0 // [7] Start from root',
+                '',
+                '    for { // [8] Bubble down until heap property holds',
+                '        left := 2*index + 1 // [9] Left child index',
+                '        right := 2*index + 2 // [10] Right child index',
+                '        smallest := index // [11] Assume current is smallest',
+                '',
+                '        if left < len(heap) && heap[left] < heap[smallest] { // [12] Left child is smaller',
+                '            smallest = left // [13] Update smallest index',
+                '        }',
+                '        if right < len(heap) && heap[right] < heap[smallest] { // [14] Right child is smaller',
+                '            smallest = right // [15] Update smallest index',
+                '        }',
+                '',
+                '        if smallest == index { // [16] Heap property satisfied',
+                '            break // [17] Stop bubbling down',
+                '        }',
+                '        heap[index], heap[smallest] = heap[smallest], heap[index] // [18] Swap with smallest child',
+                '        index = smallest // [19] Continue from child position',
+                '    }',
+                '',
+                '    return heap, result // [20] Return the minimum value',
+                '}',
+            ],
+            rust: [
+                '// Step 1: Extract minimum value from Min-Heap',
+                'fn heap_extract(heap: &mut Vec<i32>) -> Option<i32> {',
+                '',
+                '    if heap.is_empty() { // [2] Heap has no elements',
+                '        return None; // [3] Cannot extract from empty heap',
+                '    }',
+                '',
+                '    let result = heap[0]; // [4] Save the minimum value',
+                '    heap[0] = heap[heap.len() - 1]; // [5] Move last element to root',
+                '    heap.pop(); // [6] Remove the last element',
+                '    let mut index = 0; // [7] Start from root',
+                '',
+                '    loop { // [8] Bubble down until heap property holds',
+                '        let left = 2 * index + 1; // [9] Left child index',
+                '        let right = 2 * index + 2; // [10] Right child index',
+                '        let mut smallest = index; // [11] Assume current is smallest',
+                '',
+                '        if left < heap.len() && heap[left] < heap[smallest] { // [12] Left child is smaller',
+                '            smallest = left; // [13] Update smallest index',
+                '        }',
+                '        if right < heap.len() && heap[right] < heap[smallest] { // [14] Right child is smaller',
+                '            smallest = right; // [15] Update smallest index',
+                '        }',
+                '',
+                '        if smallest == index { // [16] Heap property satisfied',
+                '            break; // [17] Stop bubbling down',
+                '        }',
+                '        heap.swap(index, smallest); // [18] Swap with smallest child',
+                '        index = smallest; // [19] Continue from child position',
+                '    }',
+                '',
+                '    Some(result) // [20] Return the minimum value',
+                '}',
+            ],
+        },
+    };
+
+    // ─── Heap Complexity Information ───
+
+    const HEAP_COMPLEXITY = {
+        heapInsertMin: {
+            name: 'Min-Heap Insert',
+            best: 'O(1)',
+            average: 'O(log n)',
+            worst: 'O(log n)',
+            space: 'O(1)',
+            description:
+                'Add the new element at the end of the heap array, then bubble it up by ' +
+                'comparing with its parent and swapping if it is smaller (for min-heap) or larger (for max-heap). ' +
+                'The bubbling continues until the heap property is restored or the root is reached. ' +
+                'Best case is O(1) when the new element is already in the correct position.',
+            useCase:
+                'Use when building a priority queue or when you need efficient access to the minimum element. ' +
+                'Essential for implementing Dijkstra\'s shortest path, Huffman coding, and heap sort. ' +
+                'Also used in scheduling algorithms and event-driven simulations.',
+            avoid:
+                'Avoid when you need fast search or deletion of arbitrary elements. ' +
+                'Heaps are optimized for root access, not for arbitrary lookups. ' +
+                'For balanced search operations, use a BST or balanced tree instead.',
+        },
+        heapExtractMin: {
+            name: 'Min-Heap Extract',
+            best: 'O(log n)',
+            average: 'O(log n)',
+            worst: 'O(log n)',
+            space: 'O(1)',
+            description:
+                'Save the root (minimum for min-heap, maximum for max-heap), replace it with the last element, ' +
+                'then bubble down by comparing with children and swapping with the smaller (or larger) child. ' +
+                'The bubbling continues until the heap property is restored or a leaf is reached. ' +
+                'Always takes O(log n) since we may need to traverse from root to leaf.',
+            useCase:
+                'Use when repeatedly extracting the minimum (or maximum) element in order. ' +
+                'Critical for priority queue operations, sorting with heap sort, and algorithms ' +
+                'that process elements in order of priority like Dijkstra or Prim\'s MST.',
+            avoid:
+                'Avoid when you need to preserve all elements. Extract removes the root element permanently. ' +
+                'For peeking at the minimum without removing, use a different data structure ' +
+                'or add a separate peek operation. Not suitable for maintaining a sorted list of all elements.',
+        },
+    };
+
+    // ─── Heap Algorithm Generators ───
+
+    /**
+     * Heap Insert generator for visualization.
+     *
+     * @param {number[]} heap - The heap array.
+     * @param {number} value - Value to insert.
+     * @param {string} type - 'min' or 'max' heap.
+     * @yields {{ type: string, indices: number[], codeLine: number, value?: number }}
+     * @returns {number[]} The updated heap array.
+     */
+    function* heapInsert(heap, value, type = 'min') {
+        heap.push(value);
+        yield { type: 'insert', indices: [heap.length - 1], codeLine: 2, value };
+
+        let index = heap.length - 1;
+
+        while (index > 0) {
+            yield { type: 'compare', indices: [index, (index - 1) / 2 | 0], codeLine: 4 };
+
+            const parentIndex = Math.floor((index - 1) / 2);
+            const shouldBreak = (type === 'min' && heap[parentIndex] <= heap[index]) ||
+                            (type === 'max' && heap[parentIndex] >= heap[index]);
+
+            if (shouldBreak) {
+                yield { type: 'check', indices: [index], codeLine: 7 };
+                break;
+            }
+
+            yield { type: 'swap', indices: [parentIndex, index], codeLine: 8, values: [heap[parentIndex], heap[index]] };
+            [heap[parentIndex], heap[index]] = [heap[index], heap[parentIndex]];
+            index = parentIndex;
+            yield { type: 'visit', indices: [index], codeLine: 9 };
+        }
+
+        return heap;
+    }
+
+    /**
+     * Heap Extract generator for visualization.
+     *
+     * @param {number[]} heap - The heap array.
+     * @param {string} type - 'min' or 'max' heap.
+     * @yields {{ type: string, indices: number[], codeLine: number, value?: number }}
+     * @returns {{ heap: number[], extracted: number|null }} The updated heap and extracted value.
+     */
+    function* heapExtract(heap, type = 'min') {
+        if (heap.length === 0) {
+            yield { type: 'notFound', indices: [-1], codeLine: 3 };
+            return { heap, extracted: null };
+        }
+
+        const result = heap[0];
+        yield { type: 'found', indices: [0], codeLine: 4, value: result };
+
+        heap[0] = heap[heap.length - 1];
+        heap.pop();
+        yield { type: 'overwrite', indices: [0], codeLine: 6, value: heap[0] };
+
+        let index = 0;
+        const length = heap.length;
+
+        while (length > 0) {
+            yield { type: 'visit', indices: [index], codeLine: 8 };
+
+            let bestIndex = index;
+            const leftChild = 2 * index + 1;
+            const rightChild = 2 * index + 2;
+
+            yield { type: 'compare', indices: [index, leftChild], codeLine: 9 };
+
+            if (leftChild < length) {
+                if ((type === 'min' && heap[leftChild] < heap[bestIndex]) ||
+                    (type === 'max' && heap[leftChild] > heap[bestIndex])) {
+                    yield { type: 'compare', indices: [bestIndex, leftChild], codeLine: 12 };
+                    bestIndex = leftChild;
+                }
+            }
+
+            if (rightChild < length) {
+                if ((type === 'min' && heap[rightChild] < heap[bestIndex]) ||
+                    (type === 'max' && heap[rightChild] > heap[bestIndex])) {
+                    yield { type: 'compare', indices: [bestIndex, rightChild], codeLine: 14 };
+                    bestIndex = rightChild;
+                }
+            }
+
+            if (bestIndex === index) {
+                yield { type: 'check', indices: [index], codeLine: 17 };
+                break;
+            }
+
+            yield { type: 'swap', indices: [index, bestIndex], codeLine: 18, values: [heap[index], heap[bestIndex]] };
+            [heap[index], heap[bestIndex]] = [heap[bestIndex], heap[index]];
+            index = bestIndex;
+        }
+
+        return { heap, extracted: result };
+    }
+
     // ─── Public API ───
 
     return {
@@ -808,12 +2455,25 @@ const TreeAlgorithms = (() => {
         COMPLEXITY,
         createNode,
         resetIds,
+        getValues,
         buildSampleBST,
         bstInsert,
         bstSearch,
         bstInorder,
         bstPreorder,
         bstPostorder,
+        bstDelete,
+        avlInsert,
+        bstLevelOrder,
+        countNodes,
+        buildSampleHeap,
+        heapToTree,
+        heapInsert,
+        heapExtract,
+        HEAP_CODE,
+        HEAP_COMPLEXITY,
+        LEVEL_ORDER_CODE,
+        LEVEL_ORDER_COMPLEXITY,
     };
 })();
 

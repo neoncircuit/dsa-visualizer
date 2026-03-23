@@ -44,22 +44,19 @@ const TreeRenderer = (() => {
         svg.setAttribute('height', '100%');
         container.appendChild(svg);
 
-        if (!root) return;
+        if (!root) {
+            return;
+        }
 
-        // Calculate positions
         const positions = calculatePositions(root);
         const bounds = getBounds(positions);
 
-        // Set viewBox to fit all nodes with padding
         const pad = 40;
         svg.setAttribute('viewBox',
             `${bounds.minX - pad} ${bounds.minY - pad} ${bounds.maxX - bounds.minX + pad * 2} ${bounds.maxY - bounds.minY + pad * 2}`
         );
 
-        // Draw edges first (so they appear behind nodes)
         drawEdges(root, positions);
-
-        // Draw nodes
         drawNodes(root, positions);
     }
 
@@ -227,20 +224,20 @@ const TreeRenderer = (() => {
      */
     function clearAllStates() {
         for (const g of Object.values(nodeElements)) {
-            g.classList.remove('visiting', 'found', 'comparing', 'inserted', 'deleted');
+            g.classList.remove('visiting', 'found', 'comparing', 'inserted', 'deleted', 'rotating', 'height-updating', 'balancing', 'replacing');
         }
     }
 
     /**
      * Process a tree algorithm step.
      *
-     * @param {{type: string, nodeId: number}} step - The step to process.
+     * @param {{type: string, nodeId: number, newValue?: number}} step - The step to process.
      * @returns {void}
      */
     function processStep(step) {
         // Clear transient states
         for (const g of Object.values(nodeElements)) {
-            g.classList.remove('visiting', 'comparing');
+            g.classList.remove('visiting', 'comparing', 'rotating', 'height-updating', 'balancing', 'replacing');
         }
 
         const stateMap = {
@@ -249,15 +246,40 @@ const TreeRenderer = (() => {
             found: 'found',
             insert: 'inserted',
             delete: 'deleted',
+            rotate: 'rotating',
+            updateHeight: 'height-updating',
+            checkBalance: 'balancing',
+            replace: 'replacing',
         };
 
         const cls = stateMap[step.type];
         if (cls && step.nodeId != null) {
             highlightNode(step.nodeId, cls);
         }
+
+        if (step.type === 'replace' && step.newValue !== undefined && step.nodeId != null) {
+            updateNodeValue(step.nodeId, step.newValue);
+        }
     }
 
-    return { init, render, highlightNode, clearNodeState, clearAllStates, processStep };
+    /**
+     * Update the displayed value of a node without re-rendering.
+     *
+     * @param {number} nodeId - The node id to update.
+     * @param {number} newValue - The new value to display.
+     * @returns {void}
+     */
+    function updateNodeValue(nodeId, newValue) {
+        const g = nodeElements[nodeId];
+        if (g) {
+            const textElement = g.querySelector('.tree-node-text');
+            if (textElement) {
+                textElement.textContent = newValue;
+            }
+        }
+    }
+
+    return { init, render, highlightNode, clearNodeState, clearAllStates, processStep, updateNodeValue };
 })();
 
 export default TreeRenderer;

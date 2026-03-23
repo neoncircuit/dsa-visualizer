@@ -238,8 +238,7 @@ html, body {
 .cheat-drawer-tab {
     position: absolute;
     top: -32px;
-    left: 50%;
-    transform: translateX(-50%);
+    left: 0;
     background: var(--bg-secondary);
     color: var(--text-secondary);
     border: 1px solid var(--border-color);
@@ -607,7 +606,9 @@ html, body {
     display: flex;
     align-items: flex-end;
     width: 100%;
-    height: 100%;
+    height: calc(100% - 36px);
+    margin-top: 18px;
+    padding-bottom: 18px;
     gap: 1px;
 }
 
@@ -641,6 +642,8 @@ html, body {
     transition: height 0.08s ease, background 0.15s ease;
     position: relative;
     min-width: 2px;
+    min-height: 4px;
+    overflow: visible;
 }
 
 .bar.comparing {
@@ -665,6 +668,20 @@ html, body {
 
 .bar.pivot {
     background: var(--bar-found);
+}
+
+.bar[data-value]::after {
+    content: attr(data-value);
+    position: absolute;
+    top: -18px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-primary);
+    pointer-events: none;
+    z-index: 10;
 }
 
 /* ── Tree / Graph Container ── */
@@ -741,6 +758,44 @@ html, body {
 .graph-node.found circle { fill: var(--bar-found); stroke: var(--bar-found); }
 .graph-edge.traversed { stroke: var(--bar-sorted); stroke-width: 3; }
 .graph-edge.considering { stroke: var(--bar-compare); stroke-width: 3; }
+
+/* ── Linked List ── */
+
+.ll-svg {
+    width: 100%;
+    height: 100%;
+}
+
+.ll-node rect {
+    fill: var(--bg-tertiary);
+    stroke: var(--accent);
+    stroke-width: 2;
+    transition: fill 0.2s, stroke 0.2s;
+}
+
+.ll-node-text {
+    fill: var(--text-primary);
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.ll-empty-text {
+    fill: var(--text-secondary);
+    font-family: var(--font-mono);
+    font-size: 14px;
+}
+
+.ll-arrow {
+    stroke: var(--border-color);
+    stroke-width: 2;
+}
+
+.ll-node.visiting rect { fill: var(--bar-compare); stroke: var(--bar-compare); }
+.ll-node.comparing rect { fill: var(--bar-swap); stroke: var(--bar-swap); }
+.ll-node.found rect { fill: var(--bar-found); stroke: var(--bar-found); }
+.ll-node.inserted rect { fill: var(--bar-sorted); stroke: var(--bar-sorted); }
+.ll-node.deleted rect { fill: var(--bar-swap); stroke: var(--bar-swap); opacity: 0.5; }
 
 /* ── Scrollbar (shared) ── */
 .code-display::-webkit-scrollbar,
