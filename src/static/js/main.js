@@ -29,12 +29,16 @@ import LinkedListRenderer from './linked-list-renderer.js';
     const algorithmSelect = document.getElementById('algorithm-select');
     /** @type {HTMLInputElement} */
     const arraySizeSlider = document.getElementById('array-size');
-    /** @type {HTMLSpanElement} */
+    /** @type {HTMLInputElement} */
     const sizeDisplay = document.getElementById('size-display');
     /** @type {HTMLInputElement} */
     const speedSlider = document.getElementById('speed-slider');
+    /** @type {HTMLInputElement} */
+    const speedDisplay = document.getElementById('speed-display');
     /** @type {HTMLSelectElement} */
     const arrayTypeSelect = document.getElementById('array-type');
+    /** @type {HTMLSelectElement} */
+    const vizModeSelect = document.getElementById('viz-mode');
     /** @type {HTMLInputElement} */
     const searchTargetInput = document.getElementById('search-target');
     /** @type {HTMLDivElement} */
@@ -43,6 +47,10 @@ import LinkedListRenderer from './linked-list-renderer.js';
     const llPositionInput = document.getElementById('ll-position');
     /** @type {HTMLDivElement} */
     const llPositionGroup = document.querySelector('.ll-position-group');
+    /** @type {HTMLInputElement} */
+    const llTargetInput = document.getElementById('ll-target');
+    /** @type {HTMLDivElement} */
+    const llTargetGroup = document.querySelector('.ll-target-group');
 
     /** @type {HTMLButtonElement} */
     const btnGenerate = document.getElementById('btn-generate');
@@ -113,14 +121,14 @@ import LinkedListRenderer from './linked-list-renderer.js';
     // ─── Algorithm Classification ───
 
     /** @type {string[]} */
-    const SEARCH_ALGORITHMS = ['linearSearch', 'binarySearch', 'jumpSearch', 'ternarySearch', 'fibonacciSearch'];
+    const SEARCH_ALGORITHMS = ['linearSearch', 'binarySearch', 'jumpSearch', 'ternarySearch', 'fibonacciSearch', 'interpolationSearch', 'exponentialSearch', 'sentinelLinearSearch'];
 
     /** @type {string[]} */
     const TREE_ALGORITHMS = ['bstInsert', 'bstSearch', 'bstDelete', 'avlInsert', 'bstInorder', 'bstPreorder', 'bstPostorder', 'bstLevelOrder', 'heapInsertMin', 'heapExtractMin'];
     /** @type {string[]} */
-    const GRAPH_ALGORITHMS = ['bfs', 'dfs', 'dijkstra'];
+    const GRAPH_ALGORITHMS = ['bfs', 'dfs', 'dijkstra', 'astar', 'bellmanFord', 'kruskal', 'topologicalSort'];
     /** @type {string[]} */
-    const LINKED_LIST_ALGORITHMS = ['llInsertHead', 'llInsertTail', 'llDeleteHead', 'llDeleteTail', 'llSearch', 'llTraverse', 'llReverse', 'llInsertPos', 'llDeletePos', 'llDeleteVal'];
+    const LINKED_LIST_ALGORITHMS = ['llInsertHead', 'llInsertTail', 'llDeleteHead', 'llDeleteTail', 'llSearch', 'llTraverse', 'llReverse', 'llInsertPos', 'llDeletePos', 'llDeleteVal', 'llInsertAfterValue', 'llDetectCycle', 'llMergeSorted', 'llMergeSort'];
 
     // ─── Tree/Graph/Linked List State ───
 
@@ -141,6 +149,9 @@ import LinkedListRenderer from './linked-list-renderer.js';
 
     /** @type {boolean} */
     let isVertical = false;
+
+    /** @type {number} Original array size before switching to list view */
+    let originalArraySize = 0;
 
     // ─── Initialization ───
 
@@ -176,8 +187,8 @@ import LinkedListRenderer from './linked-list-renderer.js';
     }
 
     /**
-     * Create an array of the given size and distribution type.
-     * Uses unique values (1..N) for clear visual distinction between bars.
+     * Create an array of given size and distribution type.
+     * Uses unique random values (1..100) for both visual clarity and list view readability.
      *
      * @param {number} size - Number of elements.
      * @param {string} type - Distribution type: random, nearlySorted, reversed, fewUnique.
@@ -187,9 +198,19 @@ import LinkedListRenderer from './linked-list-renderer.js';
         /** @type {number[]} */
         let arr = [];
 
+        const generateUniqueRandomValues = (count) => {
+            const uniqueValues = new Set();
+            while (uniqueValues.size < count) {
+                uniqueValues.add(Math.floor(Math.random() * 100) + 1);
+            }
+            return Array.from(uniqueValues);
+        };
+
         switch (type) {
             case 'nearlySorted':
-                for (let i = 1; i <= size; i++) arr.push(i);
+                const sorted = generateUniqueRandomValues(size);
+                sorted.sort((a, b) => a - b);
+                arr = sorted;
                 // Swap ~10% of elements to introduce slight disorder
                 for (let i = 0; i < Math.floor(size * 0.1); i++) {
                     const a = Math.floor(Math.random() * size);
@@ -198,15 +219,17 @@ import LinkedListRenderer from './linked-list-renderer.js';
                 }
                 break;
             case 'reversed':
-                for (let i = size; i >= 1; i--) arr.push(i);
+                const reversedSorted = generateUniqueRandomValues(size);
+                reversedSorted.sort((a, b) => a - b);
+                arr = reversedSorted.reverse();
                 break;
             case 'fewUnique':
                 for (let i = 0; i < size; i++) {
                     arr.push(Math.floor(Math.random() * 5) + 1);
                 }
                 break;
-            default: // random - Fisher-Yates shuffle of unique values
-                for (let i = 1; i <= size; i++) arr.push(i);
+            default: // random - unique random values 1-100
+                arr = generateUniqueRandomValues(size);
                 arr = fisherYatesShuffle(arr);
                 break;
         }
@@ -287,7 +310,7 @@ import LinkedListRenderer from './linked-list-renderer.js';
         const isSearch = isSearchAlgorithm(algoKey);
         const isTree = isTreeAlgorithm(algoKey);
         const isGraph = isGraphAlgorithm(algoKey);
-        const isHeap = algoKey.startsWith('heap');
+        const isHeap = algoKey === 'heapInsertMin' || algoKey === 'heapExtractMin';
 
         // Show/hide search target input
         const needsTarget = isSearch || algoKey === 'bstSearch';
@@ -314,6 +337,9 @@ import LinkedListRenderer from './linked-list-renderer.js';
         } else if (isSearch) {
             codeSource = SearchingAlgorithms.CODE;
             complexitySource = SearchingAlgorithms.COMPLEXITY;
+        } else if (isLinkedListAlgorithm(algoKey)) {
+            codeSource = LinkedListAlgorithms.CODE;
+            complexitySource = LinkedListAlgorithms.COMPLEXITY;
         } else {
             codeSource = SortingAlgorithms.CODE;
             complexitySource = SortingAlgorithms.COMPLEXITY;
@@ -406,7 +432,7 @@ import LinkedListRenderer from './linked-list-renderer.js';
      */
     function switchVizMode(algoKey) {
         const isLL = isLinkedListAlgorithm(algoKey);
-        const isHeap = algoKey.startsWith('heap');
+        const isHeap = algoKey === 'heapInsertMin' || algoKey === 'heapExtractMin';
         const isTG = isTreeAlgorithm(algoKey) || isGraphAlgorithm(algoKey) || isHeap;
         barsContainer.classList.toggle('compare-hidden', isLL || isTG);
         treeGraphContainer.classList.toggle('compare-hidden', !isTG);
@@ -496,7 +522,21 @@ import LinkedListRenderer from './linked-list-renderer.js';
             }
         } else         if (isGraphAlgorithm(algoKey)) {
             GraphRenderer.clearAllStates();
-            generator = GraphAlgorithms[algoKey](currentGraph.adj, currentGraph.nodes[0], currentGraph.nodes);
+            if (algoKey === 'astar') {
+                const goalNode = currentGraph.nodes[currentGraph.nodes.length - 1];
+                const positions = GraphRenderer.getNodePositions();
+                generator = GraphAlgorithms.astar(currentGraph.adj, currentGraph.nodes[0], goalNode, currentGraph.nodes, positions);
+            } else if (algoKey === 'bellmanFord') {
+                const edges = currentGraph.edges.map(e => [e[0], e[1], e[2] || 1]);
+                generator = GraphAlgorithms.bellmanFord(edges, currentGraph.nodes[0], currentGraph.nodes);
+            } else if (algoKey === 'kruskal') {
+                const edges = currentGraph.edges.map(e => [e[0], e[1], e[2] || 1]);
+                generator = GraphAlgorithms.kruskal(edges, currentGraph.nodes);
+            } else if (algoKey === 'topologicalSort') {
+                generator = GraphAlgorithms.topologicalSort(currentGraph.adj, currentGraph.nodes);
+            } else {
+                generator = GraphAlgorithms[algoKey](currentGraph.adj, currentGraph.nodes[0], currentGraph.nodes);
+            }
         } else if (isLinkedListAlgorithm(algoKey)) {
             LinkedListRenderer.clearAllStates();
             if (algoKey === 'llInsertHead') {
@@ -520,6 +560,20 @@ import LinkedListRenderer from './linked-list-renderer.js';
                 const pos = Math.max(0, parseInt(llPositionInput.value, 10) || 0);
                 const val = Math.floor(Math.random() * 90) + 5;
                 generator = LinkedListAlgorithms.llInsertPos(currentLinkedList, pos, val);
+            } else if (algoKey === 'llInsertAfterValue') {
+                const target = Math.floor(Math.random() * 90) + 5;
+                const val = Math.floor(Math.random() * 90) + 5;
+                generator = LinkedListAlgorithms.llInsertAfterValue(currentLinkedList, target, val);
+            } else if (algoKey === 'llDetectCycle') {
+                generator = LinkedListAlgorithms.llDetectCycle(currentLinkedList);
+            } else if (algoKey === 'llMergeSorted') {
+                const list1 = currentLinkedList;
+                const list2 = LinkedListAlgorithms.buildSampleLinkedList(
+                    Array.from({ length: 5 }, () => Math.floor(Math.random() * 45) + 5).sort((a, b) => a - b)
+                );
+                generator = LinkedListAlgorithms.llMergeSorted(list1, list2);
+            } else if (algoKey === 'llMergeSort') {
+                generator = LinkedListAlgorithms.llMergeSort(currentLinkedList);
             } else if (algoKey === 'llDeletePos') {
                 const pos = Math.max(0, parseInt(llPositionInput.value, 10) || 0);
                 generator = LinkedListAlgorithms.llDeletePos(currentLinkedList, pos);
@@ -535,7 +589,7 @@ import LinkedListRenderer from './linked-list-renderer.js';
                 generator = LinkedListAlgorithms[algoKey](currentLinkedList);
             }
         } else if (isSearchAlgorithm(algoKey)) {
-            if (algoKey !== 'linearSearch') {
+            if (algoKey !== 'linearSearch' && algoKey !== 'sentinelLinearSearch') {
                 currentArray.sort((a, b) => a - b);
                 Visualizer.render(currentArray);
             }
@@ -576,7 +630,7 @@ import LinkedListRenderer from './linked-list-renderer.js';
             const updatedValue = result.value;
             if (updatedValue !== undefined) {
                 const algoKey = algorithmSelect.value;
-                if (algoKey.startsWith('heap')) {
+                if (algoKey === 'heapInsertMin' || algoKey === 'heapExtractMin') {
                     currentHeap = updatedValue.heap;
                     currentTree = TreeAlgorithms.heapToTree(currentHeap);
                     TreeRenderer.render(currentTree);
@@ -584,7 +638,12 @@ import LinkedListRenderer from './linked-list-renderer.js';
                     currentTree = updatedValue;
                     TreeRenderer.render(currentTree);
                 } else if (isLinkedListAlgorithm(algoKey)) {
-                    currentLinkedList = updatedValue;
+                    // Only update list if the return value is a node object.
+                    // Some algorithms (e.g. llDetectCycle) return a boolean result
+                    // and do not modify the list structure.
+                    if (updatedValue !== null && typeof updatedValue === 'object') {
+                        currentLinkedList = updatedValue;
+                    }
                     LinkedListRenderer.render(currentLinkedList);
                 }
             }
@@ -596,7 +655,7 @@ import LinkedListRenderer from './linked-list-renderer.js';
         const algoKey = algorithmSelect.value;
         processStepStats(step);
 
-        if (algoKey.startsWith('heap')) {
+        if (algoKey === 'heapInsertMin' || algoKey === 'heapExtractMin') {
             if (step.indices && step.indices[0] >= 0 && step.indices[0] < currentHeap.length) {
                 Visualizer.processStep(step, currentHeap);
             }
@@ -701,7 +760,7 @@ import LinkedListRenderer from './linked-list-renderer.js';
         isPlaying = false;
         elapsedTimeEl.textContent = '0.000s';
         const algoKey = algorithmSelect.value;
-        if (isTreeAlgorithm(algoKey) || isGraphAlgorithm(algoKey)) {
+        if (isTreeAlgorithm(algoKey) || isGraphAlgorithm(algoKey) || isLinkedListAlgorithm(algoKey)) {
             switchVizMode(algoKey);
         }
         generateArray();
@@ -733,6 +792,7 @@ import LinkedListRenderer from './linked-list-renderer.js';
         btnStep.disabled = isPlaying;
         btnGenerate.disabled = isPlaying;
         arraySizeSlider.disabled = isPlaying;
+        sizeDisplay.disabled = isPlaying;
         arrayTypeSelect.disabled = isPlaying;
         algorithmSelect.disabled = isPlaying;
     }
@@ -977,18 +1037,72 @@ import LinkedListRenderer from './linked-list-renderer.js';
         loadAlgorithm();
         // For sorted-array searches, auto-sort the array for display
         const val = algorithmSelect.value;
-        if (val !== 'linearSearch' && isSearchAlgorithm(val)) {
+        if (val !== 'linearSearch' && val !== 'sentinelLinearSearch' && isSearchAlgorithm(val)) {
             currentArray.sort((a, b) => a - b);
             Visualizer.render(currentArray);
         }
     });
 
     arraySizeSlider.addEventListener('input', () => {
-        sizeDisplay.textContent = arraySizeSlider.value;
+        if (Visualizer.getMode() === 'list') {
+            let newSize = parseInt(arraySizeSlider.value, 10);
+            if (newSize > 10) {
+                newSize = 10;
+                arraySizeSlider.value = 10;
+            }
+            sizeDisplay.value = String(newSize);
+        } else {
+            sizeDisplay.value = arraySizeSlider.value;
+        }
         generateArray();
     });
 
+    sizeDisplay.addEventListener('change', () => {
+        let val = Math.min(100, Math.max(5, parseInt(sizeDisplay.value, 10) || 5));
+        if (Visualizer.getMode() === 'list') val = Math.min(val, 10);
+        sizeDisplay.value = String(val);
+        arraySizeSlider.value = String(val);
+        generateArray();
+    });
+
+    speedDisplay.addEventListener('change', () => {
+        const val = Math.min(100, Math.max(1, parseInt(speedDisplay.value, 10) || 1));
+        speedDisplay.value = String(val);
+        speedSlider.value = String(val);
+    });
+
+    speedSlider.addEventListener('input', () => {
+        speedDisplay.value = speedSlider.value;
+    });
+
     arrayTypeSelect.addEventListener('change', generateArray);
+
+    vizModeSelect.addEventListener('change', () => {
+        const newMode = vizModeSelect.value;
+        const currentSize = parseInt(arraySizeSlider.value, 10);
+
+        Visualizer.setMode(newMode);
+
+        if (newMode === 'list') {
+            if (currentSize > 10) {
+                originalArraySize = currentSize;
+                arraySizeSlider.value = 10;
+                sizeDisplay.value = '10';
+                generateArray();
+            } else {
+                Visualizer.render(currentArray);
+            }
+        } else if (newMode === 'bars') {
+            if (originalArraySize > 0) {
+                arraySizeSlider.value = originalArraySize;
+                sizeDisplay.value = String(originalArraySize);
+                originalArraySize = 0;
+                generateArray();
+            } else {
+                Visualizer.render(currentArray);
+            }
+        }
+    });
 
     // Sound controls
     btnSound.addEventListener('click', () => {

@@ -106,19 +106,20 @@ See [docs/linked-lists.md](../docs/linked-lists.md) for complete implementation 
 - [x] Integrate UI (position input control shown/hidden per algorithm)
 - [x] Implement ambiguity for delete by value (80% picks existing value, 20% picks missing)
 - [x] Test and verify all operations work correctly
-- [ ] Implement insert after value
-- [ ] Implement advanced operations (detect cycle, merge sorted lists)
-- [ ] Implement linked list Merge Sort (natural O(n log n) for linked lists)
-- [ ] Update cheat sheet with linked list complexity table
+- [x] Implement insert after value
+- [x] Implement detect cycle (Floyd's algorithm)
+- [x] Update cheat sheet with linked list complexity table
+- [x] Implement merge sorted lists
+- [x] Implement linked list Merge Sort (natural O(n log n) for linked lists)
 
 ### 2.3 Graph Visualizations
 - [x] BFS (Breadth-First Search)
 - [x] DFS (Depth-First Search)
 - [x] Dijkstra's shortest path
-- [ ] A* pathfinding
-- [ ] Bellman-Ford shortest path
-- [ ] Kruskal's / Prim's minimum spanning tree
-- [ ] Topological sort
+- [x] A* pathfinding
+- [x] Bellman-Ford shortest path
+- [x] Kruskal's / Prim's minimum spanning tree
+- [x] Topological sort
 
 ### 2.4 Graph Representations and Matrices
 - [ ] Adjacency matrix visualization (grid with weighted edges)
@@ -139,25 +140,25 @@ See [docs/linked-lists.md](../docs/linked-lists.md) for complete implementation 
 - [x] Gnome Sort
 - [x] Cocktail Shaker Sort
 - [x] Pancake Sort
-- [ ] Radix Sort
-- [ ] Bucket Sort
-- [ ] Tim Sort
-- [ ] Comb Sort
-- [ ] Odd-Even Sort
+- [x] Radix Sort
+- [x] Bucket Sort
+- [x] Tim Sort
+- [x] Comb Sort
+- [x] Odd-Even Sort
 
 ### 3.2 Fun / Meme Sorting
 - [x] Bogo Sort (shuffles randomly until sorted)
 - [x] Thanos Sort (removes half randomly until sorted)
 - [x] Stalin Sort (removes elements that are out of order)
-- [ ] Sleep Sort (uses time delays to sort)
-- [ ] Miracle Sort (checks if sorted, otherwise waits and hopes)
+- [x] Sleep Sort (simulates value-proportional thread sleep, elements wake in sorted order)
+- [x] Miracle Sort (checks if sorted, waits for cosmic rays; miracle strikes after 3 passes)
 
 ### 3.3 Additional Searching
 - [x] Ternary Search
 - [x] Fibonacci Search
-- [ ] Interpolation Search
-- [ ] Exponential Search
-- [ ] Sentinel Linear Search
+- [x] Interpolation Search
+- [x] Exponential Search
+- [x] Sentinel Linear Search
 
 ## Phase 4 - Polish and Quality
 

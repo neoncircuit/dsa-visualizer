@@ -14,6 +14,8 @@ const GraphRenderer = (() => {
     let nodeElements = {};
     /** @type {Object.<string, SVGLineElement>} */
     let edgeElements = {};
+    /** @type {Map<number, {x: number, y: number}>} */
+    let currentPositions = new Map();
 
     const NODE_RADIUS = 22;
 
@@ -47,12 +49,12 @@ const GraphRenderer = (() => {
         container.appendChild(svg);
 
         // Position nodes in a circle
-        const positions = circleLayout(nodes);
+        currentPositions = circleLayout(nodes);
 
         // Calculate viewBox
         const pad = 60;
         const size = Math.max(...nodes.map((_, i) => {
-            const p = positions.get(nodes[i]);
+            const p = currentPositions.get(nodes[i]);
             return Math.max(Math.abs(p.x), Math.abs(p.y));
         })) + pad;
 
@@ -61,8 +63,8 @@ const GraphRenderer = (() => {
         // Draw edges first
         for (const edge of edges) {
             const [from, to, weight] = edge;
-            const fromPos = positions.get(from);
-            const toPos = positions.get(to);
+            const fromPos = currentPositions.get(from);
+            const toPos = currentPositions.get(to);
             if (fromPos && toPos) {
                 drawEdge(from, to, fromPos, toPos, weight, directed);
             }
@@ -70,7 +72,7 @@ const GraphRenderer = (() => {
 
         // Draw nodes
         for (const nodeVal of nodes) {
-            const pos = positions.get(nodeVal);
+            const pos = currentPositions.get(nodeVal);
             drawNode(nodeVal, pos.x, pos.y);
         }
     }
@@ -240,7 +242,200 @@ const GraphRenderer = (() => {
         }
     }
 
-    return { init, render, highlightNode, highlightEdge, clearAllStates, processStep };
+    /**
+     * Get the current node positions.
+     *
+     * @returns {Object.<number, {x: number, y: number}>} Position map.
+     */
+    function getNodePositions() {
+        const result = {};
+        for (const [key, value] of currentPositions) {
+            result[key] = value;
+        }
+        return result;
+    }
+
+    /**
+     * Render an adjacency matrix representation of the graph.
+     *
+     * @param {number[]} nodes - Array of node values/ids.
+     * @param {Array<[number, number, number?]>} edges - Array of [from, to, weight?].
+     * @param {boolean} directed - Whether edges are directed.
+     * @returns {void}
+     */
+    function renderMatrix(nodes, edges, directed = false) {
+        container.innerHTML = '';
+        nodeElements = {};
+        edgeElements = {};
+
+        const n = nodes.length;
+        const sortedNodes = [...nodes].sort((a, b) => a - b);
+        const nodeIndex = new Map(sortedNodes.map((node, i) => [node, i]));
+
+        const matrix = Array(n).fill(null).map(() => Array(n).fill(0));
+
+        for (const [from, to, weight] of edges) {
+            const w = weight || 1;
+            const i = nodeIndex.get(from);
+            const j = nodeIndex.get(to);
+            if (i !== undefined && j !== undefined) {
+                matrix[i][j] = w;
+                if (!directed) {
+                    matrix[j][i] = w;
+                }
+            }
+        }
+
+        const wrapper = document.createElement('div');
+        wrapper.className = 'adj-matrix-wrapper';
+
+        const table = document.createElement('table');
+        table.className = 'adj-matrix';
+
+        const headerRow = document.createElement('tr');
+        const emptyHeader = document.createElement('th');
+        headerRow.appendChild(emptyHeader);
+        for (const node of sortedNodes) {
+            const th = document.createElement('th');
+            th.textContent = node;
+            th.className = 'matrix-header';
+            headerRow.appendChild(th);
+        }
+        table.appendChild(headerRow);
+
+        for (let i = 0; i < n; i++) {
+            const row = document.createElement('tr');
+            const rowHeader = document.createElement('th');
+            rowHeader.textContent = sortedNodes[i];
+            rowHeader.className = 'matrix-header';
+            row.appendChild(rowHeader);
+
+            for (let j = 0; j < n; j++) {
+                const cell = document.createElement('td');
+                const val = matrix[i][j];
+                cell.textContent = val === 0 ? '-' : val;
+                cell.className = 'matrix-cell';
+                cell.dataset.row = sortedNodes[i];
+                cell.dataset.col = sortedNodes[j];
+                if (val !== 0) {
+                    cell.classList.add('has-edge');
+                }
+                if (i === j) {
+                    cell.classList.add('diagonal');
+                }
+                row.appendChild(cell);
+            }
+            table.appendChild(row);
+        }
+
+        wrapper.appendChild(table);
+        container.appendChild(wrapper);
+    }
+
+    /**
+     * Render an adjacency list representation of the graph.
+     *
+     * @param {number[]} nodes - Array of node values/ids.
+     * @param {Array<[number, number, number?]>} edges - Array of [from, to, weight?].
+     * @param {boolean} directed - Whether edges are directed.
+     * @returns {void}
+     */
+    function renderList(nodes, edges, directed = false) {
+        container.innerHTML = '';
+        nodeElements = {};
+        edgeElements = {};
+
+        const adjList = {};
+        for (const node of nodes) {
+            adjList[node] = [];
+        }
+
+        for (const [from, to, weight] of edges) {
+            const w = weight || 1;
+            if (adjList[from]) {
+                adjList[from].push({ to, weight: w });
+            }
+            if (!directed && adjList[to]) {
+                adjList[to].push({ to: from, weight: w });
+            }
+        }
+
+        const wrapper = document.createElement('div');
+        wrapper.className = 'adj-list-wrapper';
+
+        const sortedNodes = [...nodes].sort((a, b) => a - b);
+
+        for (const node of sortedNodes) {
+            const row = document.createElement('div');
+            row.className = 'adj-list-row';
+            row.dataset.node = node;
+
+            const nodeLabel = document.createElement('span');
+            nodeLabel.className = 'adj-list-node';
+            nodeLabel.textContent = node;
+            row.appendChild(nodeLabel);
+
+            const arrow = document.createElement('span');
+            arrow.className = 'adj-list-arrow';
+            arrow.textContent = '→';
+            row.appendChild(arrow);
+
+            const neighbors = adjList[node] || [];
+            if (neighbors.length === 0) {
+                const empty = document.createElement('span');
+                empty.className = 'adj-list-empty';
+                empty.textContent = '∅';
+                row.appendChild(empty);
+            } else {
+                for (let i = 0; i < neighbors.length; i++) {
+                    const neighbor = neighbors[i];
+                    const neighborSpan = document.createElement('span');
+                    neighborSpan.className = 'adj-list-neighbor';
+                    neighborSpan.textContent = neighbor.weight === 1 ? neighbor.to : `${neighbor.to}(${neighbor.weight})`;
+                    neighborSpan.dataset.from = node;
+                    neighborSpan.dataset.to = neighbor.to;
+                    row.appendChild(neighborSpan);
+
+                    if (i < neighbors.length - 1) {
+                        const separator = document.createElement('span');
+                        separator.className = 'adj-list-separator';
+                        separator.textContent = '→';
+                        row.appendChild(separator);
+                    }
+                }
+            }
+
+            wrapper.appendChild(row);
+        }
+
+        container.appendChild(wrapper);
+    }
+
+    /**
+     * Get the current representation type.
+     *
+     * @returns {string} 'node-edge', 'matrix', or 'list'.
+     */
+    function getCurrentRepresentation() {
+        const wrapper = container.querySelector('.adj-matrix-wrapper');
+        if (wrapper) return 'matrix';
+        const listWrapper = container.querySelector('.adj-list-wrapper');
+        if (listWrapper) return 'list';
+        return 'node-edge';
+    }
+
+    return {
+        init,
+        render,
+        highlightNode,
+        highlightEdge,
+        clearAllStates,
+        processStep,
+        getNodePositions,
+        renderMatrix,
+        renderList,
+        getCurrentRepresentation,
+    };
 })();
 
 export default GraphRenderer;

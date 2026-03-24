@@ -5,6 +5,51 @@ All notable changes to the DSA Visualizer project will be documented in this fil
 ## [Unreleased]
 
 ### Added
+- **Phase 3 Complete**: All Phase 3 algorithms implemented
+
+- **Phase 3.3 Additional Searching Algorithms**: Three new searching algorithms with full 10-language snippets, complexity info, and generators
+  - `Interpolation Search` — estimates probe position via value interpolation; O(log log n) average on uniform data
+  - `Exponential Search` — doubles index to find range then binary searches within it; O(log n); best for unbounded arrays
+  - `Sentinel Linear Search` — places target as sentinel at end to eliminate bounds check per iteration; `sentinelLinearSearch` correctly skips pre-sort (works on unsorted arrays like `linearSearch`)
+
+- **Phase 3.2 Meme Sorting Algorithms**: Two new novelty sorts added to `sorting-meme.js`
+  - `Sleep Sort` — simulates value-proportional thread sleep; smaller values "wake up" first; visualised as threads launching then arriving in value order
+  - `Miracle Sort` — scans array hoping for cosmic ray intervention; runs 3 futile passes then the miracle strikes and all elements are sorted
+
+- **Phase 3.1 Practical Sorting Algorithms**: Added five new sorting algorithms with full 10-language code snippets, complexity info, and step-by-step generators
+  - `Comb Sort` — shrinking-gap variant of Bubble Sort; gap starts at n and shrinks by factor 1.3 each pass
+  - `Odd-Even Sort` — parallel variant alternating between odd-indexed and even-indexed pair comparisons
+  - `Radix Sort` — LSD digit-by-digit counting sort; visualises each digit pass with compare and overwrite steps
+  - `Bucket Sort` — distributes elements into value-range buckets, insertion-sorts each bucket, then concatenates
+  - `Tim Sort` — hybrid insertion-sort + merge-sort; identifies natural runs then merges them in ascending size order
+
+- **Algorithm file split (sorting.js)**: `sorting.js` (6,400 lines) split into three files for maintainability
+  - `sorting.js` — core comparison sorts: Bubble, Selection, Insertion, Merge, Quick, Heap, Shell, Counting (~2,640 lines)
+  - `sorting-extended.js` — extended/practical sorts: Gnome, Cocktail Shaker, Pancake, Comb, Odd-Even, Radix, Bucket, Tim (~2,836 lines)
+  - `sorting-meme.js` — novelty sorts: Bogo, Thanos, Stalin (~1,075 lines)
+  - `sorting.js` imports and re-exports from the other two; `main.js` unchanged
+
+- **Build optimisation — Vite chunk splitting**: Added `manualChunks` in `vite.config.js` to separate all algorithm files into a dedicated `algorithms` chunk; main bundle reduced from 533 KB to 36 KB
+
+- **Manual input for Size and Speed controls**: Added editable number inputs alongside the Size and Speed sliders; typing a value and pressing Enter (or tabbing out) clamps to the valid range and syncs the slider; Size input respects the List[int] 10-element cap
+
+### Fixed
+- **Bug — List[int] mode rendering as bars**: Switching view mode to `List[int]` rendered bars instead of list cells when array size exceeded 10. `Visualizer.setMode()` was being called after `generateArray()`, so the first render still used the old mode. Fixed by calling `setMode()` before any array regeneration.
+
+- **Bug — Heap Sort code panel empty**: `Heap Sort` (`heapSort`) matched the `algoKey.startsWith('heap')` guard intended only for tree-heap operations (`heapInsertMin`, `heapExtractMin`). This caused `loadAlgorithm()` to look up code in `TreeAlgorithms.HEAP_CODE` (which has no `heapSort` key) instead of `SortingAlgorithms.CODE`. Fixed all four `startsWith('heap')` occurrences to explicit key checks.
+
+- **Bug — Linked List visualizer completely empty**: Three separate issues caused the linked list panel to show nothing
+  1. `loadAlgorithm()` had no branch for linked list algorithms — they fell through to `SortingAlgorithms.CODE`, yielding empty code, description, and complexity panels. Added explicit `isLinkedListAlgorithm` branch routing to `LinkedListAlgorithms.CODE` and `COMPLEXITY`.
+  2. `reset()` only called `switchVizMode()` for tree/graph algorithms. Added linked list to the condition so Reset rebuilds the list.
+  3. `.linked-list-container` had no CSS dimensions. Added `width: 100%; height: 100%; display: flex;` rule mirroring `.tree-graph-container`.
+
+- **Bug — Detect Cycle empties the linked list**: `llDetectCycle` returns a boolean (`true`/`false`). The `result.done` handler unconditionally assigned this to `currentLinkedList`, causing `LinkedListRenderer.render(false)` to display "Empty List". Fixed by only updating `currentLinkedList` when the return value is a non-null object.
+
+- **Bug — Linked list nodes clipped on right edge**: The SVG `viewBox` width was calculated from node top-left positions only, omitting `NODE_WIDTH` (50 px) for the rightmost node. Added `NODE_WIDTH` and `NODE_HEIGHT` to the viewBox dimensions so all nodes are fully visible.
+
+### Technical Notes
+- `sorting-extended.js` and `sorting-meme.js` export plain objects `{ CODE, COMPLEXITY, ...generators }`; `sorting.js` merges them via spread before exporting `SortingAlgorithms`
+- The `algorithms` Vite chunk now includes all five algorithm files; parallel loading replaces the single 533 KB bundle
 - **Linked List Visualizer - CRUD Operations (Phase 2.2)**: Extended linked list support with three new operations
   - `llInsertPos` — Insert a new node at a specified 0-based position; position 0 behaves as insert at head, position >= length appends at tail
   - `llDeletePos` — Delete the node at a specified 0-based position with graceful out-of-range handling

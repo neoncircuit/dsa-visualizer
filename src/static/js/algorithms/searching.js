@@ -1311,6 +1311,554 @@ const SearchingAlgorithms = (() => {
                 '}',
             ],
         },
+
+        interpolationSearch: {
+            pseudo: [
+                '# Interpolation Search on sorted array A',
+                'procedure interpolationSearch(A, target):',
+                '    low = 0; high = length(A) - 1  # [2] initialise bounds',
+                '    while low <= high and target >= A[low] and target <= A[high]:  # [3] check bounds',
+                '        pos = low + floor((target - A[low]) * (high - low) / (A[high] - A[low]))  # [4] estimate position',
+                '        if A[pos] == target:  # [5] check probe',
+                '            return pos  # found  # [6]',
+                '        ',
+                '        if A[pos] < target:  # [8] target is to the right',
+                '            low = pos + 1  # [9]',
+                '        else:',
+                '            high = pos - 1  # [11]',
+                '    return -1  # not found  # [13]',
+            ],
+            python: [
+                '# Interpolation Search on sorted list A',
+                'def interpolation_search(arr: list[int], target: int) -> int:',
+                '    low: int = 0',
+                '    high: int = len(arr) - 1  # [2] initialise bounds',
+                '    while low <= high and target >= arr[low] and target <= arr[high]:  # [3] check bounds',
+                '        if arr[low] == arr[high]:',
+                '            return low if arr[low] == target else -1',
+                '        pos: int = low + (target - arr[low]) * (high - low) // (arr[high] - arr[low])  # [4] estimate position',
+                '        if arr[pos] == target:  # [5] check probe',
+                '            return pos  # [6] found',
+                '        if arr[pos] < target:  # [8] target is to the right',
+                '            low = pos + 1  # [9]',
+                '        else:',
+                '            high = pos - 1  # [11]',
+                '    return -1  # [13] not found',
+            ],
+            java: [
+                '// Interpolation Search on sorted array',
+                'int interpolationSearch(int[] arr, int target) {',
+                '    int low = 0, high = arr.length - 1;  // [2] initialise bounds',
+                '    while (low <= high && target >= arr[low] && target <= arr[high]) {  // [3] check bounds',
+                '        if (arr[low] == arr[high]) {',
+                '            return arr[low] == target ? low : -1;',
+                '        }',
+                '        int pos = low + (target - arr[low]) * (high - low) / (arr[high] - arr[low]);  // [4] estimate position',
+                '        if (arr[pos] == target) return pos;  // [5][6] found',
+                '        if (arr[pos] < target) {  // [8]',
+                '            low = pos + 1;  // [9]',
+                '        } else {',
+                '            high = pos - 1;  // [11]',
+                '        }',
+                '    }',
+                '    return -1;  // [13] not found',
+                '}',
+            ],
+            cpp: [
+                '// Interpolation Search on sorted vector',
+                'int interpolationSearch(vector<int>& arr, int target) {',
+                '    int low = 0, high = (int)arr.size() - 1;  // [2] initialise bounds',
+                '    while (low <= high && target >= arr[low] && target <= arr[high]) {  // [3] check bounds',
+                '        if (arr[low] == arr[high]) {',
+                '            return arr[low] == target ? low : -1;',
+                '        }',
+                '        int pos = low + (target - arr[low]) * (high - low) / (arr[high] - arr[low]);  // [4] estimate position',
+                '        if (arr[pos] == target) return pos;  // [5][6] found',
+                '        if (arr[pos] < target) {  // [8]',
+                '            low = pos + 1;  // [9]',
+                '        } else {',
+                '            high = pos - 1;  // [11]',
+                '        }',
+                '    }',
+                '    return -1;  // [13] not found',
+                '}',
+            ],
+            c: [
+                '// Interpolation Search on sorted array',
+                'int interpolationSearch(int *arr, int n, int target) {',
+                '    int low = 0, high = n - 1;  // [2] initialise bounds',
+                '    while (low <= high && target >= arr[low] && target <= arr[high]) {  // [3] check bounds',
+                '        if (arr[low] == arr[high]) {',
+                '            return arr[low] == target ? low : -1;',
+                '        }',
+                '        int pos = low + (target - arr[low]) * (high - low) / (arr[high] - arr[low]);  // [4] estimate position',
+                '        if (arr[pos] == target) return pos;  // [5][6] found',
+                '        if (arr[pos] < target) {  // [8]',
+                '            low = pos + 1;  // [9]',
+                '        } else {',
+                '            high = pos - 1;  // [11]',
+                '        }',
+                '    }',
+                '    return -1;  // [13] not found',
+                '}',
+            ],
+            csharp: [
+                '// Interpolation Search on sorted array',
+                'int InterpolationSearch(int[] arr, int target) {',
+                '    int low = 0, high = arr.Length - 1;  // [2] initialise bounds',
+                '    while (low <= high && target >= arr[low] && target <= arr[high]) {  // [3] check bounds',
+                '        if (arr[low] == arr[high]) {',
+                '            return arr[low] == target ? low : -1;',
+                '        }',
+                '        int pos = low + (target - arr[low]) * (high - low) / (arr[high] - arr[low]);  // [4] estimate position',
+                '        if (arr[pos] == target) return pos;  // [5][6] found',
+                '        if (arr[pos] < target) {  // [8]',
+                '            low = pos + 1;  // [9]',
+                '        } else {',
+                '            high = pos - 1;  // [11]',
+                '        }',
+                '    }',
+                '    return -1;  // [13] not found',
+                '}',
+            ],
+            javascript: [
+                '// Interpolation Search on sorted array',
+                'function interpolationSearch(arr, target) {',
+                '    let low = 0, high = arr.length - 1;  // [2] initialise bounds',
+                '    while (low <= high && target >= arr[low] && target <= arr[high]) {  // [3] check bounds',
+                '        if (arr[low] === arr[high]) {',
+                '            return arr[low] === target ? low : -1;',
+                '        }',
+                '        const pos = low + Math.floor((target - arr[low]) * (high - low) / (arr[high] - arr[low]));  // [4] estimate position',
+                '        if (arr[pos] === target) return pos;  // [5][6] found',
+                '        if (arr[pos] < target) {  // [8]',
+                '            low = pos + 1;  // [9]',
+                '        } else {',
+                '            high = pos - 1;  // [11]',
+                '        }',
+                '    }',
+                '    return -1;  // [13] not found',
+                '}',
+            ],
+            typescript: [
+                '// Interpolation Search on sorted array',
+                'function interpolationSearch(arr: number[], target: number): number {',
+                '    let low: number = 0, high: number = arr.length - 1;  // [2] initialise bounds',
+                '    while (low <= high && target >= arr[low] && target <= arr[high]) {  // [3] check bounds',
+                '        if (arr[low] === arr[high]) {',
+                '            return arr[low] === target ? low : -1;',
+                '        }',
+                '        const pos: number = low + Math.floor((target - arr[low]) * (high - low) / (arr[high] - arr[low]));  // [4] estimate position',
+                '        if (arr[pos] === target) return pos;  // [5][6] found',
+                '        if (arr[pos] < target) {  // [8]',
+                '            low = pos + 1;  // [9]',
+                '        } else {',
+                '            high = pos - 1;  // [11]',
+                '        }',
+                '    }',
+                '    return -1;  // [13] not found',
+                '}',
+            ],
+            go: [
+                '// Interpolation Search on sorted slice',
+                'func interpolationSearch(arr []int, target int) int {',
+                '    low, high := 0, len(arr)-1  // [2] initialise bounds',
+                '    for low <= high && target >= arr[low] && target <= arr[high] {  // [3] check bounds',
+                '        if arr[low] == arr[high] {',
+                '            if arr[low] == target { return low }',
+                '            return -1',
+                '        }',
+                '        pos := low + (target-arr[low])*(high-low)/(arr[high]-arr[low])  // [4] estimate position',
+                '        if arr[pos] == target { return pos }  // [5][6] found',
+                '        if arr[pos] < target {  // [8]',
+                '            low = pos + 1  // [9]',
+                '        } else {',
+                '            high = pos - 1  // [11]',
+                '        }',
+                '    }',
+                '    return -1  // [13] not found',
+                '}',
+            ],
+            rust: [
+                '// Interpolation Search on sorted vector',
+                'fn interpolation_search(arr: &[i32], target: i32) -> Option<usize> {',
+                '    let mut low: usize = 0;',
+                '    let mut high: usize = arr.len() - 1;  // [2] initialise bounds',
+                '    while low <= high && target >= arr[low] && target <= arr[high] {  // [3] check bounds',
+                '        if arr[low] == arr[high] {',
+                '            return if arr[low] == target { Some(low) } else { None };',
+                '        }',
+                '        let pos = (low as i64 + (target - arr[low]) as i64 * (high - low) as i64',
+                '            / (arr[high] - arr[low]) as i64) as usize;  // [4] estimate position',
+                '        if arr[pos] == target { return Some(pos); }  // [5][6] found',
+                '        if arr[pos] < target {  // [8]',
+                '            low = pos + 1;  // [9]',
+                '        } else {',
+                '            high = pos - 1;  // [11]',
+                '        }',
+                '    }',
+                '    None  // [13] not found',
+                '}',
+            ],
+        },
+
+        exponentialSearch: {
+            pseudo: [
+                '# Exponential Search on sorted array A',
+                'procedure exponentialSearch(A, target):',
+                '    n = length(A)',
+                '    if A[0] == target: return 0  # [2] check first element',
+                '    bound = 1  # [3] start with index 1',
+                '    while bound < n and A[bound] <= target:  # [4] double until overshoot',
+                '        bound = bound * 2  # [5]',
+                '    # binary search in [bound/2, min(bound, n-1)]',
+                '    low = floor(bound / 2); high = min(bound, n - 1)  # [7]',
+                '    while low <= high:  # [8]',
+                '        mid = floor((low + high) / 2)  # [9]',
+                '        if A[mid] == target: return mid  # [10]',
+                '        ',
+                '        if A[mid] < target: low = mid + 1  # [12]',
+                '        else: high = mid - 1  # [14]',
+                '    return -1  # [16]',
+            ],
+            python: [
+                '# Exponential Search on sorted list A',
+                'def exponential_search(arr: list[int], target: int) -> int:',
+                '    n: int = len(arr)',
+                '    if arr[0] == target: return 0  # [2] check first element',
+                '    bound: int = 1  # [3] start with index 1',
+                '    while bound < n and arr[bound] <= target:  # [4] double until overshoot',
+                '        bound *= 2  # [5]',
+                '    low: int = bound // 2',
+                '    high: int = min(bound, n - 1)  # [7]',
+                '    while low <= high:  # [8]',
+                '        mid: int = (low + high) // 2  # [9]',
+                '        if arr[mid] == target: return mid  # [10]',
+                '        if arr[mid] < target:  # [12]',
+                '            low = mid + 1',
+                '        else:',
+                '            high = mid - 1  # [14]',
+                '    return -1  # [16]',
+            ],
+            java: [
+                '// Exponential Search on sorted array',
+                'int exponentialSearch(int[] arr, int target) {',
+                '    int n = arr.length;',
+                '    if (arr[0] == target) return 0;  // [2] check first element',
+                '    int bound = 1;  // [3] start with index 1',
+                '    while (bound < n && arr[bound] <= target) bound *= 2;  // [4][5]',
+                '    int low = bound / 2, high = Math.min(bound, n - 1);  // [7]',
+                '    while (low <= high) {  // [8]',
+                '        int mid = (low + high) / 2;  // [9]',
+                '        if (arr[mid] == target) return mid;  // [10]',
+                '        if (arr[mid] < target) {  // [12]',
+                '            low = mid + 1;',
+                '        } else {',
+                '            high = mid - 1;  // [14]',
+                '        }',
+                '    }',
+                '    return -1;  // [16]',
+                '}',
+            ],
+            cpp: [
+                '// Exponential Search on sorted vector',
+                'int exponentialSearch(vector<int>& arr, int target) {',
+                '    int n = (int)arr.size();',
+                '    if (arr[0] == target) return 0;  // [2] check first element',
+                '    int bound = 1;  // [3] start with index 1',
+                '    while (bound < n && arr[bound] <= target) bound *= 2;  // [4][5]',
+                '    int low = bound / 2, high = min(bound, n - 1);  // [7]',
+                '    while (low <= high) {  // [8]',
+                '        int mid = (low + high) / 2;  // [9]',
+                '        if (arr[mid] == target) return mid;  // [10]',
+                '        if (arr[mid] < target) {  // [12]',
+                '            low = mid + 1;',
+                '        } else {',
+                '            high = mid - 1;  // [14]',
+                '        }',
+                '    }',
+                '    return -1;  // [16]',
+                '}',
+            ],
+            c: [
+                '// Exponential Search on sorted array',
+                'int exponentialSearch(int *arr, int n, int target) {',
+                '    if (arr[0] == target) return 0;  // [2] check first element',
+                '    int bound = 1;  // [3] start with index 1',
+                '    while (bound < n && arr[bound] <= target) bound *= 2;  // [4][5]',
+                '    int low = bound / 2, high = (bound < n) ? bound : n - 1;  // [7]',
+                '    while (low <= high) {  // [8]',
+                '        int mid = (low + high) / 2;  // [9]',
+                '        if (arr[mid] == target) return mid;  // [10]',
+                '        if (arr[mid] < target) {  // [12]',
+                '            low = mid + 1;',
+                '        } else {',
+                '            high = mid - 1;  // [14]',
+                '        }',
+                '    }',
+                '    return -1;  // [16]',
+                '}',
+            ],
+            csharp: [
+                '// Exponential Search on sorted array',
+                'int ExponentialSearch(int[] arr, int target) {',
+                '    int n = arr.Length;',
+                '    if (arr[0] == target) return 0;  // [2] check first element',
+                '    int bound = 1;  // [3] start with index 1',
+                '    while (bound < n && arr[bound] <= target) bound *= 2;  // [4][5]',
+                '    int low = bound / 2, high = Math.Min(bound, n - 1);  // [7]',
+                '    while (low <= high) {  // [8]',
+                '        int mid = (low + high) / 2;  // [9]',
+                '        if (arr[mid] == target) return mid;  // [10]',
+                '        if (arr[mid] < target) {  // [12]',
+                '            low = mid + 1;',
+                '        } else {',
+                '            high = mid - 1;  // [14]',
+                '        }',
+                '    }',
+                '    return -1;  // [16]',
+                '}',
+            ],
+            javascript: [
+                '// Exponential Search on sorted array',
+                'function exponentialSearch(arr, target) {',
+                '    const n = arr.length;',
+                '    if (arr[0] === target) return 0;  // [2] check first element',
+                '    let bound = 1;  // [3] start with index 1',
+                '    while (bound < n && arr[bound] <= target) bound *= 2;  // [4][5]',
+                '    let low = Math.floor(bound / 2);',
+                '    let high = Math.min(bound, n - 1);  // [7]',
+                '    while (low <= high) {  // [8]',
+                '        const mid = Math.floor((low + high) / 2);  // [9]',
+                '        if (arr[mid] === target) return mid;  // [10]',
+                '        if (arr[mid] < target) {  // [12]',
+                '            low = mid + 1;',
+                '        } else {',
+                '            high = mid - 1;  // [14]',
+                '        }',
+                '    }',
+                '    return -1;  // [16]',
+                '}',
+            ],
+            typescript: [
+                '// Exponential Search on sorted array',
+                'function exponentialSearch(arr: number[], target: number): number {',
+                '    const n: number = arr.length;',
+                '    if (arr[0] === target) return 0;  // [2] check first element',
+                '    let bound: number = 1;  // [3] start with index 1',
+                '    while (bound < n && arr[bound] <= target) bound *= 2;  // [4][5]',
+                '    let low: number = Math.floor(bound / 2);',
+                '    let high: number = Math.min(bound, n - 1);  // [7]',
+                '    while (low <= high) {  // [8]',
+                '        const mid: number = Math.floor((low + high) / 2);  // [9]',
+                '        if (arr[mid] === target) return mid;  // [10]',
+                '        if (arr[mid] < target) {  // [12]',
+                '            low = mid + 1;',
+                '        } else {',
+                '            high = mid - 1;  // [14]',
+                '        }',
+                '    }',
+                '    return -1;  // [16]',
+                '}',
+            ],
+            go: [
+                '// Exponential Search on sorted slice',
+                'func exponentialSearch(arr []int, target int) int {',
+                '    n := len(arr)',
+                '    if arr[0] == target { return 0 }  // [2] check first element',
+                '    bound := 1  // [3] start with index 1',
+                '    for bound < n && arr[bound] <= target { bound *= 2 }  // [4][5]',
+                '    low := bound / 2',
+                '    high := bound',
+                '    if high >= n { high = n - 1 }  // [7]',
+                '    for low <= high {  // [8]',
+                '        mid := (low + high) / 2  // [9]',
+                '        if arr[mid] == target { return mid }  // [10]',
+                '        if arr[mid] < target {  // [12]',
+                '            low = mid + 1',
+                '        } else {',
+                '            high = mid - 1  // [14]',
+                '        }',
+                '    }',
+                '    return -1  // [16]',
+                '}',
+            ],
+            rust: [
+                '// Exponential Search on sorted vector',
+                'fn exponential_search(arr: &[i32], target: i32) -> Option<usize> {',
+                '    let n = arr.len();',
+                '    if arr[0] == target { return Some(0); }  // [2] check first element',
+                '    let mut bound: usize = 1;  // [3] start with index 1',
+                '    while bound < n && arr[bound] <= target { bound *= 2; }  // [4][5]',
+                '    let low = bound / 2;',
+                '    let high = (bound).min(n - 1);  // [7]',
+                '    let mut lo = low;',
+                '    let mut hi = high;',
+                '    while lo <= hi {  // [8]',
+                '        let mid = (lo + hi) / 2;  // [9]',
+                '        if arr[mid] == target { return Some(mid); }  // [10]',
+                '        if arr[mid] < target {  // [12]',
+                '            lo = mid + 1;',
+                '        } else if mid == 0 {',
+                '            break;',
+                '        } else {',
+                '            hi = mid - 1;  // [14]',
+                '        }',
+                '    }',
+                '    None  // [16]',
+                '}',
+            ],
+        },
+
+        sentinelLinearSearch: {
+            pseudo: [
+                '# Sentinel Linear Search',
+                'procedure sentinelLinearSearch(A, target):',
+                '    n = length(A)',
+                '    last = A[n-1]  # [2] save last element',
+                '    A[n-1] = target  # [3] place sentinel',
+                '    i = 0  # [4]',
+                '    while A[i] != target:  # [5] scan — sentinel guarantees termination',
+                '        i = i + 1  # [6]',
+                '    A[n-1] = last  # [8] restore last element',
+                '    if i < n-1 or A[n-1] == target:  # [9] was it a real find?',
+                '        return i  # [10]',
+                '    return -1  # [12]',
+            ],
+            python: [
+                '# Sentinel Linear Search',
+                'def sentinel_linear_search(arr: list[int], target: int) -> int:',
+                '    n: int = len(arr)',
+                '    last: int = arr[n - 1]  # [2] save last element',
+                '    arr[n - 1] = target  # [3] place sentinel',
+                '    i: int = 0  # [4]',
+                '    while arr[i] != target:  # [5] scan — sentinel guarantees termination',
+                '        i += 1  # [6]',
+                '    arr[n - 1] = last  # [8] restore last element',
+                '    if i < n - 1 or arr[n - 1] == target:  # [9] was it a real find?',
+                '        return i  # [10]',
+                '    return -1  # [12]',
+            ],
+            java: [
+                '// Sentinel Linear Search',
+                'int sentinelLinearSearch(int[] arr, int target) {',
+                '    int n = arr.length;',
+                '    int last = arr[n - 1];  // [2] save last element',
+                '    arr[n - 1] = target;  // [3] place sentinel',
+                '    int i = 0;  // [4]',
+                '    while (arr[i] != target) i++;  // [5][6] scan — sentinel guarantees termination',
+                '    arr[n - 1] = last;  // [8] restore last element',
+                '    if (i < n - 1 || arr[n - 1] == target) {  // [9] was it a real find?',
+                '        return i;  // [10]',
+                '    }',
+                '    return -1;  // [12]',
+                '}',
+            ],
+            cpp: [
+                '// Sentinel Linear Search',
+                'int sentinelLinearSearch(vector<int>& arr, int target) {',
+                '    int n = (int)arr.size();',
+                '    int last = arr[n - 1];  // [2] save last element',
+                '    arr[n - 1] = target;  // [3] place sentinel',
+                '    int i = 0;  // [4]',
+                '    while (arr[i] != target) i++;  // [5][6] scan — sentinel guarantees termination',
+                '    arr[n - 1] = last;  // [8] restore last element',
+                '    if (i < n - 1 || arr[n - 1] == target) {  // [9] was it a real find?',
+                '        return i;  // [10]',
+                '    }',
+                '    return -1;  // [12]',
+                '}',
+            ],
+            c: [
+                '// Sentinel Linear Search',
+                'int sentinelLinearSearch(int *arr, int n, int target) {',
+                '    int last = arr[n - 1];  // [2] save last element',
+                '    arr[n - 1] = target;  // [3] place sentinel',
+                '    int i = 0;  // [4]',
+                '    while (arr[i] != target) i++;  // [5][6] scan — sentinel guarantees termination',
+                '    arr[n - 1] = last;  // [8] restore last element',
+                '    if (i < n - 1 || arr[n - 1] == target) {  // [9] was it a real find?',
+                '        return i;  // [10]',
+                '    }',
+                '    return -1;  // [12]',
+                '}',
+            ],
+            csharp: [
+                '// Sentinel Linear Search',
+                'int SentinelLinearSearch(int[] arr, int target) {',
+                '    int n = arr.Length;',
+                '    int last = arr[n - 1];  // [2] save last element',
+                '    arr[n - 1] = target;  // [3] place sentinel',
+                '    int i = 0;  // [4]',
+                '    while (arr[i] != target) i++;  // [5][6] scan — sentinel guarantees termination',
+                '    arr[n - 1] = last;  // [8] restore last element',
+                '    if (i < n - 1 || arr[n - 1] == target) {  // [9] was it a real find?',
+                '        return i;  // [10]',
+                '    }',
+                '    return -1;  // [12]',
+                '}',
+            ],
+            javascript: [
+                '// Sentinel Linear Search',
+                'function sentinelLinearSearch(arr, target) {',
+                '    const n = arr.length;',
+                '    const last = arr[n - 1];  // [2] save last element',
+                '    arr[n - 1] = target;  // [3] place sentinel',
+                '    let i = 0;  // [4]',
+                '    while (arr[i] !== target) i++;  // [5][6] scan — sentinel guarantees termination',
+                '    arr[n - 1] = last;  // [8] restore last element',
+                '    if (i < n - 1 || arr[n - 1] === target) {  // [9] was it a real find?',
+                '        return i;  // [10]',
+                '    }',
+                '    return -1;  // [12]',
+                '}',
+            ],
+            typescript: [
+                '// Sentinel Linear Search',
+                'function sentinelLinearSearch(arr: number[], target: number): number {',
+                '    const n: number = arr.length;',
+                '    const last: number = arr[n - 1];  // [2] save last element',
+                '    arr[n - 1] = target;  // [3] place sentinel',
+                '    let i: number = 0;  // [4]',
+                '    while (arr[i] !== target) i++;  // [5][6] scan — sentinel guarantees termination',
+                '    arr[n - 1] = last;  // [8] restore last element',
+                '    if (i < n - 1 || arr[n - 1] === target) {  // [9] was it a real find?',
+                '        return i;  // [10]',
+                '    }',
+                '    return -1;  // [12]',
+                '}',
+            ],
+            go: [
+                '// Sentinel Linear Search',
+                'func sentinelLinearSearch(arr []int, target int) int {',
+                '    n := len(arr)',
+                '    last := arr[n-1]  // [2] save last element',
+                '    arr[n-1] = target  // [3] place sentinel',
+                '    i := 0  // [4]',
+                '    for arr[i] != target { i++ }  // [5][6] scan — sentinel guarantees termination',
+                '    arr[n-1] = last  // [8] restore last element',
+                '    if i < n-1 || arr[n-1] == target {  // [9] was it a real find?',
+                '        return i  // [10]',
+                '    }',
+                '    return -1  // [12]',
+                '}',
+            ],
+            rust: [
+                '// Sentinel Linear Search',
+                'fn sentinel_linear_search(arr: &mut Vec<i32>, target: i32) -> Option<usize> {',
+                '    let n = arr.len();',
+                '    let last = arr[n - 1];  // [2] save last element',
+                '    arr[n - 1] = target;  // [3] place sentinel',
+                '    let mut i: usize = 0;  // [4]',
+                '    while arr[i] != target { i += 1; }  // [5][6] scan — sentinel guarantees termination',
+                '    arr[n - 1] = last;  // [8] restore last element',
+                '    if i < n - 1 || arr[n - 1] == target {  // [9] was it a real find?',
+                '        return Some(i);  // [10]',
+                '    }',
+                '    None  // [12]',
+                '}',
+            ],
+        },
     };
 
     // ─── Complexity Info ───
@@ -1416,6 +1964,54 @@ const SearchingAlgorithms = (() => {
                 'Avoid when the list is unsorted or when you have fast random access to any position. ' +
                 'On modern computers with fast memory, Binary Search is usually just as fast and simpler. ' +
                 'Also not a good choice for very small lists where Linear Search would be easier.',
+        },
+        interpolationSearch: {
+            name: 'Interpolation Search',
+            best: 'O(1)',
+            average: 'O(log log n)',
+            worst: 'O(n)',
+            space: 'O(1)',
+            description:
+                'Like binary search but probes using value interpolation to estimate where the target likely sits. ' +
+                'Works like guessing where "Smith" is in a phone book — you open near the S section rather than the middle.',
+            useCase:
+                'Best on large, uniformly distributed sorted arrays where the probe formula lands close to the target quickly.',
+            avoid:
+                'Avoid with non-uniform distributions (clustered values); the formula can produce bad probes, degrading to O(n). ' +
+                'Also avoid with very small arrays where binary search is simpler.',
+        },
+        exponentialSearch: {
+            name: 'Exponential Search',
+            best: 'O(1)',
+            average: 'O(log n)',
+            worst: 'O(log n)',
+            space: 'O(1)',
+            description:
+                'Doubles an index (1\u21922\u21924\u21928...) until overshooting the target, then binary searches the identified range. ' +
+                'Combines range-finding with binary search.',
+            useCase:
+                'Ideal for unbounded or very large sorted arrays where the target is near the beginning. ' +
+                'Also useful when array size is unknown.',
+            avoid:
+                'No advantage over binary search on small or medium bounded arrays. ' +
+                'Slightly more complex for the same O(log n) result.',
+        },
+        sentinelLinearSearch: {
+            name: 'Sentinel Linear Search',
+            best: 'O(1)',
+            average: 'O(n)',
+            worst: 'O(n)',
+            space: 'O(1)',
+            description:
+                'Places the target at the end of the array as a sentinel, eliminating the need for a bounds check in the inner loop. ' +
+                'Guaranteed to find the sentinel, so the loop only needs one condition.',
+            useCase:
+                'Minor optimisation over standard linear search in performance-critical loops. ' +
+                'Useful when reducing branch instructions matters.',
+            avoid:
+                'Only marginally faster than linear search. ' +
+                'Avoid when the array cannot be temporarily modified. ' +
+                'Binary search is far better on sorted data.',
         },
     };
 
@@ -1636,7 +2232,135 @@ const SearchingAlgorithms = (() => {
         yield { type: 'notFound', indices: [], codeLine: 26 };
     }
 
-    return { CODE, COMPLEXITY, linearSearch, binarySearch, jumpSearch, ternarySearch, fibonacciSearch };
+    /**
+     * Interpolation Search generator. Expects a sorted array.
+     *
+     * Estimates the probe position using linear interpolation based on the value
+     * distribution, allowing it to converge quickly on uniformly distributed data.
+     *
+     * @param {number[]} arr - The sorted array to search.
+     * @param {number} target - The value to find.
+     * @yields {{ type: string, indices: number[], codeLine: number }} Step object.
+     * @returns {number} Index of target, or -1 if not found.
+     */
+    function* interpolationSearch(arr, target) {
+        let low = 0, high = arr.length - 1;
+        while (low <= high && target >= arr[low] && target <= arr[high]) {
+            if (arr[low] === arr[high]) {
+                // Uniform values edge case
+                if (arr[low] === target) {
+                    yield { type: 'found', indices: [low], codeLine: 6 };
+                    return low;
+                }
+                break;
+            }
+            const pos = low + Math.floor(((target - arr[low]) * (high - low)) / (arr[high] - arr[low]));
+            yield { type: 'check', indices: [pos], codeLine: 4 };
+            yield { type: 'compare', indices: [low, high], codeLine: 3 };
+            if (arr[pos] === target) {
+                yield { type: 'found', indices: [pos], codeLine: 6 };
+                return pos;
+            }
+            if (arr[pos] < target) {
+                yield { type: 'eliminate', indices: Array.from({ length: pos - low + 1 }, (_, i) => low + i), codeLine: 9 };
+                low = pos + 1;
+            } else {
+                yield { type: 'eliminate', indices: Array.from({ length: high - pos + 1 }, (_, i) => pos + i), codeLine: 11 };
+                high = pos - 1;
+            }
+        }
+        yield { type: 'notFound', indices: [], codeLine: 13 };
+        return -1;
+    }
+
+    /**
+     * Exponential Search generator. Expects a sorted array.
+     *
+     * Doubles the bound index (1, 2, 4, 8, ...) until arr[bound] >= target,
+     * then performs binary search over the identified range [bound/2, bound].
+     *
+     * @param {number[]} arr - The sorted array to search.
+     * @param {number} target - The value to find.
+     * @yields {{ type: string, indices: number[], codeLine: number }} Step object.
+     * @returns {number} Index of target, or -1 if not found.
+     */
+    function* exponentialSearch(arr, target) {
+        const n = arr.length;
+        if (arr[0] === target) {
+            yield { type: 'found', indices: [0], codeLine: 2 };
+            return 0;
+        }
+        yield { type: 'check', indices: [0], codeLine: 2 };
+        let bound = 1;
+        while (bound < n && arr[bound] <= target) {
+            yield { type: 'check', indices: [bound], codeLine: 4 };
+            bound *= 2;
+        }
+        let low = Math.floor(bound / 2);
+        let high = Math.min(bound, n - 1);
+        yield { type: 'compare', indices: [low, high], codeLine: 7 };
+        while (low <= high) {
+            const mid = Math.floor((low + high) / 2);
+            yield { type: 'check', indices: [mid], codeLine: 9 };
+            if (arr[mid] === target) {
+                yield { type: 'found', indices: [mid], codeLine: 10 };
+                return mid;
+            }
+            if (arr[mid] < target) {
+                yield { type: 'eliminate', indices: Array.from({ length: mid - low + 1 }, (_, i) => low + i), codeLine: 12 };
+                low = mid + 1;
+            } else {
+                yield { type: 'eliminate', indices: Array.from({ length: high - mid + 1 }, (_, i) => mid + i), codeLine: 14 };
+                high = mid - 1;
+            }
+        }
+        yield { type: 'notFound', indices: [], codeLine: 16 };
+        return -1;
+    }
+
+    /**
+     * Sentinel Linear Search generator. Works on unsorted arrays.
+     *
+     * Temporarily places the target at the last position as a sentinel so the
+     * scan loop requires only one condition per iteration (no bounds check).
+     * The array is restored before the function returns.
+     *
+     * @param {number[]} arr - The array to search (may be unsorted).
+     * @param {number} target - The value to find.
+     * @yields {{ type: string, indices: number[], codeLine: number }} Step object.
+     * @returns {number} Index of target, or -1 if not found.
+     */
+    function* sentinelLinearSearch(arr, target) {
+        const n = arr.length;
+        const last = arr[n - 1];
+        arr[n - 1] = target; // place sentinel
+        let i = 0;
+        while (arr[i] !== target) {
+            yield { type: 'check', indices: [i], codeLine: 5 };
+            i++;
+        }
+        arr[n - 1] = last; // restore
+        yield { type: 'check', indices: [i], codeLine: 5 };
+        if (i < n - 1 || arr[n - 1] === target) {
+            yield { type: 'found', indices: [i], codeLine: 10 };
+            return i;
+        }
+        yield { type: 'notFound', indices: [], codeLine: 12 };
+        return -1;
+    }
+
+    return {
+        CODE,
+        COMPLEXITY,
+        linearSearch,
+        binarySearch,
+        jumpSearch,
+        ternarySearch,
+        fibonacciSearch,
+        interpolationSearch,
+        exponentialSearch,
+        sentinelLinearSearch,
+    };
 })();
 
 export default SearchingAlgorithms;

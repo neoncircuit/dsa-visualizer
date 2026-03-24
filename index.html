@@ -28,6 +28,8 @@
                     <option value="bogoSort">Bogo Sort</option>
                     <option value="thanosSort">Thanos Sort</option>
                     <option value="stalinSort">Stalin Sort</option>
+                    <option value="sleepSort">Sleep Sort</option>
+                    <option value="miracleSort">Miracle Sort</option>
                 </optgroup>
                 <optgroup label="Searching">
                     <option value="linearSearch">Linear Search</option>
@@ -35,6 +37,9 @@
                     <option value="jumpSearch">Jump Search</option>
                     <option value="ternarySearch">Ternary Search</option>
                     <option value="fibonacciSearch">Fibonacci Search</option>
+                    <option value="interpolationSearch">Interpolation Search</option>
+                    <option value="exponentialSearch">Exponential Search</option>
+                    <option value="sentinelLinearSearch">Sentinel Linear Search</option>
                 </optgroup>
                 <optgroup label="Trees (BST)">
                     <option value="bstInsert">BST Insert</option>
@@ -56,11 +61,19 @@
                     <option value="bfs">BFS (Breadth-First)</option>
                     <option value="dfs">DFS (Depth-First)</option>
                     <option value="dijkstra">Dijkstra's Shortest Path</option>
+                    <option value="astar">A* Pathfinding</option>
+                    <option value="bellmanFord">Bellman-Ford</option>
+                    <option value="kruskal">Kruskal's MST</option>
+                    <option value="topologicalSort">Topological Sort</option>
                 </optgroup>
                 <optgroup label="Linked Lists">
                     <option value="llInsertHead">Insert at Head</option>
                     <option value="llInsertTail">Insert at Tail</option>
                     <option value="llInsertPos">Insert at Position</option>
+                    <option value="llInsertAfterValue">Insert After Value</option>
+                    <option value="llDetectCycle">Detect Cycle</option>
+                    <option value="llMergeSorted">Merge Sorted Lists</option>
+                    <option value="llMergeSort">Merge Sort</option>
                     <option value="llDeleteHead">Delete Head</option>
                     <option value="llDeleteTail">Delete Tail</option>
                     <option value="llDeletePos">Delete at Position</option>
@@ -73,7 +86,8 @@
         </div>
 
         <div class="controls-group">
-            <label for="array-size">Size: <span id="size-display">30</span></label>
+            <label for="array-size">Size</label>
+            <input type="number" id="size-display" class="slider-input" min="5" max="100" value="30">
             <input type="range" id="array-size" min="5" max="100" value="30">
         </div>
 
@@ -89,6 +103,7 @@
 
         <div class="controls-group">
             <label for="speed-slider">Speed</label>
+            <input type="number" id="speed-display" class="slider-input" min="1" max="100" value="50">
             <input type="range" id="speed-slider" min="1" max="100" value="50">
         </div>
 
@@ -99,6 +114,14 @@
                 <option value="nearlySorted">Nearly Sorted</option>
                 <option value="reversed">Reversed</option>
                 <option value="fewUnique">Few Unique</option>
+            </select>
+        </div>
+
+        <div class="controls-group">
+            <label for="viz-mode">View Mode</label>
+            <select id="viz-mode">
+                <option value="bars">Bars</option>
+                <option value="list">List[int]</option>
             </select>
         </div>
 
@@ -343,6 +366,24 @@
                         <li>Large lists: Merge Sort or Quick Sort</li>
                         <li>Binary Search needs sorted data but is much faster</li>
                     </ul>
+                    <h4 class="cheat-subheading">Linked List Operations</h4>
+                    <table class="cheat-table">
+                        <thead>
+                            <tr><th>Operation</th><th>Time</th><th>Space</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Insert Head</td><td>O(1)</td><td>O(1)</td></tr>
+                            <tr><td>Insert Tail</td><td>O(n)</td><td>O(1)</td></tr>
+                            <tr><td>Insert At Pos</td><td>O(n)</td><td>O(1)</td></tr>
+                            <tr><td>Delete Head</td><td>O(1)</td><td>O(1)</td></tr>
+                            <tr><td>Delete Tail</td><td>O(n)</td><td>O(1)</td></tr>
+                            <tr><td>Delete At Pos</td><td>O(n)</td><td>O(1)</td></tr>
+                            <tr><td>Search</td><td>O(n)</td><td>O(1)</td></tr>
+                            <tr><td>Reverse</td><td>O(n)</td><td>O(1)</td></tr>
+                            <tr><td>Detect Cycle</td><td>O(n)</td><td>O(1)</td></tr>
+                            <tr><td>Merge Sorted</td><td>O(n+m)</td><td>O(1)</td></tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>

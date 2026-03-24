@@ -84,6 +84,12 @@ html, body {
     width: 60px;
 }
 
+.controls-group input.slider-input {
+    width: 44px;
+    text-align: center;
+    padding: 0.4rem 0.3rem;
+}
+
 #btn-sound {
     background: var(--btn-bg);
     color: var(--text-primary);
@@ -612,6 +618,11 @@ html, body {
     gap: 1px;
 }
 
+.bars-container.bars-view {
+    display: flex;
+    align-items: flex-end;
+}
+
 /* Compare mode button */
 #btn-compare {
     background: var(--btn-bg);
@@ -684,6 +695,136 @@ html, body {
     z-index: 10;
 }
 
+/* ── List View ── */
+
+.bars-container.list-view {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    padding: 1rem 3rem;
+    height: calc(100% - 36px);
+    margin-top: 18px;
+    overflow-x: auto;
+}
+
+.bars-container.list-view::before {
+    content: '';
+    display: none;
+}
+
+.bars-container.list-view::after {
+    content: '';
+    display: none;
+}
+
+.list-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3.5rem;
+    height: 3.5rem;
+    padding: 0;
+    background: var(--bg-tertiary);
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    font-family: var(--font-mono);
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    transition: all 0.2s ease;
+    position: relative;
+    box-sizing: border-box;
+    margin: 0 1rem;
+    flex-shrink: 0;
+}
+
+.list-cell:not(:last-child)::after {
+    content: '→';
+    position: absolute;
+    right: -1.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.5rem;
+    color: var(--text-secondary);
+    font-weight: 700;
+    pointer-events: none;
+}
+
+.list-cell.updating {
+    animation: valueUpdate 0.25s ease-out;
+}
+
+@keyframes valueUpdate {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.15);
+        opacity: 0.8;
+        background: var(--accent);
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.list-cell.comparing {
+    background: var(--bar-compare);
+    color: #1a1b26;
+    border-color: var(--bar-compare);
+}
+
+.list-cell.swapping {
+    background: var(--bar-swap);
+    color: #1a1b26;
+    border-color: var(--bar-swap);
+    animation: swapBounce 0.5s ease-in-out;
+    z-index: 10;
+}
+
+@keyframes swapBounce {
+    0%, 100% {
+        transform: scale(1) translateY(0);
+    }
+    25% {
+        transform: scale(1.1) translateY(-10px);
+    }
+    50% {
+        transform: scale(1.15) translateY(0);
+    }
+    75% {
+        transform: scale(1.1) translateY(10px);
+    }
+}
+
+.list-cell.sorted {
+    background: var(--bar-sorted);
+    color: #1a1b26;
+    border-color: var(--bar-sorted);
+}
+
+.list-cell.found {
+    background: var(--bar-found);
+    color: #1a1b26;
+    border-color: var(--bar-found);
+}
+
+.list-cell.searching {
+    background: var(--bar-searching);
+    color: #1a1b26;
+    border-color: var(--bar-searching);
+}
+
+.list-cell.pivot {
+    background: var(--bar-found);
+    color: #1a1b26;
+    border-color: var(--bar-found);
+}
+
 /* ── Tree / Graph Container ── */
 .tree-graph-container {
     width: 100%;
@@ -691,6 +832,16 @@ html, body {
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+/* ── Linked List Container ── */
+.linked-list-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: auto;
 }
 
 .tree-svg,

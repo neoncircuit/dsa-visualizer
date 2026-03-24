@@ -10,6 +10,10 @@ const Visualizer = (() => {
     let container = null;
     /** @type {HTMLDivElement[]} */
     let bars = [];
+    /** @type {HTMLDivElement[]} */
+    let cells = [];
+    /** @type {'bars'|'list'} */
+    let mode = 'bars';
 
     /**
      * Initialize the visualizer with a DOM container reference.
@@ -22,7 +26,26 @@ const Visualizer = (() => {
     }
 
     /**
-     * Render the array as bars inside the container.
+     * Set the visualization mode.
+     *
+     * @param {'bars'|'list'} newMode - The visualization mode.
+     * @returns {void}
+     */
+    function setMode(newMode) {
+        mode = newMode;
+    }
+
+    /**
+     * Get the current visualization mode.
+     *
+     * @returns {'bars'|'list'} The current mode.
+     */
+    function getMode() {
+        return mode;
+    }
+
+    /**
+     * Render the array as bars or list cells inside the container.
      * Each bar's height is proportional to its value relative to the max.
      *
      * @param {number[]} arr - The array of values to render.
@@ -31,8 +54,25 @@ const Visualizer = (() => {
     function render(arr) {
         container.innerHTML = '';
         bars = [];
-        const maxVal = Math.max(...arr);
+        cells = [];
 
+        if (mode === 'bars') {
+            renderBars(arr);
+        } else {
+            renderList(arr);
+        }
+    }
+
+    /**
+     * Render the array as bars.
+     *
+     * @param {number[]} arr - The array of values to render.
+     * @returns {void}
+     */
+    function renderBars(arr) {
+        container.classList.remove('list-view');
+        container.classList.add('bars-view');
+        const maxVal = Math.max(...arr);
         const showLabels = arr.length <= 40;
 
         for (let i = 0; i < arr.length; i++) {
@@ -47,14 +87,48 @@ const Visualizer = (() => {
         }
     }
 
+    /**
+     * Render the array as list cells.
+     *
+     * @param {number[]} arr - The array of values to render.
+     * @returns {void}
+     */
+    function renderList(arr) {
+        container.classList.remove('bars-view');
+        container.classList.add('list-view');
+
+        for (let i = 0; i < arr.length; i++) {
+            const cell = document.createElement('div');
+            cell.className = 'list-cell';
+            cell.textContent = arr[i];
+            cell.dataset.index = i;
+            container.appendChild(cell);
+            cells.push(cell);
+        }
+    }
+
 
     /**
-     * Update bar heights to reflect current array state without recreating DOM elements.
+     * Update bar heights or list cell values to reflect current array state without recreating DOM elements.
      *
      * @param {number[]} arr - The current array values.
      * @returns {void}
      */
     function updateHeights(arr) {
+        if (mode === 'bars') {
+            updateBarsHeights(arr);
+        } else {
+            updateListValues(arr);
+        }
+    }
+
+    /**
+     * Update bar heights to reflect current array state.
+     *
+     * @param {number[]} arr - The current array values.
+     * @returns {void}
+     */
+    function updateBarsHeights(arr) {
         const maxVal = Math.max(...arr);
         for (let i = 0; i < arr.length; i++) {
             if (bars[i]) {
@@ -67,27 +141,52 @@ const Visualizer = (() => {
     }
 
     /**
-     * Clear all CSS state classes from every bar.
+     * Update list cell values to reflect current array state.
      *
+     * @param {number[]} arr - The current array values.
      * @returns {void}
      */
-    function clearStates() {
-        for (const bar of bars) {
-            bar.classList.remove('comparing', 'swapping', 'sorted', 'found', 'searching', 'pivot');
+    function updateListValues(arr) {
+        for (let i = 0; i < arr.length; i++) {
+            if (cells[i]) {
+                const oldValue = cells[i].textContent;
+                if (oldValue !== String(arr[i])) {
+                    cells[i].classList.add('updating');
+                    cells[i].textContent = arr[i];
+                    setTimeout(() => {
+                        if (cells[i]) {
+                            cells[i].classList.remove('updating');
+                        }
+                    }, 250);
+                }
+            }
         }
     }
 
     /**
-     * Apply a visual state to specific bar indices.
+     * Clear all CSS state classes from every element.
+     *
+     * @returns {void}
+     */
+    function clearStates() {
+        const elements = mode === 'bars' ? bars : cells;
+        for (const el of elements) {
+            el.classList.remove('comparing', 'swapping', 'sorted', 'found', 'searching', 'pivot');
+        }
+    }
+
+    /**
+     * Apply a visual state to specific element indices.
      *
      * @param {string} state - The CSS class name to apply.
-     * @param {number[]} indices - The bar indices to highlight.
+     * @param {number[]} indices - The element indices to highlight.
      * @returns {void}
      */
     function applyState(state, indices) {
+        const elements = mode === 'bars' ? bars : cells;
         for (const idx of indices) {
-            if (bars[idx]) {
-                bars[idx].classList.add(state);
+            if (elements[idx]) {
+                elements[idx].classList.add(state);
             }
         }
     }
@@ -102,8 +201,9 @@ const Visualizer = (() => {
      */
     function processStep(step, arr) {
         // Only clear non-sorted states to preserve the sorted markers
-        for (const bar of bars) {
-            bar.classList.remove('comparing', 'swapping', 'searching', 'pivot');
+        const elements = mode === 'bars' ? bars : cells;
+        for (const el of elements) {
+            el.classList.remove('comparing', 'swapping', 'searching', 'pivot');
         }
         updateHeights(arr);
 
@@ -127,18 +227,19 @@ const Visualizer = (() => {
     }
 
     /**
-     * Mark all bars as sorted (final state after algorithm completes).
+     * Mark all elements as sorted (final state after algorithm completes).
      *
      * @returns {void}
      */
     function markAllSorted() {
-        for (const bar of bars) {
-            bar.classList.remove('comparing', 'swapping', 'searching', 'pivot');
-            bar.classList.add('sorted');
+        const elements = mode === 'bars' ? bars : cells;
+        for (const el of elements) {
+            el.classList.remove('comparing', 'swapping', 'searching', 'pivot');
+            el.classList.add('sorted');
         }
     }
 
-    return { init, render, updateHeights, clearStates, applyState, processStep, markAllSorted };
+    return { init, render, updateHeights, clearStates, applyState, processStep, markAllSorted, setMode, getMode };
 })();
 
 export default Visualizer;

@@ -1517,6 +1517,717 @@ const LinkedListAlgorithms = (() => {
                 '}',
             ],
         },
+
+        llInsertAfterValue: {
+            pseudo: [
+                '# Step 1: Insert a new node after the first node with target value',
+                'procedure insertAfterValue(head, targetValue, newValue):',
+                '',
+                '    newNode = Node(newValue)  # [2] Create a new node',
+                '    if (head == null):',
+                '        return null  # [3] Empty list',
+                '',
+                '    current = head  # [4] Start from head',
+                '    while (current != null):',
+                '        if (current.value == targetValue):',
+                '            newNode.next = current.next  # [6] Link new node',
+                '            current.next = newNode  # [7] Insert after current',
+                '            return head  # [8] Success',
+                '        current = current.next  # [5] Move to next',
+                '    return head  # [9] Target not found',
+            ],
+            python: [
+                '# Step 1: Insert a new node after the first node with target value',
+                'def insert_after_value(head: Optional[Node], target: int, new_val: int) -> Optional[Node]:',
+                '',
+                '    new_node = Node(new_val)  # [2] Create a new node',
+                '    if head is None:',
+                '        return None  # [3] Empty list',
+                '',
+                '    current = head  # [4] Start from head',
+                '    while current is not None:',
+                '        if current.value == target:',
+                '            new_node.next = current.next  # [6] Link new node',
+                '            current.next = new_node  # [7] Insert after current',
+                '            return head  # [8] Success',
+                '        current = current.next  # [5] Move to next',
+                '    return head  # [9] Target not found',
+            ],
+            java: [
+                '// Step 1: Insert a new node after the first node with target value',
+                'Node insertAfterValue(Node head, int target, int newVal) {',
+                '',
+                '    Node newNode = new Node(newVal);  // [2] Create a new node',
+                '    if (head == null) {',
+                '        return null;  // [3] Empty list',
+                '    }',
+                '',
+                '    Node current = head;  // [4] Start from head',
+                '    while (current != null) {',
+                '        if (current.value == target) {',
+                '            newNode.next = current.next;  // [6] Link new node',
+                '            current.next = newNode;  // [7] Insert after current',
+                '            return head;  // [8] Success',
+                '        }',
+                '        current = current.next;  // [5] Move to next',
+                '    }',
+                '    return head;  // [9] Target not found',
+                '}',
+            ],
+            c: [
+                '// Step 1: Insert a new node after the first node with target value',
+                'struct Node* insertAfterValue(struct Node* head, int target, int newVal) {',
+                '',
+                '    struct Node* newNode = createNode(newVal);  // [2] Create a new node',
+                '    if (head == NULL) {',
+                '        return NULL;  // [3] Empty list',
+                '    }',
+                '',
+                '    struct Node* current = head;  // [4] Start from head',
+                '    while (current != NULL) {',
+                '        if (current->value == target) {',
+                '            newNode->next = current->next;  // [6] Link new node',
+                '            current->next = newNode;  // [7] Insert after current',
+                '            return head;  // [8] Success',
+                '        }',
+                '        current = current->next;  // [5] Move to next',
+                '    }',
+                '    return head;  // [9] Target not found',
+                '}',
+            ],
+            csharp: [
+                '// Step 1: Insert a new node after the first node with target value',
+                'Node InsertAfterValue(Node head, int target, int newVal) {',
+                '',
+                '    Node newNode = new Node(newVal);  // [2] Create a new node',
+                '    if (head == null) {',
+                '        return null;  // [3] Empty list',
+                '    }',
+                '',
+                '    Node current = head;  // [4] Start from head',
+                '    while (current != null) {',
+                '        if (current.Value == target) {',
+                '            newNode.Next = current.Next;  // [6] Link new node',
+                '            current.Next = newNode;  // [7] Insert after current',
+                '            return head;  // [8] Success',
+                '        }',
+                '        current = current.Next;  // [5] Move to next',
+                '    }',
+                '    return head;  // [9] Target not found',
+                '}',
+            ],
+            javascript: [
+                '// Step 1: Insert a new node after the first node with target value',
+                'function insertAfterValue(head, target, newVal) {',
+                '',
+                '    const newNode = createNode(newVal);  // [2] Create a new node',
+                '    if (head === null) {',
+                '        return null;  // [3] Empty list',
+                '    }',
+                '',
+                '    let current = head;  // [4] Start from head',
+                '    while (current !== null) {',
+                '        if (current.value === target) {',
+                '            newNode.next = current.next;  // [6] Link new node',
+                '            current.next = newNode;  // [7] Insert after current',
+                '            return head;  // [8] Success',
+                '        }',
+                '        current = current.next;  // [5] Move to next',
+                '    }',
+                '    return head;  // [9] Target not found',
+                '}',
+            ],
+            typescript: [
+                '// Step 1: Insert a new node after the first node with target value',
+                'function insertAfterValue(head: Node | null, target: number, newVal: number): Node | null {',
+                '',
+                '    const newNode = createNode(newVal);  // [2] Create a new node',
+                '    if (head === null) {',
+                '        return null;  // [3] Empty list',
+                '    }',
+                '',
+                '    let current: Node | null = head;  // [4] Start from head',
+                '    while (current !== null) {',
+                '        if (current.value === target) {',
+                '            newNode.next = current.next;  // [6] Link new node',
+                '            current.next = newNode;  // [7] Insert after current',
+                '            return head;  // [8] Success',
+                '        }',
+                '        current = current.next;  // [5] Move to next',
+                '    }',
+                '    return head;  // [9] Target not found',
+                '}',
+            ],
+            go: [
+                '// Step 1: Insert a new node after the first node with target value',
+                'func insertAfterValue(head *Node, target int, newVal int) *Node {',
+                '',
+                '    newNode := &Node{Value: newVal}  // [2] Create a new node',
+                '    if head == nil {',
+                '        return nil  // [3] Empty list',
+                '    }',
+                '',
+                '    current := head  // [4] Start from head',
+                '    for current != nil {',
+                '        if current.Value == target {',
+                '            newNode.Next = current.Next  // [6] Link new node',
+                '            current.Next = newNode  // [7] Insert after current',
+                '            return head  // [8] Success',
+                '        }',
+                '        current = current.Next  // [5] Move to next',
+                '    }',
+                '    return head  // [9] Target not found',
+                '}',
+            ],
+            rust: [
+                '// Step 1: Insert a new node after the first node with target value',
+                'fn insert_after_value(head: Option<Box<Node>>, target: i32, new_val: i32) -> Option<Box<Node>> {',
+                '',
+                '    let new_node = Box::new(Node { value: new_val, next: None });  // [2] Create new node',
+                '    if head.is_none() {',
+                '        return None;  // [3] Empty list',
+                '    }',
+                '',
+                '    let mut current = &head;  // [4] Start from head',
+                '    while let Some(ref node) = current.as_ref() {',
+                '        if node.value == target {',
+                '            // [6-7] Insert after current (simplified)',
+                '            return head;  // [8] Success',
+                '        }',
+                '        current = &node.next;  // [5] Move to next',
+                '    }',
+                '    head  // [9] Target not found',
+                '}',
+            ],
+        },
+
+        llDetectCycle: {
+            pseudo: [
+                '# Detect cycle using Floyd\'s tortoise and hare algorithm',
+                'procedure detectCycle(head):',
+                '',
+                '    if (head == null):',
+                '        return false  # [2] Empty list has no cycle',
+                '',
+                '    slow = head  # [3] Tortoise starts at head',
+                '    fast = head  # [3] Hare starts at head',
+                '    while (fast != null and fast.next != null):',
+                '        slow = slow.next  # [5] Move slow by 1',
+                '        fast = fast.next.next  # [6] Move fast by 2',
+                '        if (slow == fast):',
+                '            return true  # [7] Cycle detected',
+                '    return false  # [8] No cycle',
+            ],
+            python: [
+                '# Detect cycle using Floyd\'s tortoise and hare algorithm',
+                'def detect_cycle(head: Optional[Node]) -> bool:',
+                '',
+                '    if head is None:',
+                '        return False  # [2] Empty list has no cycle',
+                '',
+                '    slow = head  # [3] Tortoise starts at head',
+                '    fast = head  # [3] Hare starts at head',
+                '    while fast is not None and fast.next is not None:',
+                '        slow = slow.next  # [5] Move slow by 1',
+                '        fast = fast.next.next  # [6] Move fast by 2',
+                '        if slow is fast:',
+                '            return True  # [7] Cycle detected',
+                '    return False  # [8] No cycle',
+            ],
+            java: [
+                '// Detect cycle using Floyd\'s tortoise and hare algorithm',
+                'boolean detectCycle(Node head) {',
+                '',
+                '    if (head == null) {',
+                '        return false;  // [2] Empty list has no cycle',
+                '    }',
+                '',
+                '    Node slow = head;  // [3] Tortoise starts at head',
+                '    Node fast = head;  // [3] Hare starts at head',
+                '    while (fast != null && fast.next != null) {',
+                '        slow = slow.next;  // [5] Move slow by 1',
+                '        fast = fast.next.next;  // [6] Move fast by 2',
+                '        if (slow == fast) {',
+                '            return true;  // [7] Cycle detected',
+                '        }',
+                '    }',
+                '    return false;  // [8] No cycle',
+                '}',
+            ],
+            c: [
+                '// Detect cycle using Floyd\'s tortoise and hare algorithm',
+                'bool detectCycle(struct Node* head) {',
+                '',
+                '    if (head == NULL) {',
+                '        return false;  // [2] Empty list has no cycle',
+                '    }',
+                '',
+                '    struct Node* slow = head;  // [3] Tortoise starts at head',
+                '    struct Node* fast = head;  // [3] Hare starts at head',
+                '    while (fast != NULL && fast->next != NULL) {',
+                '        slow = slow->next;  // [5] Move slow by 1',
+                '        fast = fast->next->next;  // [6] Move fast by 2',
+                '        if (slow == fast) {',
+                '            return true;  // [7] Cycle detected',
+                '        }',
+                '    }',
+                '    return false;  // [8] No cycle',
+                '}',
+            ],
+            csharp: [
+                '// Detect cycle using Floyd\'s tortoise and hare algorithm',
+                'bool DetectCycle(Node head) {',
+                '',
+                '    if (head == null) {',
+                '        return false;  // [2] Empty list has no cycle',
+                '    }',
+                '',
+                '    Node slow = head;  // [3] Tortoise starts at head',
+                '    Node fast = head;  // [3] Hare starts at head',
+                '    while (fast != null && fast.Next != null) {',
+                '        slow = slow.Next;  // [5] Move slow by 1',
+                '        fast = fast.Next.Next;  // [6] Move fast by 2',
+                '        if (slow == fast) {',
+                '            return true;  // [7] Cycle detected',
+                '        }',
+                '    }',
+                '    return false;  // [8] No cycle',
+                '}',
+            ],
+            javascript: [
+                '// Detect cycle using Floyd\'s tortoise and hare algorithm',
+                'function detectCycle(head) {',
+                '',
+                '    if (head === null) {',
+                '        return false;  // [2] Empty list has no cycle',
+                '    }',
+                '',
+                '    let slow = head;  // [3] Tortoise starts at head',
+                '    let fast = head;  // [3] Hare starts at head',
+                '    while (fast !== null && fast.next !== null) {',
+                '        slow = slow.next;  // [5] Move slow by 1',
+                '        fast = fast.next.next;  // [6] Move fast by 2',
+                '        if (slow === fast) {',
+                '            return true;  // [7] Cycle detected',
+                '        }',
+                '    }',
+                '    return false;  // [8] No cycle',
+                '}',
+            ],
+            typescript: [
+                '// Detect cycle using Floyd\'s tortoise and hare algorithm',
+                'function detectCycle(head: Node | null): boolean {',
+                '',
+                '    if (head === null) {',
+                '        return false;  // [2] Empty list has no cycle',
+                '    }',
+                '',
+                '    let slow: Node | null = head;  // [3] Tortoise starts at head',
+                '    let fast: Node | null = head;  // [3] Hare starts at head',
+                '    while (fast !== null && fast.next !== null) {',
+                '        slow = slow!.next;  // [5] Move slow by 1',
+                '        fast = fast.next.next;  // [6] Move fast by 2',
+                '        if (slow === fast) {',
+                '            return true;  // [7] Cycle detected',
+                '        }',
+                '    }',
+                '    return false;  // [8] No cycle',
+                '}',
+            ],
+            go: [
+                '// Detect cycle using Floyd\'s tortoise and hare algorithm',
+                'func detectCycle(head *Node) bool {',
+                '',
+                '    if head == nil {',
+                '        return false  // [2] Empty list has no cycle',
+                '    }',
+                '',
+                '    slow := head  // [3] Tortoise starts at head',
+                '    fast := head  // [3] Hare starts at head',
+                '    for fast != nil && fast.Next != nil {',
+                '        slow = slow.Next  // [5] Move slow by 1',
+                '        fast = fast.Next.Next  // [6] Move fast by 2',
+                '        if slow == fast {',
+                '            return true  // [7] Cycle detected',
+                '        }',
+                '    }',
+                '    return false  // [8] No cycle',
+                '}',
+            ],
+            rust: [
+                '// Detect cycle using Floyd\'s tortoise and hare algorithm',
+                'fn detect_cycle(head: Option<&Node>) -> bool {',
+                '',
+                '    if head.is_none() {',
+                '        return false;  // [2] Empty list has no cycle',
+                '    }',
+                '',
+                '    let mut slow = head;  // [3] Tortoise starts at head',
+                '    let mut fast = head;  // [3] Hare starts at head',
+                '    while fast.is_some() && fast.unwrap().next.is_some() {',
+                '        slow = slow.unwrap().next.as_ref();  // [5] Move slow by 1',
+                '        fast = fast.unwrap().next.as_ref().unwrap().next.as_ref();  // [6] Move fast by 2',
+                '        if slow == fast {',
+                '            return true;  // [7] Cycle detected',
+                '        }',
+                '    }',
+                '    false  // [8] No cycle',
+                '}',
+            ],
+        },
+
+        llMergeSorted: {
+            pseudo: [
+                '# Merge two sorted linked lists into one sorted list',
+                'procedure mergeSorted(head1, head2):',
+                '',
+                '    dummy = Node(0)  # [2] Dummy node for result',
+                '    tail = dummy  # [3] Tail pointer for appending',
+                '',
+                '    while (head1 != null and head2 != null):',
+                '        if (head1.value <= head2.value):',
+                '            tail.next = head1  # [5] Append from list 1',
+                '            head1 = head1.next  # [6] Advance list 1',
+                '        else:',
+                '            tail.next = head2  # [7] Append from list 2',
+                '            head2 = head2.next  # [8] Advance list 2',
+                '        tail = tail.next  # [9] Move tail forward',
+                '',
+                '    tail.next = (head1 != null) ? head1 : head2  # [10] Attach remaining',
+                '    return dummy.next  # [11] Return merged list head',
+            ],
+            python: [
+                '# Merge two sorted linked lists into one sorted list',
+                'def merge_sorted(head1: Optional[Node], head2: Optional[Node]) -> Optional[Node]:',
+                '',
+                '    dummy = Node(0)  # [2] Dummy node for result',
+                '    tail = dummy  # [3] Tail pointer for appending',
+                '',
+                '    while head1 is not None and head2 is not None:',
+                '        if head1.value <= head2.value:',
+                '            tail.next = head1  # [5] Append from list 1',
+                '            head1 = head1.next  # [6] Advance list 1',
+                '        else:',
+                '            tail.next = head2  # [7] Append from list 2',
+                '            head2 = head2.next  # [8] Advance list 2',
+                '        tail = tail.next  # [9] Move tail forward',
+                '',
+                '    tail.next = head1 if head1 is not None else head2  # [10] Attach remaining',
+                '    return dummy.next  # [11] Return merged list head',
+            ],
+            java: [
+                '// Merge two sorted linked lists into one sorted list',
+                'Node mergeSorted(Node head1, Node head2) {',
+                '',
+                '    Node dummy = new Node(0);  // [2] Dummy node for result',
+                '    Node tail = dummy;  // [3] Tail pointer for appending',
+                '',
+                '    while (head1 != null && head2 != null) {',
+                '        if (head1.value <= head2.value) {',
+                '            tail.next = head1;  // [5] Append from list 1',
+                '            head1 = head1.next;  // [6] Advance list 1',
+                '        } else {',
+                '            tail.next = head2;  // [7] Append from list 2',
+                '            head2 = head2.next;  // [8] Advance list 2',
+                '        }',
+                '        tail = tail.next;  // [9] Move tail forward',
+                '    }',
+                '    tail.next = (head1 != null) ? head1 : head2;  // [10] Attach remaining',
+                '    return dummy.next;  // [11] Return merged list head',
+                '}',
+            ],
+            c: [
+                '// Merge two sorted linked lists into one sorted list',
+                'struct Node* mergeSorted(struct Node* head1, struct Node* head2) {',
+                '',
+                '    struct Node dummy = {0, NULL};  // [2] Dummy node for result',
+                '    struct Node* tail = &dummy;  // [3] Tail pointer for appending',
+                '',
+                '    while (head1 != NULL && head2 != NULL) {',
+                '        if (head1->value <= head2->value) {',
+                '            tail->next = head1;  // [5] Append from list 1',
+                '            head1 = head1->next;  // [6] Advance list 1',
+                '        } else {',
+                '            tail->next = head2;  // [7] Append from list 2',
+                '            head2 = head2->next;  // [8] Advance list 2',
+                '        }',
+                '        tail = tail->next;  // [9] Move tail forward',
+                '    }',
+                '    tail->next = (head1 != NULL) ? head1 : head2;  // [10] Attach remaining',
+                '    return dummy.next;  // [11] Return merged list head',
+                '}',
+            ],
+            csharp: [
+                '// Merge two sorted linked lists into one sorted list',
+                'Node MergeSorted(Node head1, Node head2) {',
+                '',
+                '    Node dummy = new Node(0);  // [2] Dummy node for result',
+                '    Node tail = dummy;  // [3] Tail pointer for appending',
+                '',
+                '    while (head1 != null && head2 != null) {',
+                '        if (head1.Value <= head2.Value) {',
+                '            tail.Next = head1;  // [5] Append from list 1',
+                '            head1 = head1.Next;  // [6] Advance list 1',
+                '        } else {',
+                '            tail.Next = head2;  // [7] Append from list 2',
+                '            head2 = head2.Next;  // [8] Advance list 2',
+                '        }',
+                '        tail = tail.Next;  // [9] Move tail forward',
+                '    }',
+                '    tail.Next = (head1 != null) ? head1 : head2;  // [10] Attach remaining',
+                '    return dummy.Next;  // [11] Return merged list head',
+                '}',
+            ],
+            javascript: [
+                '// Merge two sorted linked lists into one sorted list',
+                'function mergeSorted(head1, head2) {',
+                '',
+                '    const dummy = createNode(0);  // [2] Dummy node for result',
+                '    let tail = dummy;  // [3] Tail pointer for appending',
+                '',
+                '    while (head1 !== null && head2 !== null) {',
+                '        if (head1.value <= head2.value) {',
+                '            tail.next = head1;  // [5] Append from list 1',
+                '            head1 = head1.next;  // [6] Advance list 1',
+                '        } else {',
+                '            tail.next = head2;  // [7] Append from list 2',
+                '            head2 = head2.next;  // [8] Advance list 2',
+                '        }',
+                '        tail = tail.next;  // [9] Move tail forward',
+                '    }',
+                '    tail.next = (head1 !== null) ? head1 : head2;  // [10] Attach remaining',
+                '    return dummy.next;  // [11] Return merged list head',
+                '}',
+            ],
+            typescript: [
+                '// Merge two sorted linked lists into one sorted list',
+                'function mergeSorted(head1: Node | null, head2: Node | null): Node | null {',
+                '',
+                '    const dummy = createNode(0);  // [2] Dummy node for result',
+                '    let tail: Node = dummy;  // [3] Tail pointer for appending',
+                '',
+                '    while (head1 !== null && head2 !== null) {',
+                '        if (head1.value <= head2.value) {',
+                '            tail.next = head1;  // [5] Append from list 1',
+                '            head1 = head1.next;  // [6] Advance list 1',
+                '        } else {',
+                '            tail.next = head2;  // [7] Append from list 2',
+                '            head2 = head2.next;  // [8] Advance list 2',
+                '        }',
+                '        tail = tail.next!;  // [9] Move tail forward',
+                '    }',
+                '    tail.next = (head1 !== null) ? head1 : head2;  // [10] Attach remaining',
+                '    return dummy.next;  // [11] Return merged list head',
+                '}',
+            ],
+            go: [
+                '// Merge two sorted linked lists into one sorted list',
+                'func mergeSorted(head1 *Node, head2 *Node) *Node {',
+                '',
+                '    dummy := &Node{Value: 0}  // [2] Dummy node for result',
+                '    tail := dummy  // [3] Tail pointer for appending',
+                '',
+                '    for head1 != nil && head2 != nil {',
+                '        if head1.Value <= head2.Value {',
+                '            tail.Next = head1  // [5] Append from list 1',
+                '            head1 = head1.Next  // [6] Advance list 1',
+                '        } else {',
+                '            tail.Next = head2  // [7] Append from list 2',
+                '            head2 = head2.Next  // [8] Advance list 2',
+                '        }',
+                '        tail = tail.Next  // [9] Move tail forward',
+                '    }',
+                '    if head1 != nil {  // [10] Attach remaining',
+                '        tail.Next = head1',
+                '    } else {',
+                '        tail.Next = head2',
+                '    }',
+                '    return dummy.Next  // [11] Return merged list head',
+                '}',
+            ],
+            rust: [
+                '// Merge two sorted linked lists into one sorted list',
+                'fn merge_sorted(head1: Option<Box<Node>>, head2: Option<Box<Node>>) -> Option<Box<Node>> {',
+                '',
+                '    let dummy = Box::new(Node { value: 0, next: None });  // [2] Dummy node',
+                '    let mut tail = &dummy;  // [3] Tail pointer',
+                '',
+                '    let mut h1 = head1;',
+                '    let mut h2 = head2;',
+                '    while h1.is_some() && h2.is_some() {',
+                '        if h1.as_ref().unwrap().value <= h2.as_ref().unwrap().value {',
+                '            // [5-6] Append from list 1',
+                '        } else {',
+                '            // [7-8] Append from list 2',
+                '        }',
+                '        // [9] Move tail forward',
+                '    }',
+                '    // [10-11] Attach remaining and return',
+                '    dummy.next',
+                '}',
+            ],
+        },
+
+        llMergeSort: {
+            pseudo: [
+                '# Merge sort for linked lists - O(n log n) without random access',
+                'procedure mergeSort(head):',
+                '',
+                '    if (head == null or head.next == null):',
+                '        return head  # [2] Base case: 0 or 1 element',
+                '',
+                '    mid = findMiddle(head)  # [3] Find middle using slow/fast pointers',
+                '    rightHead = mid.next  # [4] Split list',
+                '    mid.next = null  # [4] Terminate left half',
+                '',
+                '    left = mergeSort(head)  # [5] Recursively sort left',
+                '    right = mergeSort(rightHead)  # [6] Recursively sort right',
+                '    return merge(left, right)  # [7] Merge sorted halves',
+                '',
+                'procedure findMiddle(head):',
+                '    slow = head, fast = head.next',
+                '    while (fast != null and fast.next != null):',
+                '        slow = slow.next, fast = fast.next.next',
+                '    return slow',
+            ],
+            python: [
+                '# Merge sort for linked lists - O(n log n) without random access',
+                'def merge_sort(head: Optional[Node]) -> Optional[Node]:',
+                '',
+                '    if head is None or head.next is None:',
+                '        return head  # [2] Base case: 0 or 1 element',
+                '',
+                '    mid = find_middle(head)  # [3] Find middle using slow/fast pointers',
+                '    right_head = mid.next  # [4] Split list',
+                '    mid.next = None  # [4] Terminate left half',
+                '',
+                '    left = merge_sort(head)  # [5] Recursively sort left',
+                '    right = merge_sort(right_head)  # [6] Recursively sort right',
+                '    return merge(left, right)  # [7] Merge sorted halves',
+                '',
+                'def find_middle(head: Node) -> Node:',
+                '    slow, fast = head, head.next',
+                '    while fast is not None and fast.next is not None:',
+                '        slow, fast = slow.next, fast.next.next',
+                '    return slow',
+            ],
+            java: [
+                '// Merge sort for linked lists - O(n log n) without random access',
+                'Node mergeSort(Node head) {',
+                '',
+                '    if (head == null || head.next == null) {',
+                '        return head;  // [2] Base case: 0 or 1 element',
+                '    }',
+                '',
+                '    Node mid = findMiddle(head);  // [3] Find middle using slow/fast pointers',
+                '    Node rightHead = mid.next;  // [4] Split list',
+                '    mid.next = null;  // [4] Terminate left half',
+                '',
+                '    Node left = mergeSort(head);  // [5] Recursively sort left',
+                '    Node right = mergeSort(rightHead);  // [6] Recursively sort right',
+                '    return merge(left, right);  // [7] Merge sorted halves',
+                '}',
+            ],
+            c: [
+                '// Merge sort for linked lists - O(n log n) without random access',
+                'struct Node* mergeSort(struct Node* head) {',
+                '',
+                '    if (head == NULL || head->next == NULL) {',
+                '        return head;  // [2] Base case: 0 or 1 element',
+                '    }',
+                '',
+                '    struct Node* mid = findMiddle(head);  // [3] Find middle',
+                '    struct Node* rightHead = mid->next;  // [4] Split list',
+                '    mid->next = NULL;  // [4] Terminate left half',
+                '',
+                '    struct Node* left = mergeSort(head);  // [5] Recursively sort left',
+                '    struct Node* right = mergeSort(rightHead);  // [6] Recursively sort right',
+                '    return merge(left, right);  // [7] Merge sorted halves',
+                '}',
+            ],
+            csharp: [
+                '// Merge sort for linked lists - O(n log n) without random access',
+                'Node MergeSort(Node head) {',
+                '',
+                '    if (head == null || head.Next == null) {',
+                '        return head;  // [2] Base case: 0 or 1 element',
+                '    }',
+                '',
+                '    Node mid = FindMiddle(head);  // [3] Find middle using slow/fast pointers',
+                '    Node rightHead = mid.Next;  // [4] Split list',
+                '    mid.Next = null;  // [4] Terminate left half',
+                '',
+                '    Node left = MergeSort(head);  // [5] Recursively sort left',
+                '    Node right = MergeSort(rightHead);  // [6] Recursively sort right',
+                '    return Merge(left, right);  // [7] Merge sorted halves',
+                '}',
+            ],
+            javascript: [
+                '// Merge sort for linked lists - O(n log n) without random access',
+                'function mergeSort(head) {',
+                '',
+                '    if (head === null || head.next === null) {',
+                '        return head;  // [2] Base case: 0 or 1 element',
+                '    }',
+                '',
+                '    const mid = findMiddle(head);  // [3] Find middle using slow/fast pointers',
+                '    const rightHead = mid.next;  // [4] Split list',
+                '    mid.next = null;  // [4] Terminate left half',
+                '',
+                '    const left = mergeSort(head);  // [5] Recursively sort left',
+                '    const right = mergeSort(rightHead);  // [6] Recursively sort right',
+                '    return merge(left, right);  // [7] Merge sorted halves',
+                '}',
+            ],
+            typescript: [
+                '// Merge sort for linked lists - O(n log n) without random access',
+                'function mergeSort(head: Node | null): Node | null {',
+                '',
+                '    if (head === null || head.next === null) {',
+                '        return head;  // [2] Base case: 0 or 1 element',
+                '    }',
+                '',
+                '    const mid = findMiddle(head);  // [3] Find middle using slow/fast pointers',
+                '    const rightHead = mid.next;  // [4] Split list',
+                '    mid.next = null;  // [4] Terminate left half',
+                '',
+                '    const left = mergeSort(head);  // [5] Recursively sort left',
+                '    const right = mergeSort(rightHead);  // [6] Recursively sort right',
+                '    return merge(left, right);  // [7] Merge sorted halves',
+                '}',
+            ],
+            go: [
+                '// Merge sort for linked lists - O(n log n) without random access',
+                'func mergeSort(head *Node) *Node {',
+                '',
+                '    if head == nil || head.Next == nil {',
+                '        return head  // [2] Base case: 0 or 1 element',
+                '    }',
+                '',
+                '    mid := findMiddle(head)  // [3] Find middle using slow/fast pointers',
+                '    rightHead := mid.Next  // [4] Split list',
+                '    mid.Next = nil  // [4] Terminate left half',
+                '',
+                '    left := mergeSort(head)  // [5] Recursively sort left',
+                '    right := mergeSort(rightHead)  // [6] Recursively sort right',
+                '    return merge(left, right)  // [7] Merge sorted halves',
+                '}',
+            ],
+            rust: [
+                '// Merge sort for linked lists - O(n log n) without random access',
+                'fn merge_sort(head: Option<Box<Node>>) -> Option<Box<Node>> {',
+                '',
+                '    if head.is_none() || head.as_ref().unwrap().next.is_none() {',
+                '        return head;  // [2] Base case: 0 or 1 element',
+                '    }',
+                '',
+                '    let (left, right) = split(head);  // [3-4] Find middle and split',
+                '    let left = merge_sort(left);  // [5] Recursively sort left',
+                '    let right = merge_sort(right);  // [6] Recursively sort right',
+                '    merge(left, right)  // [7] Merge sorted halves',
+                '}',
+            ],
+        },
     };
 
     // ─── Complexity Information ───
@@ -1724,6 +2435,84 @@ const LinkedListAlgorithms = (() => {
                 'O(n) worst case. Use a hash map to cache node references for O(1) ' +
                 'lookup-and-delete, or a sorted structure with binary search.',
         },
+
+        llInsertAfterValue: {
+            name: 'Insert After Value',
+            best: 'O(1)',
+            average: 'O(n)',
+            worst: 'O(n)',
+            space: 'O(1)',
+            description:
+                'Search for the first node with the target value and insert a new node immediately ' +
+                'after it. The actual insertion is O(1) once the target is found, but ' +
+                'searching for the target requires O(n) traversal through the list.',
+            useCase:
+                'Use when you have a reference value and want to insert immediately after it. ' +
+                'Common in ordered data maintenance where you know the preceding element, or when ' +
+                'inserting nodes in sorted order by finding the specific predecessor value.',
+            avoid:
+                'Avoid when you frequently insert after the same value — consider using a ' +
+                'hash map to cache node references for O(1) direct access. For random ' +
+                'position insertion, use insert-at-position instead for clearer semantics.',
+        },
+
+        llDetectCycle: {
+            name: 'Detect Cycle (Floyd\'s)',
+            best: 'O(n)',
+            average: 'O(n)',
+            worst: 'O(n)',
+            space: 'O(1)',
+            description:
+                'Uses Floyd\'s cycle-finding algorithm (tortoise and hare). Two pointers traverse ' +
+                'the list at different speeds (slow moves 1 step, fast moves 2 steps). If they meet, ' +
+                'a cycle exists. If fast reaches null, no cycle exists.',
+            useCase:
+                'Use when debugging linked list implementations or verifying that a list is properly ' +
+                'terminated. Essential for preventing infinite loops in algorithms that operate on ' +
+                'linked lists. Common in interview questions and production debugging.',
+            avoid:
+                'Avoid when you know the list is acyclic (e.g., from a trusted source). ' +
+                'For most application code, cycles indicate a bug and should be fixed rather than ' +
+                'repeatedly checked at runtime.',
+        },
+
+        llMergeSorted: {
+            name: 'Merge Sorted Lists',
+            best: 'O(n + m)',
+            average: 'O(n + m)',
+            worst: 'O(n + m)',
+            space: 'O(1)',
+            description:
+                'Merges two sorted linked lists into one sorted list by comparing head nodes and ' +
+                'repeatedly appending the smaller value to the result. Uses a dummy node to simplify ' +
+                'edge cases. Only pointer manipulation is needed, no new nodes are created.',
+            useCase:
+                'Use as a subroutine in merge sort for linked lists, or when combining sorted lists ' +
+                'from different sources. Essential for external sorting algorithms where data is ' +
+                'too large to fit in memory.',
+            avoid:
+                'Avoid when the input lists are not already sorted. If lists need to be sorted first, ' +
+                'consider whether a different data structure (like a heap) would be more efficient.',
+        },
+
+        llMergeSort: {
+            name: 'Merge Sort (Linked List)',
+            best: 'O(n log n)',
+            average: 'O(n log n)',
+            worst: 'O(n log n)',
+            space: 'O(log n)',
+            description:
+                'Recursively splits the list into halves using slow/fast pointers to find the middle, ' +
+                'sorts each half, then merges them. Unlike array merge sort, no random access is needed, ' +
+                'making this the natural sorting algorithm for linked lists. Space is O(log n) for recursion.',
+            useCase:
+                'Use when sorting a linked list - this is the preferred sorting algorithm for linked lists ' +
+                'since it does not require random access. Preferred over quicksort for linked lists since ' +
+                'quicksort\'s pivot selection is inefficient without random access.',
+            avoid:
+                'Avoid when memory is extremely constrained due to O(log n) stack space. ' +
+                'For small lists, insertion sort may be simpler and faster due to lower overhead.',
+        },
     };
 
     // ─── Generator Functions ───
@@ -1926,6 +2715,221 @@ const LinkedListAlgorithms = (() => {
         return head;
     }
 
+    /**
+     * Insert a new node with given value after the first occurrence of target value.
+     * If target not found, returns original list unchanged.
+     *
+     * @param {object|null} head - Head node of linked list.
+     * @param {number} targetValue - Value to search for and insert after.
+     * @param {number} newValue - Value for new node.
+     * @returns {object|null} Updated head of linked list, or null if empty.
+     */
+    function* llInsertAfterValue(head, targetValue, newValue) {
+        const newNode = createNode(newValue);
+        yield { type: 'insert', nodeId: newNode.id, codeLine: 2 };
+
+        if (head === null) {
+            yield { type: 'visit', nodeId: -1, codeLine: 3 };
+            return null;
+        }
+
+        let current = head;
+        yield { type: 'visit', nodeId: current.id, codeLine: 4 };
+
+        while (current !== null) {
+            yield { type: 'compare', nodeId: current.id, codeLine: 5 };
+            if (current.value === targetValue) {
+                newNode.next = current.next;
+                current.next = newNode;
+                yield { type: 'insert', nodeId: newNode.id, codeLine: 6 };
+                yield { type: 'insert', nodeId: newNode.id, codeLine: 7 };
+                yield { type: 'found', nodeId: current.id, codeLine: 8 };
+                return head;
+            }
+            current = current.next;
+            if (current !== null) {
+                yield { type: 'visit', nodeId: current.id, codeLine: 5 };
+            }
+        }
+
+        yield { type: 'notFound', nodeId: -1, codeLine: 9 };
+        return head;
+    }
+
+    /**
+     * Detect if a linked list contains a cycle using Floyd's algorithm.
+     * Uses two pointers (slow and fast) that traverse at different speeds.
+     *
+     * @param {object|null} head - Head node of linked list.
+     * @returns {boolean} True if cycle detected, false otherwise.
+     */
+    function* llDetectCycle(head) {
+        if (head === null) {
+            yield { type: 'visit', nodeId: -1, codeLine: 2 };
+            return false;
+        }
+
+        let slow = head;
+        let fast = head;
+        yield { type: 'visit', nodeId: slow.id, codeLine: 3 };
+        yield { type: 'visit', nodeId: fast.id, codeLine: 3 };
+
+        while (fast !== null && fast.next !== null) {
+            yield { type: 'visit', nodeId: slow.id, codeLine: 5 };
+            slow = slow.next;
+
+            yield { type: 'visit', nodeId: fast.id, codeLine: 6 };
+            fast = fast.next.next;
+
+            if (fast !== null) {
+                yield { type: 'visit', nodeId: fast.id, codeLine: 6 };
+            }
+
+            yield { type: 'compare', nodeId: slow.id, codeLine: 7 };
+            if (slow === fast) {
+                yield { type: 'found', nodeId: slow.id, codeLine: 7 };
+                return true;
+            }
+        }
+
+        yield { type: 'notFound', nodeId: -1, codeLine: 8 };
+        return false;
+    }
+
+    /**
+     * Merge two sorted linked lists into one sorted list.
+     * Uses a dummy node to simplify edge cases.
+     *
+     * @param {object|null} head1 - Head of first sorted list.
+     * @param {object|null} head2 - Head of second sorted list.
+     * @returns {object|null} Head of merged sorted list.
+     */
+    function* llMergeSorted(head1, head2) {
+        const dummy = createNode(0);
+        let tail = dummy;
+        yield { type: 'insert', nodeId: dummy.id, codeLine: 2 };
+
+        while (head1 !== null && head2 !== null) {
+            yield { type: 'compare', nodeId: head1.id, codeLine: 4 };
+            yield { type: 'compare', nodeId: head2.id, codeLine: 4 };
+
+            if (head1.value <= head2.value) {
+                yield { type: 'visit', nodeId: head1.id, codeLine: 5 };
+                tail.next = head1;
+                head1 = head1.next;
+                yield { type: 'visit', nodeId: tail.next.id, codeLine: 6 };
+            } else {
+                yield { type: 'visit', nodeId: head2.id, codeLine: 7 };
+                tail.next = head2;
+                head2 = head2.next;
+                yield { type: 'visit', nodeId: tail.next.id, codeLine: 8 };
+            }
+            tail = tail.next;
+            yield { type: 'visit', nodeId: tail.id, codeLine: 9 };
+        }
+
+        if (head1 !== null) {
+            yield { type: 'visit', nodeId: head1.id, codeLine: 10 };
+            tail.next = head1;
+        } else if (head2 !== null) {
+            yield { type: 'visit', nodeId: head2.id, codeLine: 10 };
+            tail.next = head2;
+        }
+
+        const result = dummy.next;
+        if (result !== null) {
+            yield { type: 'found', nodeId: result.id, codeLine: 11 };
+        }
+        return result;
+    }
+
+    /**
+     * Merge sort for linked lists - natural O(n log n) without random access.
+     * Recursively splits the list, sorts each half, then merges.
+     *
+     * @param {object|null} head - Head node of linked list.
+     * @returns {object|null} Head of sorted linked list.
+     */
+    function* llMergeSort(head) {
+        if (head === null || head.next === null) {
+            yield { type: 'visit', nodeId: head ? head.id : -1, codeLine: 2 };
+            return head;
+        }
+
+        function findMiddle(node) {
+            let slow = node;
+            let fast = node.next;
+            while (fast !== null && fast.next !== null) {
+                slow = slow.next;
+                fast = fast.next.next;
+            }
+            return slow;
+        }
+
+        function* mergeSortedInternal(a, b) {
+            const dummy = createNode(0);
+            let tail = dummy;
+
+            while (a !== null && b !== null) {
+                yield { type: 'compare', nodeId: a.id, codeLine: 4 };
+                yield { type: 'compare', nodeId: b.id, codeLine: 4 };
+
+                if (a.value <= b.value) {
+                    yield { type: 'visit', nodeId: a.id, codeLine: 5 };
+                    tail.next = a;
+                    a = a.next;
+                } else {
+                    yield { type: 'visit', nodeId: b.id, codeLine: 7 };
+                    tail.next = b;
+                    b = b.next;
+                }
+                tail = tail.next;
+            }
+
+            tail.next = a !== null ? a : b;
+            return dummy.next;
+        }
+
+        function* sortRecursive(node) {
+            if (node === null || node.next === null) {
+                if (node !== null) {
+                    yield { type: 'visit', nodeId: node.id, codeLine: 2 };
+                }
+                return node;
+            }
+
+            yield { type: 'visit', nodeId: node.id, codeLine: 3 };
+            const mid = findMiddle(node);
+            yield { type: 'visit', nodeId: mid.id, codeLine: 3 };
+
+            const rightHead = mid.next;
+            mid.next = null;
+            yield { type: 'delete', nodeId: mid.id, codeLine: 4 };
+
+            yield* sortRecursive(node);
+            const leftSorted = yield* sortRecursive(node);
+
+            yield* sortRecursive(rightHead);
+            const rightSorted = yield* sortRecursive(rightHead);
+
+            const merged = yield* mergeSortedInternal(leftSorted, rightSorted);
+            if (merged !== null) {
+                yield { type: 'found', nodeId: merged.id, codeLine: 7 };
+            }
+            return merged;
+        }
+
+        const sortedHead = yield* sortRecursive(head);
+        if (sortedHead !== null) {
+            let current = sortedHead;
+            while (current !== null) {
+                yield { type: 'found', nodeId: current.id, codeLine: 7 };
+                current = current.next;
+            }
+        }
+        return sortedHead;
+    }
+
     function buildSampleLinkedList(values) {
         resetIds();
         let head = null;
@@ -1963,6 +2967,10 @@ const LinkedListAlgorithms = (() => {
         llInsertPos,
         llDeletePos,
         llDeleteVal,
+        llInsertAfterValue,
+        llDetectCycle,
+        llMergeSorted,
+        llMergeSort,
     };
 })();
 

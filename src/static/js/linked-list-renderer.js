@@ -63,7 +63,7 @@ const LinkedListRenderer = (() => {
 
         const pad = 40;
         svg.setAttribute('viewBox',
-            `${bounds.minX - pad} ${bounds.minY - pad} ${bounds.maxX - bounds.minX + pad * 2} ${bounds.maxY - bounds.minY + pad * 2}`
+            `${bounds.minX - pad} ${bounds.minY - pad} ${bounds.maxX - bounds.minX + NODE_WIDTH + pad * 2} ${bounds.maxY - bounds.minY + NODE_HEIGHT + pad * 2}`
         );
 
         drawArrows(head, positions);
