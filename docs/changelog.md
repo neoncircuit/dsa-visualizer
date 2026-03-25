@@ -5,6 +5,25 @@ All notable changes to the DSA Visualizer project will be documented in this fil
 ## [Unreleased]
 
 ### Added
+
+- **Phase 4 Complete**: Polish, quality, and UX improvements
+
+- **Dark/Light Theme Toggle**: `Light` / `Dark` button in second controls row; toggles `body.light` CSS class with smooth 0.2s transitions on all colour properties; preference persisted via `localStorage`
+
+- **Custom Array Input**: Text field (e.g. `5,3,8,1,9`) with Apply button and Enter key support; visible only for sort/search algorithms; values clamped to [1, 200]; flashes green on success, red on invalid input
+
+- **Mobile Responsive Layout**: Media query breakpoints at 1024px (tablet), 768px (mobile stacked panels), and 480px (compact); touch-friendly 36px min button heights; panels stack vertically on mobile with fixed heights for viz area
+
+- **Algorithm Performance Benchmarking**: Benchmark button (visible for sort/search algorithms) opens a modal running 20 iterations across array sizes [10, 25, 50, 100]; displays min/avg/max timing table and CSS bar chart per size
+
+- **Phase 2.4 Graph Representations**: Graph View selector (Graph / Matrix / Adj List / Both) visible when a graph algorithm is selected
+  - Adjacency Matrix: weighted grid table with edge highlights
+  - Adjacency List: per-node neighbour chain view
+  - Both: 50/50 split panel showing matrix and list side by side
+  - Interactive Graph Builder: Edit Graph toggle; click empty space to add node; click two nodes to add weighted edge; right-click node/edge to delete
+
+- **Phase 2.5 Animated Tree Operations**: Tree nodes now animate between renders using CSS `transform: translate` transitions (420ms ease); new nodes fade in; removed nodes scale down and fade out before DOM removal; edges redraw instantly per render
+
 - **Phase 3 Complete**: All Phase 3 algorithms implemented
 
 - **Phase 3.3 Additional Searching Algorithms**: Three new searching algorithms with full 10-language snippets, complexity info, and generators

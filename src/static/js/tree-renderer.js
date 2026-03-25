@@ -2,7 +2,8 @@
  * Tree Renderer module.
  *
  * Renders binary trees as SVG with nodes, edges, and value labels.
- * Supports highlighting nodes in different states (visiting, found, comparing, etc.).
+ * Supports highlighting nodes in different states (visiting, found, comparing, etc.)
+ * and animates node movement, insertion, and deletion between renders.
  */
 
 const TreeRenderer = (() => {
@@ -10,12 +11,17 @@ const TreeRenderer = (() => {
     let container = null;
     /** @type {SVGSVGElement|null} */
     let svg = null;
+    /** @type {SVGGElement|null} */
+    let edgeLayer = null;
+    /** @type {SVGGElement|null} */
+    let nodeLayer = null;
     /** @type {Object.<number, SVGGElement>} */
     let nodeElements = {};
 
     const NODE_RADIUS = 20;
     const LEVEL_HEIGHT = 60;
     const MIN_H_SPACING = 50;
+    const ANIM_MS = 420;
 
     /**
      * Initialize the renderer with a container element.
@@ -28,46 +34,135 @@ const TreeRenderer = (() => {
     }
 
     /**
-     * Render a binary tree from its node structure.
-     * Tree is an object: { value, left, right, id }
+     * Render a binary tree from its node structure with animated transitions.
+     * Existing nodes animate to new positions, new nodes fade in,
+     * removed nodes fade out before being removed.
      *
      * @param {object|null} root - The root node of the tree.
      * @returns {void}
      */
     function render(root) {
-        container.innerHTML = '';
-        nodeElements = {};
-
-        svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-        svg.setAttribute('class', 'tree-svg');
-        svg.setAttribute('width', '100%');
-        svg.setAttribute('height', '100%');
-        container.appendChild(svg);
-
         if (!root) {
+            container.innerHTML = '';
+            nodeElements = {};
+            svg = null;
+            edgeLayer = null;
+            nodeLayer = null;
             return;
         }
 
-        const positions = calculatePositions(root);
-        const bounds = getBounds(positions);
-
+        const newPositions = calculatePositions(root);
+        const bounds = getBounds(newPositions);
         const pad = 40;
-        svg.setAttribute('viewBox',
-            `${bounds.minX - pad} ${bounds.minY - pad} ${bounds.maxX - bounds.minX + pad * 2} ${bounds.maxY - bounds.minY + pad * 2}`
-        );
+        const vb = `${bounds.minX - pad} ${bounds.minY - pad} ${bounds.maxX - bounds.minX + pad * 2} ${bounds.maxY - bounds.minY + pad * 2}`;
 
-        drawEdges(root, positions);
-        drawNodes(root, positions);
+        // Create SVG layers on first render or if DOM was cleared externally
+        if (!svg || !container.contains(svg)) {
+            container.innerHTML = '';
+            nodeElements = {};
+            svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            svg.setAttribute('class', 'tree-svg');
+            svg.setAttribute('width', '100%');
+            svg.setAttribute('height', '100%');
+            edgeLayer = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+            edgeLayer.setAttribute('class', 'tree-edge-layer');
+            nodeLayer = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+            nodeLayer.setAttribute('class', 'tree-node-layer');
+            svg.appendChild(edgeLayer);
+            svg.appendChild(nodeLayer);
+            container.appendChild(svg);
+        }
+
+        svg.setAttribute('viewBox', vb);
+
+        // Redraw edges instantly — edges snap, only nodes animate
+        edgeLayer.innerHTML = '';
+        drawEdges(root, newPositions);
+
+        // Collect current tree node IDs
+        const newIds = new Set();
+        collectIds(root, newIds);
+        const oldIds = new Set(Object.keys(nodeElements).map(Number));
+
+        // Fade out nodes that no longer exist
+        for (const id of oldIds) {
+            if (!newIds.has(id)) {
+                const g = nodeElements[id];
+                g.style.transition = `opacity ${ANIM_MS}ms ease, transform ${ANIM_MS}ms ease`;
+                g.style.opacity = '0';
+                // Slightly shrink to reinforce the "removed" feel
+                const cur = g.style.transform || 'translate(0px,0px)';
+                g.style.transform = cur + ' scale(0.4)';
+                setTimeout(() => { if (g.parentNode) g.remove(); }, ANIM_MS);
+                delete nodeElements[id];
+            }
+        }
+
+        // Move existing nodes or create new ones
+        traverseNodes(root, (node) => {
+            const pos = newPositions.get(node.id);
+            const tx = `translate(${pos.x}px, ${pos.y}px)`;
+
+            if (nodeElements[node.id]) {
+                // Existing node: animate to new position and clear any highlight state
+                const g = nodeElements[node.id];
+                g.classList.remove('visiting', 'comparing', 'rotating', 'height-updating', 'balancing', 'replacing');
+                g.style.transition = `transform ${ANIM_MS}ms cubic-bezier(0.25, 0.46, 0.45, 0.94)`;
+                g.style.opacity = '1';
+                g.style.transform = tx;
+            } else {
+                // New node: create at position with opacity 0, then fade in
+                const g = createNodeElement(node);
+                g.style.transform = tx;
+                g.style.opacity = '0';
+                g.style.transition = 'none';
+                nodeLayer.appendChild(g);
+                nodeElements[node.id] = g;
+                // Force reflow so the transition triggers
+                void g.getBoundingClientRect();
+                g.style.transition = `opacity ${ANIM_MS}ms ease`;
+                g.style.opacity = '1';
+            }
+        });
+    }
+
+    /**
+     * Create an SVG group element for a tree node, centred at origin.
+     * Positioning is applied via style.transform on the group.
+     *
+     * @param {{id: number, value: number}} node - The tree node.
+     * @returns {SVGGElement} The constructed group element.
+     */
+    function createNodeElement(node) {
+        const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        g.setAttribute('class', 'tree-node');
+        g.setAttribute('data-id', node.id);
+
+        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        circle.setAttribute('cx', 0);
+        circle.setAttribute('cy', 0);
+        circle.setAttribute('r', NODE_RADIUS);
+
+        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        text.setAttribute('x', 0);
+        text.setAttribute('y', 0);
+        text.setAttribute('text-anchor', 'middle');
+        text.setAttribute('dominant-baseline', 'central');
+        text.setAttribute('class', 'tree-node-text');
+        text.textContent = node.value;
+
+        g.appendChild(circle);
+        g.appendChild(text);
+        return g;
     }
 
     /**
      * Calculate x, y positions for each node using an in-order traversal.
      *
      * @param {object} root - The root node.
-     * @returns {Map} Map of node id to {x, y}.
+     * @returns {Map<number, {x: number, y: number}>} Map of node id to position.
      */
     function calculatePositions(root) {
-        /** @type {Map<number, {x: number, y: number}>} */
         const positions = new Map();
         let xCounter = 0;
 
@@ -96,7 +191,7 @@ const TreeRenderer = (() => {
     /**
      * Get bounding box of all node positions.
      *
-     * @param {Map} positions - Node positions map.
+     * @param {Map<number, {x: number, y: number}>} positions - Node positions map.
      * @returns {{minX: number, minY: number, maxX: number, maxY: number}} Bounds.
      */
     function getBounds(positions) {
@@ -111,10 +206,38 @@ const TreeRenderer = (() => {
     }
 
     /**
-     * Draw edges between parent and child nodes.
+     * Collect all node IDs in the tree into a Set.
      *
-     * @param {object} node - Current node.
-     * @param {Map} positions - Node positions.
+     * @param {object|null} node - Current node.
+     * @param {Set<number>} ids - Set to populate.
+     * @returns {void}
+     */
+    function collectIds(node, ids) {
+        if (!node) return;
+        ids.add(node.id);
+        collectIds(node.left, ids);
+        collectIds(node.right, ids);
+    }
+
+    /**
+     * Traverse all nodes in the tree and invoke a callback for each.
+     *
+     * @param {object|null} node - Current node.
+     * @param {Function} cb - Callback invoked with each node.
+     * @returns {void}
+     */
+    function traverseNodes(node, cb) {
+        if (!node) return;
+        cb(node);
+        traverseNodes(node.left, cb);
+        traverseNodes(node.right, cb);
+    }
+
+    /**
+     * Draw edges between parent and child nodes into the edge layer.
+     *
+     * @param {object|null} node - Current node.
+     * @param {Map<number, {x: number, y: number}>} positions - Node positions.
      * @returns {void}
      */
     function drawEdges(node, positions) {
@@ -134,7 +257,7 @@ const TreeRenderer = (() => {
     }
 
     /**
-     * Draw a line (edge) between two points.
+     * Draw a line (edge) between two points in the edge layer.
      *
      * @param {number} x1 - Start x.
      * @param {number} y1 - Start y.
@@ -149,51 +272,14 @@ const TreeRenderer = (() => {
         line.setAttribute('x2', x2);
         line.setAttribute('y2', y2);
         line.setAttribute('class', 'tree-edge');
-        svg.appendChild(line);
+        edgeLayer.appendChild(line);
     }
 
     /**
-     * Draw all nodes recursively.
-     *
-     * @param {object|null} node - Current node.
-     * @param {Map} positions - Node positions.
-     * @returns {void}
-     */
-    function drawNodes(node, positions) {
-        if (!node) return;
-        const pos = positions.get(node.id);
-
-        const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-        g.setAttribute('class', 'tree-node');
-        g.setAttribute('data-id', node.id);
-
-        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-        circle.setAttribute('cx', pos.x);
-        circle.setAttribute('cy', pos.y);
-        circle.setAttribute('r', NODE_RADIUS);
-
-        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        text.setAttribute('x', pos.x);
-        text.setAttribute('y', pos.y);
-        text.setAttribute('text-anchor', 'middle');
-        text.setAttribute('dominant-baseline', 'central');
-        text.setAttribute('class', 'tree-node-text');
-        text.textContent = node.value;
-
-        g.appendChild(circle);
-        g.appendChild(text);
-        svg.appendChild(g);
-        nodeElements[node.id] = g;
-
-        drawNodes(node.left, positions);
-        drawNodes(node.right, positions);
-    }
-
-    /**
-     * Highlight a node with a given state.
+     * Highlight a node with a given state class.
      *
      * @param {number} nodeId - The node id to highlight.
-     * @param {string} state - CSS class: 'visiting', 'found', 'comparing', 'inserted', 'deleted'.
+     * @param {string} state - CSS class: 'visiting', 'found', 'comparing', 'inserted', 'deleted', etc.
      * @returns {void}
      */
     function highlightNode(nodeId, state) {
@@ -204,7 +290,7 @@ const TreeRenderer = (() => {
     }
 
     /**
-     * Clear a specific state from a node.
+     * Clear a specific state class from a node.
      *
      * @param {number} nodeId - The node id.
      * @param {string} state - The state class to remove.
@@ -229,17 +315,18 @@ const TreeRenderer = (() => {
     }
 
     /**
-     * Process a tree algorithm step.
+     * Process a tree algorithm step and apply the appropriate highlight state.
      *
-     * @param {{type: string, nodeId: number, newValue?: number}} step - The step to process.
+     * @param {{type: string, nodeId: number, newValue?: number, codeLine: number}} step - The step object.
      * @returns {void}
      */
     function processStep(step) {
-        // Clear transient states
+        // Clear transient states, keep persistent ones (found, inserted, deleted)
         for (const g of Object.values(nodeElements)) {
             g.classList.remove('visiting', 'comparing', 'rotating', 'height-updating', 'balancing', 'replacing');
         }
 
+        /** @type {Object.<string, string>} */
         const stateMap = {
             visit: 'visiting',
             compare: 'comparing',

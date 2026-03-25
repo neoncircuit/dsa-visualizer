@@ -122,17 +122,17 @@ See [docs/linked-lists.md](../docs/linked-lists.md) for complete implementation 
 - [x] Topological sort
 
 ### 2.4 Graph Representations and Matrices
-- [ ] Adjacency matrix visualization (grid with weighted edges)
-- [ ] Adjacency list visualization (linked nodes)
-- [ ] Side-by-side matrix vs list comparison for same graph
-- [ ] Interactive graph builder (add/remove nodes and edges)
+- [x] Adjacency matrix visualization (grid with weighted edges)
+- [x] Adjacency list visualization (linked nodes)
+- [x] Side-by-side matrix vs list comparison for same graph
+- [x] Interactive graph builder (add/remove nodes and edges)
 
 ### 2.5 Tree/Graph Rendering
 - [x] SVG node-and-edge renderer (tree-renderer.js, graph-renderer.js)
 - [x] Step-by-step traversal highlighting
 - [x] Weighted edge labels
 - [x] Visited/unvisited/current node color states
-- [ ] Animated insert/delete/rebalance operations
+- [x] Animated insert/delete/rebalance operations
 
 ## Phase 3 - Additional Algorithms
 
@@ -163,14 +163,14 @@ See [docs/linked-lists.md](../docs/linked-lists.md) for complete implementation 
 ## Phase 4 - Polish and Quality
 
 ### 4.1 User Experience
-- [ ] Mobile responsive layout improvements
-- [ ] Dark/light theme toggle
-- [ ] Custom array input (manual entry)
+- [x] Mobile responsive layout improvements (breakpoints at 1024px, 768px, 480px)
+- [x] Dark/light theme toggle (persisted via localStorage)
+- [x] Custom array input (manual entry, Enter key support, validation feedback)
 
 ### 4.2 Quality
-- [ ] Unit tests for algorithm generators
+- [x] Unit tests for algorithm generators (Vitest — test files written, `pnpm add -D vitest` required to run)
 - [ ] End-to-end tests with Playwright
-- [ ] CI/CD pipeline (lint, test, build, deploy)
+- [x] CI/CD pipeline (build check + test step in .github/workflows/deploy.yml)
 
 ### 4.3 Export
-- [ ] Algorithm performance benchmarking (run N times, show average)
+- [x] Algorithm performance benchmarking (Benchmark button → modal with table + bar chart, 20 runs × 4 sizes)

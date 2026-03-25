@@ -96,6 +96,12 @@
             <input type="number" id="search-target" min="1" max="100" value="50">
         </div>
 
+        <div class="controls-group custom-array-group" style="display:none;">
+            <label for="custom-array">Custom</label>
+            <input type="text" id="custom-array" placeholder="e.g. 5,3,8,1,9" title="Enter comma-separated numbers">
+            <button id="btn-apply-custom" title="Apply custom array">Apply</button>
+        </div>
+
         <div class="controls-group ll-position-group" style="display:none;">
             <label for="ll-position">Position</label>
             <input type="number" id="ll-position" min="0" max="99" value="0">
@@ -125,8 +131,26 @@
             </select>
         </div>
 
+        <div class="controls-group graph-view-group" style="display:none;">
+            <label for="graph-view">Graph View</label>
+            <select id="graph-view">
+                <option value="graph">Graph</option>
+                <option value="matrix">Matrix</option>
+                <option value="list">Adj List</option>
+                <option value="both">Both</option>
+            </select>
+        </div>
+
+        <div class="controls-group graph-edit-group" style="display:none;">
+            <button id="btn-edit-graph" title="Toggle interactive graph editing">Edit Graph</button>
+        </div>
+
         <div class="controls-group">
             <button id="btn-compare" title="Compare two algorithms">Compare</button>
+        </div>
+
+        <div class="controls-group benchmark-group" style="display:none;">
+            <button id="btn-benchmark" title="Benchmark current algorithm">Benchmark</button>
         </div>
 
         <div class="controls-group buttons">
@@ -145,6 +169,10 @@
 
         <div class="controls-group">
             <button id="btn-layout" title="Toggle vertical layout for recording">Landscape</button>
+        </div>
+
+        <div class="controls-group">
+            <button id="btn-theme" title="Toggle light/dark theme">Light</button>
         </div>
 
         <div class="controls-group">
@@ -386,6 +414,18 @@
                     </table>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Benchmark Modal Overlay -->
+    <div id="benchmark-modal" class="benchmark-modal" style="display:none;">
+        <div class="benchmark-modal-inner">
+            <div class="benchmark-header">
+                <h2 id="benchmark-title">Benchmark</h2>
+                <button id="btn-benchmark-close" title="Close benchmark">&#x2715;</button>
+            </div>
+            <div id="benchmark-loading" class="benchmark-loading" style="display:none;">Running benchmark&hellip;</div>
+            <div id="benchmark-results"></div>
         </div>
     </div>
 

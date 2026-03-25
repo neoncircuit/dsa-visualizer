@@ -19,6 +19,7 @@ import TreeAlgorithms from './algorithms/trees.js';
 import GraphAlgorithms from './algorithms/graphs.js';
 import LinkedListAlgorithms from './algorithms/linked-lists.js';
 import LinkedListRenderer from './linked-list-renderer.js';
+import Benchmark from './benchmark.js';
 
 (() => {
     'use strict';
@@ -51,6 +52,20 @@ import LinkedListRenderer from './linked-list-renderer.js';
     const llTargetInput = document.getElementById('ll-target');
     /** @type {HTMLDivElement} */
     const llTargetGroup = document.querySelector('.ll-target-group');
+    /** @type {HTMLSelectElement} */
+    const graphViewSelect = document.getElementById('graph-view');
+    /** @type {HTMLDivElement} */
+    const graphViewGroup = document.querySelector('.graph-view-group');
+    /** @type {HTMLButtonElement} */
+    const btnEditGraph = document.getElementById('btn-edit-graph');
+    /** @type {HTMLDivElement} */
+    const graphEditGroup = document.querySelector('.graph-edit-group');
+    /** @type {HTMLInputElement} */
+    const customArrayInput = document.getElementById('custom-array');
+    /** @type {HTMLDivElement} */
+    const customArrayGroup = document.querySelector('.custom-array-group');
+    /** @type {HTMLButtonElement} */
+    const btnApplyCustom = document.getElementById('btn-apply-custom');
 
     /** @type {HTMLButtonElement} */
     const btnGenerate = document.getElementById('btn-generate');
@@ -320,6 +335,15 @@ import LinkedListRenderer from './linked-list-renderer.js';
         const needsPosition = algoKey === 'llInsertPos' || algoKey === 'llDeletePos';
         llPositionGroup.style.display = needsPosition ? 'flex' : 'none';
 
+        // Show/hide graph view selector and edit button
+        const isGraphAlgo = isGraphAlgorithm(algoKey);
+        graphViewGroup.style.display = isGraphAlgo ? 'flex' : 'none';
+        graphEditGroup.style.display = isGraphAlgo ? 'flex' : 'none';
+
+        // Show custom array input only for sort/search (array-based algorithms)
+        const isArrayAlgo = !isGraphAlgo && !isTreeAlgorithm(algoKey) && !isLinkedListAlgorithm(algoKey);
+        customArrayGroup.style.display = isArrayAlgo ? 'flex' : 'none';
+
         // Determine code and complexity source
         let codeSource, complexitySource;
         if (algoKey === 'bstLevelOrder') {
@@ -424,6 +448,160 @@ import LinkedListRenderer from './linked-list-renderer.js';
         return LINKED_LIST_ALGORITHMS.includes(key);
     }
 
+    // ─── Graph View & Interactive Builder ───
+
+    /** @type {boolean} Whether the graph is in edit mode. */
+    let graphEditMode = false;
+    /** @type {number|null} First selected node when drawing a new edge. */
+    let edgeSourceNode = null;
+
+    /**
+     * Render the current graph using the selected graph view mode.
+     *
+     * @param {{nodes: number[], edges: Array, adj: object}} graph - The current graph.
+     * @returns {void}
+     */
+    function applyGraphView(graph) {
+        const view = graphViewSelect.value;
+        if (view === 'matrix') {
+            GraphRenderer.renderMatrix(graph.nodes, graph.edges);
+        } else if (view === 'list') {
+            GraphRenderer.renderList(graph.nodes, graph.edges);
+        } else if (view === 'both') {
+            GraphRenderer.renderBoth(graph.nodes, graph.edges);
+        } else {
+            GraphRenderer.render(graph.nodes, graph.edges);
+        }
+        if (graphEditMode && view === 'graph') {
+            attachGraphEditHandlers();
+        }
+    }
+
+    /**
+     * Rebuild the graph adjacency list from nodes and edges.
+     *
+     * @param {number[]} nodes - Node IDs.
+     * @param {Array<[number, number, number?]>} edges - Edge tuples.
+     * @returns {object} Adjacency list object.
+     */
+    function buildAdjList(nodes, edges) {
+        const adj = {};
+        for (const n of nodes) adj[n] = [];
+        for (const [from, to, weight] of edges) {
+            const w = weight || 1;
+            if (adj[from]) adj[from].push({ to, weight: w });
+            if (adj[to]) adj[to].push({ to: from, weight: w });
+        }
+        return adj;
+    }
+
+    /**
+     * Attach interactive event handlers to the graph SVG for edit mode.
+     *
+     * @returns {void}
+     */
+    function attachGraphEditHandlers() {
+        const svgEl = treeGraphContainer.querySelector('.graph-svg');
+        if (!svgEl) return;
+
+        svgEl.classList.add('edit-mode');
+        edgeSourceNode = null;
+
+        // Click on background → add node
+        svgEl.addEventListener('click', function onSvgClick(e) {
+            if (e.target === svgEl || e.target.tagName === 'svg') {
+                const rect = svgEl.getBoundingClientRect();
+                const vb = svgEl.viewBox.baseVal;
+                const scaleX = vb.width / rect.width;
+                const scaleY = vb.height / rect.height;
+                const x = (e.clientX - rect.left) * scaleX + vb.x;
+                const y = (e.clientY - rect.top) * scaleY + vb.y;
+                const newId = currentGraph.nodes.length > 0
+                    ? Math.max(...currentGraph.nodes) + 1
+                    : 1;
+                currentGraph.nodes.push(newId);
+                currentGraph.adj = buildAdjList(currentGraph.nodes, currentGraph.edges);
+                applyGraphView(currentGraph);
+            }
+        });
+
+        // Click on node → select for edge creation or complete edge
+        for (const nodeEl of svgEl.querySelectorAll('.graph-node')) {
+            const nodeId = parseInt(nodeEl.dataset.id, 10);
+
+            nodeEl.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (edgeSourceNode === null) {
+                    edgeSourceNode = nodeId;
+                    nodeEl.classList.add('selected');
+                } else if (edgeSourceNode === nodeId) {
+                    nodeEl.classList.remove('selected');
+                    edgeSourceNode = null;
+                } else {
+                    // Avoid duplicate edges
+                    const exists = currentGraph.edges.some(
+                        ([f, t]) => (f === edgeSourceNode && t === nodeId) ||
+                                   (f === nodeId && t === edgeSourceNode)
+                    );
+                    if (!exists) {
+                        const weightStr = prompt(`Edge weight from ${edgeSourceNode} → ${nodeId}:`, '1');
+                        const weight = parseInt(weightStr, 10);
+                        if (!isNaN(weight) && weight > 0) {
+                            currentGraph.edges.push([edgeSourceNode, nodeId, weight]);
+                        } else if (weightStr !== null) {
+                            currentGraph.edges.push([edgeSourceNode, nodeId]);
+                        }
+                        currentGraph.adj = buildAdjList(currentGraph.nodes, currentGraph.edges);
+                    }
+                    edgeSourceNode = null;
+                    applyGraphView(currentGraph);
+                }
+            });
+
+            // Right-click node → delete node and its edges
+            nodeEl.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                currentGraph.nodes = currentGraph.nodes.filter(n => n !== nodeId);
+                currentGraph.edges = currentGraph.edges.filter(
+                    ([f, t]) => f !== nodeId && t !== nodeId
+                );
+                currentGraph.adj = buildAdjList(currentGraph.nodes, currentGraph.edges);
+                edgeSourceNode = null;
+                applyGraphView(currentGraph);
+            });
+        }
+
+        // Right-click edge → delete edge
+        for (const edgeEl of svgEl.querySelectorAll('.graph-edge')) {
+            edgeEl.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                const from = parseInt(edgeEl.dataset.from, 10);
+                const to = parseInt(edgeEl.dataset.to, 10);
+                currentGraph.edges = currentGraph.edges.filter(
+                    ([f, t]) => !((f === from && t === to) || (f === to && t === from))
+                );
+                currentGraph.adj = buildAdjList(currentGraph.nodes, currentGraph.edges);
+                applyGraphView(currentGraph);
+            });
+        }
+    }
+
+    // Graph view selector change
+    graphViewSelect.addEventListener('change', () => {
+        if (currentGraph) applyGraphView(currentGraph);
+    });
+
+    // Edit Graph toggle
+    btnEditGraph.addEventListener('click', () => {
+        graphEditMode = !graphEditMode;
+        btnEditGraph.classList.toggle('active', graphEditMode);
+        btnEditGraph.textContent = graphEditMode ? 'Stop Editing' : 'Edit Graph';
+        if (currentGraph && graphViewSelect.value === 'graph') {
+            applyGraphView(currentGraph);
+        }
+    });
+
     /**
      * Switch the visualization between bars and tree/graph modes.
      *
@@ -450,7 +628,7 @@ import LinkedListRenderer from './linked-list-renderer.js';
             TreeRenderer.render(currentTree);
         } else if (isGraphAlgorithm(algoKey)) {
             currentGraph = GraphAlgorithms.buildSampleGraph();
-            GraphRenderer.render(currentGraph.nodes, currentGraph.edges);
+            applyGraphView(currentGraph);
         } else if (isLinkedListAlgorithm(algoKey)) {
             LinkedListAlgorithms.resetIds();
             currentLinkedList = LinkedListAlgorithms.buildSampleLinkedList(generateRandomLinkedListValues());
@@ -995,6 +1173,105 @@ import LinkedListRenderer from './linked-list-renderer.js';
 
     btnCompare.addEventListener('click', toggleCompare);
 
+    // ─── Benchmark Mode ───
+
+    /** @type {HTMLButtonElement} */
+    const btnBenchmark = document.getElementById('btn-benchmark');
+    /** @type {HTMLDivElement} */
+    const benchmarkModal = document.getElementById('benchmark-modal');
+    /** @type {HTMLButtonElement} */
+    const btnBenchmarkClose = document.getElementById('btn-benchmark-close');
+    /** @type {HTMLDivElement} */
+    const benchmarkResults = document.getElementById('benchmark-results');
+    /** @type {HTMLHeadingElement} */
+    const benchmarkTitle = document.getElementById('benchmark-title');
+    /** @type {HTMLDivElement} */
+    const benchmarkLoading = document.getElementById('benchmark-loading');
+    /** @type {HTMLDivElement} */
+    const benchmarkGroup = document.querySelector('.benchmark-group');
+
+    /**
+     * Determine whether the currently selected algorithm is benchmarkable.
+     * Only sorting and searching algorithms are supported.
+     *
+     * @param {string} key - The algorithm key.
+     * @returns {boolean} True if the algorithm can be benchmarked.
+     */
+    function isBenchmarkable(key) {
+        return !isTreeAlgorithm(key) && !isGraphAlgorithm(key) && !isLinkedListAlgorithm(key);
+    }
+
+    /**
+     * Show or hide the Benchmark button depending on the selected algorithm.
+     *
+     * @returns {void}
+     */
+    function updateBenchmarkVisibility() {
+        const algoKey = algorithmSelect.value;
+        benchmarkGroup.style.display = isBenchmarkable(algoKey) ? 'flex' : 'none';
+    }
+
+    /**
+     * Open the benchmark modal, run the benchmark for the current algorithm
+     * across several array sizes, and display the results table and bar chart.
+     *
+     * @returns {void}
+     */
+    function openBenchmark() {
+        const algoKey = algorithmSelect.value;
+        if (!isBenchmarkable(algoKey)) return;
+
+        const isSearch = isSearchAlgorithm(algoKey);
+
+        // Resolve the algorithm function
+        /** @type {Function} */
+        const algoFn = isSearch
+            ? SearchingAlgorithms[algoKey]
+            : SortingAlgorithms[algoKey];
+
+        if (typeof algoFn !== 'function') return;
+
+        // Build a human-readable title from the algorithm key
+        const info = isSearch
+            ? SearchingAlgorithms.COMPLEXITY[algoKey]
+            : SortingAlgorithms.COMPLEXITY[algoKey];
+        const name = info ? info.name : algoKey;
+
+        benchmarkTitle.textContent = `Benchmark — ${name}`;
+        benchmarkResults.innerHTML = '';
+        benchmarkLoading.style.display = 'block';
+        benchmarkModal.style.display = 'flex';
+
+        // Defer the heavy work one tick so the modal renders before blocking
+        setTimeout(() => {
+            const SIZES = [10, 25, 50, 100];
+            const RUNS = 20;
+
+            const results = Benchmark.run(algoFn, SIZES, RUNS, isSearch);
+            benchmarkLoading.style.display = 'none';
+            Benchmark.renderResults(benchmarkResults, name, results);
+        }, 30);
+    }
+
+    btnBenchmark.addEventListener('click', openBenchmark);
+
+    btnBenchmarkClose.addEventListener('click', () => {
+        benchmarkModal.style.display = 'none';
+    });
+
+    // Close modal when clicking the backdrop
+    benchmarkModal.addEventListener('click', (e) => {
+        if (e.target === benchmarkModal) {
+            benchmarkModal.style.display = 'none';
+        }
+    });
+
+    // Keep benchmark button visibility in sync with algorithm selection
+    algorithmSelect.addEventListener('change', updateBenchmarkVisibility);
+
+    // Set initial visibility
+    updateBenchmarkVisibility();
+
     // ─── Event Listeners ───
 
     btnGenerate.addEventListener('click', generateArray);
@@ -1176,6 +1453,59 @@ import LinkedListRenderer from './linked-list-renderer.js';
         updateVizOverlay();
         requestAnimationFrame(updatePortraitCodeSize);
     });
+
+    // ─── Custom Array Input ───
+
+    /**
+     * Parse a comma-separated string of numbers into an array.
+     * Filters out non-numeric tokens and clamps values to [1, 200].
+     *
+     * @param {string} raw - Raw input string.
+     * @returns {number[]|null} Parsed array, or null if no valid numbers found.
+     */
+    function parseCustomArray(raw) {
+        const values = raw.split(',')
+            .map(s => parseInt(s.trim(), 10))
+            .filter(n => !isNaN(n) && n >= 1 && n <= 200);
+        return values.length >= 2 ? values : null;
+    }
+
+    btnApplyCustom.addEventListener('click', () => {
+        const parsed = parseCustomArray(customArrayInput.value);
+        if (!parsed) {
+            customArrayInput.style.borderColor = 'var(--bar-swap)';
+            setTimeout(() => { customArrayInput.style.borderColor = ''; }, 1200);
+            return;
+        }
+        reset();
+        currentArray = parsed;
+        cachedMaxVal = Math.max(...currentArray);
+        Visualizer.render(currentArray);
+        customArrayInput.style.borderColor = 'var(--bar-sorted)';
+        setTimeout(() => { customArrayInput.style.borderColor = ''; }, 1200);
+    });
+
+    // Apply on Enter key
+    customArrayInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') btnApplyCustom.click();
+    });
+
+    // ─── Theme Toggle ───
+
+    /** @type {HTMLButtonElement} */
+    const btnTheme = document.getElementById('btn-theme');
+
+    btnTheme.addEventListener('click', () => {
+        const isLight = document.body.classList.toggle('light');
+        btnTheme.textContent = isLight ? 'Dark' : 'Light';
+        localStorage.setItem('theme', isLight ? 'light' : 'dark');
+    });
+
+    // Restore saved theme preference
+    if (localStorage.getItem('theme') === 'light') {
+        document.body.classList.add('light');
+        btnTheme.textContent = 'Dark';
+    }
 
     // ─── Recording ───
 

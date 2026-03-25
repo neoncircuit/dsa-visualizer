@@ -412,28 +412,195 @@ const GraphRenderer = (() => {
     }
 
     /**
+     * Render both adjacency matrix and adjacency list side by side.
+     *
+     * @param {number[]} nodes - Array of node values/ids.
+     * @param {Array<[number, number, number?]>} edges - Array of [from, to, weight?].
+     * @param {boolean} directed - Whether edges are directed.
+     * @returns {void}
+     */
+    function renderBoth(nodes, edges, directed = false) {
+        container.innerHTML = '';
+        nodeElements = {};
+        edgeElements = {};
+
+        const wrapper = document.createElement('div');
+        wrapper.className = 'graph-both-wrapper';
+
+        const matrixPanel = document.createElement('div');
+        matrixPanel.className = 'graph-both-panel';
+        const matrixLabel = document.createElement('div');
+        matrixLabel.className = 'graph-both-panel-label';
+        matrixLabel.textContent = 'Adjacency Matrix';
+        matrixPanel.appendChild(matrixLabel);
+
+        const listPanel = document.createElement('div');
+        listPanel.className = 'graph-both-panel';
+        const listLabel = document.createElement('div');
+        listLabel.className = 'graph-both-panel-label';
+        listLabel.textContent = 'Adjacency List';
+        listPanel.appendChild(listLabel);
+
+        wrapper.appendChild(matrixPanel);
+        wrapper.appendChild(listPanel);
+        container.appendChild(wrapper);
+
+        // Build matrix table into matrixPanel
+        const matrixContainer = document.createElement('div');
+        matrixContainer.className = 'adj-matrix-wrapper';
+        matrixPanel.appendChild(matrixContainer);
+        _renderMatrixInto(matrixContainer, nodes, edges, directed);
+
+        // Build list into listPanel
+        const listContainer = document.createElement('div');
+        listContainer.className = 'adj-list-wrapper';
+        listPanel.appendChild(listContainer);
+        _renderListInto(listContainer, nodes, edges, directed);
+    }
+
+    /**
+     * Internal helper: render adjacency matrix into a given element.
+     *
+     * @param {HTMLElement} target - Target element to render into.
+     * @param {number[]} nodes - Node IDs.
+     * @param {Array<[number, number, number?]>} edges - Edge tuples.
+     * @param {boolean} directed - Directed graph flag.
+     * @returns {void}
+     */
+    function _renderMatrixInto(target, nodes, edges, directed) {
+        const n = nodes.length;
+        const sortedNodes = [...nodes].sort((a, b) => a - b);
+        const nodeIndex = new Map(sortedNodes.map((node, i) => [node, i]));
+        const matrix = Array(n).fill(null).map(() => Array(n).fill(0));
+
+        for (const [from, to, weight] of edges) {
+            const w = weight || 1;
+            const i = nodeIndex.get(from);
+            const j = nodeIndex.get(to);
+            if (i !== undefined && j !== undefined) {
+                matrix[i][j] = w;
+                if (!directed) matrix[j][i] = w;
+            }
+        }
+
+        const table = document.createElement('table');
+        table.className = 'adj-matrix';
+        const headerRow = document.createElement('tr');
+        headerRow.appendChild(document.createElement('th'));
+        for (const node of sortedNodes) {
+            const th = document.createElement('th');
+            th.textContent = node;
+            th.className = 'matrix-header';
+            headerRow.appendChild(th);
+        }
+        table.appendChild(headerRow);
+
+        for (let i = 0; i < n; i++) {
+            const row = document.createElement('tr');
+            const rh = document.createElement('th');
+            rh.textContent = sortedNodes[i];
+            rh.className = 'matrix-header';
+            row.appendChild(rh);
+            for (let j = 0; j < n; j++) {
+                const cell = document.createElement('td');
+                const val = matrix[i][j];
+                cell.textContent = val === 0 ? '-' : val;
+                cell.className = 'matrix-cell';
+                cell.dataset.row = sortedNodes[i];
+                cell.dataset.col = sortedNodes[j];
+                if (val !== 0) cell.classList.add('has-edge');
+                if (i === j) cell.classList.add('diagonal');
+                row.appendChild(cell);
+            }
+            table.appendChild(row);
+        }
+        target.appendChild(table);
+    }
+
+    /**
+     * Internal helper: render adjacency list into a given element.
+     *
+     * @param {HTMLElement} target - Target element to render into.
+     * @param {number[]} nodes - Node IDs.
+     * @param {Array<[number, number, number?]>} edges - Edge tuples.
+     * @param {boolean} directed - Directed graph flag.
+     * @returns {void}
+     */
+    function _renderListInto(target, nodes, edges, directed) {
+        const adjList = {};
+        for (const node of nodes) adjList[node] = [];
+        for (const [from, to, weight] of edges) {
+            const w = weight || 1;
+            if (adjList[from]) adjList[from].push({ to, weight: w });
+            if (!directed && adjList[to]) adjList[to].push({ to: from, weight: w });
+        }
+
+        const sortedNodes = [...nodes].sort((a, b) => a - b);
+        for (const node of sortedNodes) {
+            const row = document.createElement('div');
+            row.className = 'adj-list-row';
+            row.dataset.node = node;
+
+            const nodeLabel = document.createElement('span');
+            nodeLabel.className = 'adj-list-node';
+            nodeLabel.textContent = node;
+            row.appendChild(nodeLabel);
+
+            const arrow = document.createElement('span');
+            arrow.className = 'adj-list-arrow';
+            arrow.textContent = '→';
+            row.appendChild(arrow);
+
+            const neighbors = adjList[node] || [];
+            if (neighbors.length === 0) {
+                const empty = document.createElement('span');
+                empty.className = 'adj-list-empty';
+                empty.textContent = '∅';
+                row.appendChild(empty);
+            } else {
+                for (let i = 0; i < neighbors.length; i++) {
+                    const nb = neighbors[i];
+                    const span = document.createElement('span');
+                    span.className = 'adj-list-neighbor';
+                    span.textContent = nb.weight === 1 ? nb.to : `${nb.to}(${nb.weight})`;
+                    span.dataset.from = node;
+                    span.dataset.to = nb.to;
+                    row.appendChild(span);
+                    if (i < neighbors.length - 1) {
+                        const sep = document.createElement('span');
+                        sep.className = 'adj-list-separator';
+                        sep.textContent = '→';
+                        row.appendChild(sep);
+                    }
+                }
+            }
+            target.appendChild(row);
+        }
+    }
+
+    /**
      * Get the current representation type.
      *
-     * @returns {string} 'node-edge', 'matrix', or 'list'.
+     * @returns {string} 'node-edge', 'matrix', 'list', or 'both'.
      */
     function getCurrentRepresentation() {
-        const wrapper = container.querySelector('.adj-matrix-wrapper');
-        if (wrapper) return 'matrix';
-        const listWrapper = container.querySelector('.adj-list-wrapper');
-        if (listWrapper) return 'list';
+        if (container.querySelector('.graph-both-wrapper')) return 'both';
+        if (container.querySelector('.adj-matrix-wrapper')) return 'matrix';
+        if (container.querySelector('.adj-list-wrapper')) return 'list';
         return 'node-edge';
     }
 
     return {
         init,
         render,
+        renderMatrix,
+        renderList,
+        renderBoth,
         highlightNode,
         highlightEdge,
         clearAllStates,
         processStep,
         getNodePositions,
-        renderMatrix,
-        renderList,
         getCurrentRepresentation,
     };
 })();
