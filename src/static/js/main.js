@@ -20,6 +20,8 @@ import GraphAlgorithms from './algorithms/graphs.js';
 import LinkedListAlgorithms from './algorithms/linked-lists.js';
 import LinkedListRenderer from './linked-list-renderer.js';
 import Benchmark from './benchmark.js';
+import FEATURES from './config.js';
+import Feedback from './feedback.js';
 
 (() => {
     'use strict';
@@ -178,6 +180,45 @@ import Benchmark from './benchmark.js';
 
     generateArray();
     loadAlgorithm();
+
+    // ─── Mobile Device Detection ───
+
+    /**
+     * Detect if the current device is a mobile/touch device.
+     *
+     * @returns {boolean} True if the device is mobile.
+     */
+    function isMobileDevice() {
+        return (
+            'ontouchstart' in window ||
+            navigator.maxTouchPoints > 0 ||
+            navigator.msMaxTouchPoints > 0
+        );
+    }
+
+    /**
+     * Apply mobile-specific adaptations when on a mobile device in portrait mode.
+     * Adds 'mobile-portrait' class to body for additional styling hooks.
+     *
+     * @returns {void}
+     */
+    function handleMobileAdaptation() {
+        const isMobile = isMobileDevice();
+        const isPortrait = window.innerHeight > window.innerWidth;
+        const isSmallScreen = window.innerWidth <= 768;
+
+        if (isMobile && isPortrait && isSmallScreen) {
+            document.body.classList.add('mobile-portrait');
+        } else {
+            document.body.classList.remove('mobile-portrait');
+        }
+    }
+
+    handleMobileAdaptation();
+    window.addEventListener('resize', handleMobileAdaptation);
+    window.addEventListener('orientationchange', () => {
+        setTimeout(handleMobileAdaptation, 100);
+    });
 
     // ─── Array Generation ───
 
@@ -1575,4 +1616,8 @@ import Benchmark from './benchmark.js';
                 break;
         }
     });
+
+    if (FEATURES.FEEDBACK) {
+        Feedback.init();
+    }
 })();

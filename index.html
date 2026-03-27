@@ -186,6 +186,10 @@
             </select>
             <button id="btn-record" title="Start/stop recording">Record</button>
         </div>
+
+        <div class="controls-group">
+            <button id="btn-feedback" title="Send feedback">Feedback</button>
+        </div>
     </header>
 
     <main class="main-content">
@@ -428,6 +432,48 @@
             <div id="benchmark-results"></div>
         </div>
     </div>
+
+    <!-- Feedback Modal -->
+    <div id="feedback-modal" class="feedback-modal">
+        <div class="feedback-modal-inner">
+            <div class="feedback-header">
+                <h2>Send Feedback</h2>
+                <button id="feedback-close" title="Close">&#x2715;</button>
+            </div>
+            <div class="feedback-body">
+                <div id="feedback-errors" class="feedback-errors hidden"></div>
+
+                <label class="feedback-label">Rating</label>
+                <div class="feedback-stars">
+                    <span class="feedback-star" data-value="1" title="1 - Poor">&#9733;</span>
+                    <span class="feedback-star" data-value="2" title="2 - Fair">&#9733;</span>
+                    <span class="feedback-star" data-value="3" title="3 - Good">&#9733;</span>
+                    <span class="feedback-star" data-value="4" title="4 - Very good">&#9733;</span>
+                    <span class="feedback-star" data-value="5" title="5 - Excellent">&#9733;</span>
+                </div>
+
+                <label class="feedback-label" for="feedback-category">Category</label>
+                <select id="feedback-category" class="feedback-select">
+                    <option value="general">General Feedback</option>
+                    <option value="feature">Feature Request</option>
+                    <option value="bug">Bug Report</option>
+                    <option value="other">Other</option>
+                </select>
+
+                <label class="feedback-label" for="feedback-message">Message</label>
+                <textarea id="feedback-message" class="feedback-textarea" rows="4" placeholder="Tell us what you think..." maxlength="1000"></textarea>
+                <div class="feedback-char-counter"><span id="feedback-char-count">0</span> / 1000</div>
+
+                <div class="feedback-actions">
+                    <button id="feedback-cancel" class="feedback-btn feedback-btn-secondary">Cancel</button>
+                    <button id="feedback-submit" class="feedback-btn feedback-btn-primary">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feedback Toast -->
+    <div id="feedback-toast" class="feedback-toast"></div>
 
     <script type="module" src="/src/static/js/main.js"></script>
 </body>

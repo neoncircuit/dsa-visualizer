@@ -169,8 +169,106 @@ See [docs/linked-lists.md](../docs/linked-lists.md) for complete implementation 
 
 ### 4.2 Quality
 - [x] Unit tests for algorithm generators (Vitest — test files written, `pnpm add -D vitest` required to run)
-- [ ] End-to-end tests with Playwright
+- [x] End-to-end tests with Playwright
+  - [x] Install and configure Playwright
+  - [x] Create test utilities and helpers
+  - [x] Test core UI controls (algorithm selection, size, speed, playback)
+  - [x] Test sorting algorithm visualizations
+  - [x] Test searching algorithm visualizations
+  - [x] Test tree algorithm visualizations
+  - [x] Test graph algorithm visualizations
+  - [x] Test linked list algorithm visualizations
+  - [x] Test advanced features (compare mode, keyboard shortcuts, sound)
+  - [x] Test UI/UX (responsive layout, accessibility)
+  - [x] Add to CI/CD pipeline
+  - [x] Document in docs/e2e-testing.md
+  - [x] Update lessons.md with patterns learned
 - [x] CI/CD pipeline (build check + test step in .github/workflows/deploy.yml)
 
 ### 4.3 Export
 - [x] Algorithm performance benchmarking (Benchmark button → modal with table + bar chart, 20 runs × 4 sizes)
+
+## Phase 5 - User Feedback System
+
+See [docs/feedback.md](../docs/feedback.md) for architecture, adapter pattern, and setup instructions.
+
+### 5.1 Adapter Pattern Infrastructure
+- [x] Create feature flag system (`src/static/js/config.js`)
+- [x] Create feedback service interface (`src/static/js/feedback-service.js`)
+- [x] Implement Supabase adapter (`src/static/js/adapters/supabase-adapter.js`)
+- [x] Implement Firebase adapter as reference (`src/static/js/adapters/firebase-adapter.js`)
+- [x] Document adapter interface contract (input/output types)
+
+### 5.2 UI Component
+- [x] Create feedback modal with rating, category, and message fields
+- [x] Implement form validation (rating 1-5, category whitelist, message 10-1000 chars)
+- [x] Add success/error toast notifications
+- [x] Add client-side rate limiting (30s cooldown)
+- [x] Add feedback button to header controls bar
+- [x] Create CSS styles using existing theme variables
+- [x] Wire up in main.js with feature flag gate
+
+### 5.3 Configuration and Deployment
+- [x] Update `.env.example` with Supabase and Firebase variables
+- [x] Auto-hide feedback button when adapter is not configured
+- [ ] Add Supabase environment variables to Vercel project settings
+- [ ] Create Supabase project and feedback table with RLS policies
+
+### 5.4 Testing and Documentation
+- [ ] E2E tests for feedback form submission
+- [ ] Unit tests for form validation logic
+- [x] Document architecture and adapter switching in docs/feedback.md
+
+## Phase 6 - User Experience Enhancements
+
+See [docs/enhancements.md](../docs/enhancements.md) for complete architecture and implementation guide.
+
+### 6.1 Event Bus Infrastructure
+- [ ] Create lightweight event emitter module (`src/static/js/event-bus.js`)
+- [ ] Identify emission points in main.js (algorithm start, step, complete, reset)
+- [ ] Document event types and payloads
+
+### 6.2 Visual Polish Module
+- [ ] Create `src/static/js/enhancements/visual-polish.js`
+- [ ] Implement completion particle effects (confetti on algorithm finish)
+- [ ] Add smooth state transition animations (fade/slide for panels)
+- [ ] Create additional color themes (Ocean, Forest, Sunset, Monochrome)
+- [ ] Add theme selector to settings panel
+- [ ] Persist theme preference to localStorage
+
+### 6.3 Gamification Module
+- [ ] Create `src/static/js/enhancements/gamification.js`
+- [ ] Implement streak tracking (consecutive days of use)
+- [ ] Create achievement system:
+  - [ ] "First Sort" - Complete first sorting algorithm
+  - [ ] "Speed Demon" - Complete algorithm under 1 second
+  - [ ] "Perfectionist" - Complete all sorting algorithms
+  - [ ] "Explorer" - Try all algorithm categories
+  - [ ] "Comparator" - Use compare mode 10 times
+- [ ] Add achievement notification toast
+- [ ] Create achievements panel in UI
+- [ ] Persist progress to localStorage
+
+### 6.4 Educational Module
+- [ ] Create `src/static/js/enhancements/educational.js`
+- [ ] Add quiz questions per algorithm (3-5 questions each)
+- [ ] Show quiz modal after algorithm completion (optional)
+- [ ] Track quiz scores per algorithm
+- [ ] Add "Challenge Mode" - random algorithm + quiz
+- [ ] Provide explanations for incorrect answers
+
+### 6.5 Interactivity Module
+- [ ] Create `src/static/js/enhancements/interactivity.js`
+- [ ] Implement drag-and-drop bar reordering (for custom arrays)
+- [ ] Add node drag functionality for graphs/trees
+- [ ] Create custom graph builder with edge drawing
+- [ ] Add undo/redo for interactive operations
+- [ ] Export custom configurations to JSON
+
+### 6.6 Integration and Testing
+- [ ] Integrate all enhancement modules with event bus
+- [ ] Ensure modules can be disabled independently
+- [ ] Add feature flags for gradual rollout
+- [ ] Write E2E tests for each enhancement
+- [ ] Update README with enhancement features
+- [ ] Create user documentation for new features
