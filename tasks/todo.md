@@ -166,6 +166,10 @@ See [docs/linked-lists.md](../docs/linked-lists.md) for complete implementation 
 - [x] Mobile responsive layout improvements (breakpoints at 1024px, 768px, 480px)
 - [x] Dark/light theme toggle (persisted via localStorage)
 - [x] Custom array input (manual entry, Enter key support, validation feedback)
+- [x] Landscape mode: all content visible without scrolling (header, controls, visualizer, info panel all fit in viewport)
+- [x] Array State Panel: live numeric value + index cells below the visualizer, aligned with bars, with colour-coded states and swap animation; hidden for tree/graph/linked-list and list[int] mode
+- [x] Manual value inputs for Size and Speed sliders (number field syncs with range slider bidirectionally)
+- [x] Speed/Size input field: spinner arrows removed; field widened to 48px to correctly display 3-digit values
 
 ### 4.2 Quality
 - [x] Unit tests for algorithm generators (Vitest — test files written, `pnpm add -D vitest` required to run)
@@ -211,12 +215,12 @@ See [docs/feedback.md](../docs/feedback.md) for architecture, adapter pattern, a
 ### 5.3 Configuration and Deployment
 - [x] Update `.env.example` with Supabase and Firebase variables
 - [x] Auto-hide feedback button when adapter is not configured
-- [ ] Add Supabase environment variables to Vercel project settings
-- [ ] Create Supabase project and feedback table with RLS policies
+- [x] Add Supabase environment variables to Vercel project settings
+- [x] Create Supabase project and feedback table with RLS policies
 
 ### 5.4 Testing and Documentation
-- [ ] E2E tests for feedback form submission
-- [ ] Unit tests for form validation logic
+- [x] E2E tests for feedback form submission
+- [x] Unit tests for form validation logic
 - [x] Document architecture and adapter switching in docs/feedback.md
 
 ## Phase 6 - User Experience Enhancements
@@ -224,51 +228,105 @@ See [docs/feedback.md](../docs/feedback.md) for architecture, adapter pattern, a
 See [docs/enhancements.md](../docs/enhancements.md) for complete architecture and implementation guide.
 
 ### 6.1 Event Bus Infrastructure
-- [ ] Create lightweight event emitter module (`src/static/js/event-bus.js`)
-- [ ] Identify emission points in main.js (algorithm start, step, complete, reset)
-- [ ] Document event types and payloads
+- [x] Create lightweight event emitter module (`src/static/js/event-bus.js`)
+- [x] Identify emission points in main.js (algorithm start, step, complete, reset)
+- [x] Document event types and payloads
 
 ### 6.2 Visual Polish Module
-- [ ] Create `src/static/js/enhancements/visual-polish.js`
-- [ ] Implement completion particle effects (confetti on algorithm finish)
-- [ ] Add smooth state transition animations (fade/slide for panels)
-- [ ] Create additional color themes (Ocean, Forest, Sunset, Monochrome)
-- [ ] Add theme selector to settings panel
-- [ ] Persist theme preference to localStorage
+- [x] Create `src/static/js/enhancements/visual-polish.js`
+- [x] Implement completion particle effects (confetti on algorithm finish)
+- [x] Create additional color themes (Ocean, Forest, Sunset, Monochrome)
+- [x] Add theme selector to settings panel
+- [x] Persist theme preference to localStorage
 
 ### 6.3 Gamification Module
-- [ ] Create `src/static/js/enhancements/gamification.js`
-- [ ] Implement streak tracking (consecutive days of use)
-- [ ] Create achievement system:
-  - [ ] "First Sort" - Complete first sorting algorithm
-  - [ ] "Speed Demon" - Complete algorithm under 1 second
-  - [ ] "Perfectionist" - Complete all sorting algorithms
-  - [ ] "Explorer" - Try all algorithm categories
-  - [ ] "Comparator" - Use compare mode 10 times
-- [ ] Add achievement notification toast
-- [ ] Create achievements panel in UI
-- [ ] Persist progress to localStorage
+- [x] Create `src/static/js/enhancements/gamification.js`
+- [x] Implement streak tracking (consecutive days of use)
+- [x] Create achievement system:
+  - [x] "First Sort" - Complete first sorting algorithm
+  - [x] "Speed Demon" - Complete algorithm under 1 second
+  - [x] "Perfectionist" - Complete all sorting algorithms
+  - [x] "Explorer" - Try all algorithm categories
+  - [x] "Comparator" - Use compare mode 10 times
+  - [x] "Night Owl" - Use the app after midnight
+  - [x] "Marathon" - Run 100 algorithms in one session
+  - [x] "Quick Learner" - Complete 5 different algorithms in 5 minutes
+- [x] Add achievement notification toast
+- [x] Create achievements panel in UI
+- [x] Persist progress to localStorage
 
 ### 6.4 Educational Module
-- [ ] Create `src/static/js/enhancements/educational.js`
-- [ ] Add quiz questions per algorithm (3-5 questions each)
-- [ ] Show quiz modal after algorithm completion (optional)
-- [ ] Track quiz scores per algorithm
-- [ ] Add "Challenge Mode" - random algorithm + quiz
-- [ ] Provide explanations for incorrect answers
+- [x] Create `src/static/js/enhancements/educational.js`
+- [x] Add quiz questions per algorithm (3-5 questions each)
+- [x] Show quiz modal after algorithm completion (optional)
+- [x] Track quiz scores per algorithm
+- [x] Add "Challenge Mode" - random algorithm + quiz
+- [x] Provide explanations for incorrect answers
 
 ### 6.5 Interactivity Module
-- [ ] Create `src/static/js/enhancements/interactivity.js`
-- [ ] Implement drag-and-drop bar reordering (for custom arrays)
-- [ ] Add node drag functionality for graphs/trees
-- [ ] Create custom graph builder with edge drawing
-- [ ] Add undo/redo for interactive operations
-- [ ] Export custom configurations to JSON
+- [x] Create `src/static/js/enhancements/interactivity.js`
+- [x] Implement drag-and-drop bar reordering (for custom arrays)
+- [x] Add undo/redo for interactive operations
+- [x] Add node drag functionality for graphs/trees
+- [x] Create custom graph builder with edge drawing (already implemented in main.js attachGraphEditHandlers)
+- [x] Export custom configurations to JSON
 
 ### 6.6 Integration and Testing
-- [ ] Integrate all enhancement modules with event bus
-- [ ] Ensure modules can be disabled independently
-- [ ] Add feature flags for gradual rollout
-- [ ] Write E2E tests for each enhancement
-- [ ] Update README with enhancement features
-- [ ] Create user documentation for new features
+- [x] Integrate all enhancement modules with event bus
+- [x] Ensure modules can be disabled independently
+- [x] Add feature flags for gradual rollout
+- [x] Write E2E tests for each enhancement
+- [x] Update README with enhancement features
+- [x] Create user documentation for new features
+
+## Phase 7 - Real World Use Cases
+
+### 7.1 Real World Use Case Descriptions
+- [x] Add `realWorld` field to all sorting algorithm COMPLEXITY entries (19 algorithms across sorting.js, sorting-extended.js, sorting-meme.js)
+- [x] Add `realWorld` field to all searching algorithm COMPLEXITY entries (8 algorithms)
+- [x] Add `realWorld` field to all tree algorithm COMPLEXITY entries (10 algorithms across 3 COMPLEXITY objects)
+- [x] Add `realWorld` field to all graph algorithm COMPLEXITY entries (7 algorithms)
+- [x] Add `realWorld` field to all linked list algorithm COMPLEXITY entries (14 algorithms)
+
+### 7.2 UI Integration
+- [x] Add "Real World Use Cases" section to info panel in index.html
+- [x] Wire up `realWorld` field display in main.js loadAlgorithm()
+- [x] Existing CSS classes handle styling (no additional CSS needed)
+
+## Phase 8 - Interesting Algorithms (Maze & Grid Pathfinding)
+
+Grid: 21x21 `number[][]` (0=WALL 1=PASSAGE 2=START 3=END 4=VISITED 5=EXPLORING 6=PATH 7=FRONTIER 8=CURRENT). Step objects: `{ type, row, col, codeLine }`.
+
+### 8.1 Maze Generation Algorithms
+- [x] `mazeRecursiveDFS` — Recursive Backtracker: iterative DFS stack, shuffle directions, carve/visit/backtrack steps, full 10-language CODE + COMPLEXITY
+- [x] `mazePrims` — Prim's (randomised): random frontier set, carve/frontier steps, full 10-language CODE + COMPLEXITY
+- [x] `mazeBinaryTree` — Binary Tree: for each odd cell carve N or E, visit/carve steps, full 10-language CODE + COMPLEXITY
+
+### 8.2 Grid Pathfinding Algorithms
+- [x] `pathBFS` — BFS on grid: queue, prev Map (string keys), visit/explore/found/path steps, full 10-language CODE + COMPLEXITY
+- [x] `pathDFS` — DFS on grid: explicit stack, prev Map, visit/explore/found/path steps, full 10-language CODE + COMPLEXITY
+- [x] `pathAStar` — A* (Manhattan heuristic): MinHeap, f=g+h, visit/explore/found/path steps, full 10-language CODE + COMPLEXITY
+- [x] `pathGreedy` — Greedy Best-First: MinHeap sorted by h only, visit/explore/found/path steps, full 10-language CODE + COMPLEXITY
+
+### 8.3 Renderer and Algorithm File
+- [x] Create `src/static/js/maze-renderer.js` — canvas-based IIFE: `init`, `render`, `processStep`, `clearAllStates`; ResizeObserver; dark/light palettes; STEP_STATE_MAP; start/end persistent refresh
+- [x] Create `src/static/js/algorithms/maze.js` — IIFE exporting CODE, COMPLEXITY, `buildMazeGrid`, and all 7 generator functions; MinHeap class inside IIFE for pathfinders
+
+### 8.4 Integration
+- [x] Add `<div class="maze-container compare-hidden" id="maze-container">` to `index.html` viz-single; add "Interesting" optgroup with 7 options to algorithm dropdown
+- [x] Add `.maze-container` CSS rules to `main.css`
+- [x] Add `maze.js` to `manualChunks.algorithms` in `vite.config.js`
+- [x] Add imports, `MAZE_ALGORITHMS` array, `isMazeAlgorithm()`, `currentMaze` state, `mazeContainer` DOM ref, and `generateMaze()` helper to `main.js`
+- [x] Update `switchVizMode()`, `initGenerator()`, `executeStep()`, `loadAlgorithm()` in `main.js` with maze branches
+- [x] Update `initCotPanel()`: add `|| isMazeAlgorithm(algoKey)` to show CoT panel for maze algorithms
+- [x] Update `initArrayState()`: add `&& !isMazeAlgorithm(algoKey)` to `isArrayAlgo` check to hide array state panel for maze
+- [x] Add THOUGHTS entries for all 7 maze/path algorithms to the THOUGHTS object in `main.js`
+- [x] Wire Generate button handler to call `generateMaze()` instead of `generateArray()` when a maze algorithm is selected
+
+### 8.5 Verification
+- [x] `pnpm build` passes with no errors
+- [x] Maze generation: each of 3 algorithms animates cell-by-cell carving with CoT entries
+- [x] Pathfinding: each of 4 algorithms explores and traces path on a completed maze
+- [x] Switching from sort to maze: bars hidden, canvas shown
+- [x] Generate on pathfinding algo: generates fresh maze (not array)
+- [x] Pathfinding with no prior maze: fallback synchronous maze generated before pathfinder runs

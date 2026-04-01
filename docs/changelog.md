@@ -6,6 +6,53 @@ All notable changes to the DSA Visualizer project will be documented in this fil
 
 ### Added
 
+- **Phase 8: Maze Generation and Grid Pathfinding**: Added 7 new "Interesting" algorithms under a new optgroup in the algorithm dropdown
+  - Maze generation (3 algorithms): Recursive Backtracker (iterative DFS), Prim's (randomised frontier), Binary Tree (random N/E carving)
+  - Grid pathfinding (4 algorithms): BFS (shortest path guarantee), DFS (any path), A* (optimal with Manhattan heuristic), Greedy Best-First (heuristic-only)
+  - Canvas-based renderer (`maze-renderer.js`): per-cell state colours, dark/light theme palettes, ResizeObserver, step-by-step animation
+  - Algorithm file (`algorithms/maze.js`): all 7 generators, MinHeap class for A*/Greedy, full 10-language CODE snippets, COMPLEXITY entries with real-world use cases
+  - Integration: maze container in HTML, visibility toggling, CoT panel support, Generate button routing, fallback maze generation for pathfinding without a prior maze
+
+### Added (Previous)
+
+- **Array State Panel**: Added a persistent two-row panel below the visualizer showing live numeric values and indices for every array element
+  - One cell per element; cells align horizontally with the bars above them
+  - Cell background colour mirrors bar state: compare (orange), swap (red), sorted (green), found (yellow), pivot (yellow), searching (purple)
+  - Swap animation: cells visually cross using CSS `translateX` at a duration scaled to playback speed; values update after the animation completes
+  - Hidden automatically for tree, graph, and linked-list algorithms (no array state) and for `list[int]` mode (per-item display is redundant)
+  - Hidden in portrait/vertical layout via `body.vertical .array-state-panel { display: none }`
+  - Initialised with the starting array immediately after Generate, before Play is pressed
+
+- **Manual value inputs for Size and Speed sliders**: Added editable `<input type="number">` fields alongside each range slider; typing a value and pressing Enter (or tabbing out) clamps to the valid range and syncs the slider in both directions. Size input respects the List[int] 10-element cap.
+
+- **Info Panel Readability**: Improved visual hierarchy across the left info panel
+  - Section headings now carry a 2px accent-colour left border stripe, making sections instantly scannable
+  - Algorithm title separated from content by a bottom border line; font size bumped to 1rem
+  - Section gap and line-height increased for breathing room between description text
+  - Space complexity value enlarged (0.8rem → 0.9rem)
+  - Live stats values (Comparisons, Swaps, Elapsed) coloured green (`--bar-found`) to distinguish them from static complexity values; section separated by a top border
+  - No layout changes — panel width and structure unchanged
+
+- **Phase 7: Real World Use Cases**: Added `realWorld` field to all 62 algorithm COMPLEXITY entries across 7 algorithm files (sorting, searching, trees, graphs, linked lists). Each entry now includes concrete real-world applications and examples. A new "Real World Use Cases" section in the info panel displays this information alongside "Best Used For" and "When to Avoid".
+
+- **Phase 6 Complete**: All enhancement modules implemented and integrated
+
+- **Challenge Mode**: Random sorting algorithm auto-play followed by a timed quiz (15 seconds per question). Accessible via the Challenge button in the controls bar. Tracks best scores per algorithm separately from regular quiz scores in localStorage.
+
+- **Graph Node Dragging**: Drag-and-drop repositioning of graph nodes in node-edge view. Edges connected to the dragged node follow in real time. Uses SVG coordinate space conversion from mouse events.
+
+- **Graph Export to JSON**: Export button (visible when a graph algorithm is selected) downloads the current graph structure as a JSON file containing nodes, edges, and adjacency list.
+
+- **Custom Graph Builder**: Interactive graph editing with click-to-add nodes, click-click-to-add weighted edges, and right-click to delete. Previously listed as a todo item; confirmed already implemented in `main.js`.
+
+- **User Guide**: Comprehensive end-user documentation at `docs/user-guide.md` covering all features, controls, enhancement modules, keyboard shortcuts, and usage tips.
+
+- **README Overhaul**: Updated all algorithm counts (19 sorting, 8 searching, 10 tree, 7 graph, 14 linked list). Removed stale "Planned" annotations for linked lists. Added enhancement features, updated project structure, and updated architecture diagram to include event bus, enhancement modules, and feedback adapters.
+
+- **Lessons Learned**: Added entries 28-32 covering Challenge Mode design, SVG coordinate conversion, renderer edge caching, JSON export patterns, and README maintenance.
+
+### Technical Notes
+- **Phase 5 Complete**: Feedback system with adapter pattern
 - **Phase 4 Complete**: Polish, quality, and UX improvements
 
 - **Dark/Light Theme Toggle**: `Light` / `Dark` button in second controls row; toggles `body.light` CSS class with smooth 0.2s transitions on all colour properties; preference persisted via `localStorage`
@@ -53,6 +100,15 @@ All notable changes to the DSA Visualizer project will be documented in this fil
 - **Manual input for Size and Speed controls**: Added editable number inputs alongside the Size and Speed sliders; typing a value and pressing Enter (or tabbing out) clamps to the valid range and syncs the slider; Size input respects the List[int] 10-element cap
 
 ### Fixed
+
+- **Bug — Speed input field truncating 3-digit values**: `input[type="number"]` browser spinner arrows (up/down) consumed approximately 17px of the 44px field width, leaving only ~27px for text — enough to render two digits but clipping the third. Fixed by removing spinners via `-webkit-appearance: none` and `-moz-appearance: textfield` and widening the field to 48px. Applies to both Size and Speed inputs.
+
+- **Bug — Bars completely gone after viz-wrapper restructure**: Applying `display: flex; flex-direction: column` to both `html` and `body` caused `body` to become a flex child of `html` without `flex: 1`, shrinking it to zero usable height. Fixed by splitting the rule: `html { height: 100% }` and `body { height: 100%; display: flex; flex-direction: column }`.
+
+- **Bug — `height: 100%` not resolving on bars container**: `.viz-single` had `flex: 65; min-height: 0`, which does not give the browser a resolved pixel height for percentage-height children to inherit. Fixed with `flex: 1 1 0; height: 0` — the `height: 0` baseline lets flex expand it to a concrete pixel height that `.bars-container { height: 100% }` can resolve against.
+
+- **Bug — `stateCells` ReferenceError before initialisation**: `let stateCells = []` was declared inside the IIFE near `initArrayState` (~line 980), but `clearArrayState()` called at `generateArray()` (~line 247) executed before the declaration was reached, triggering a Temporal Dead Zone `ReferenceError`. Fixed by moving the declaration to the top of the state variable block alongside `sortedIndices`.
+
 - **Bug — List[int] mode rendering as bars**: Switching view mode to `List[int]` rendered bars instead of list cells when array size exceeded 10. `Visualizer.setMode()` was being called after `generateArray()`, so the first render still used the old mode. Fixed by calling `setMode()` before any array regeneration.
 
 - **Bug — Heap Sort code panel empty**: `Heap Sort` (`heapSort`) matched the `algoKey.startsWith('heap')` guard intended only for tree-heap operations (`heapInsertMin`, `heapExtractMin`). This caused `loadAlgorithm()` to look up code in `TreeAlgorithms.HEAP_CODE` (which has no `heapSort` key) instead of `SortingAlgorithms.CODE`. Fixed all four `startsWith('heap')` occurrences to explicit key checks.

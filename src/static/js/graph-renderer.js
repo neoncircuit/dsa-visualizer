@@ -17,6 +17,13 @@ const GraphRenderer = (() => {
     /** @type {Map<number, {x: number, y: number}>} */
     let currentPositions = new Map();
 
+    /** @type {number[]} Cached node list for edge redrawing. */
+    let cachedNodes = [];
+    /** @type {Array<[number, number, number?]>} Cached edge list for redrawing. */
+    let cachedEdges = [];
+    /** @type {boolean} Cached directed flag for edge redrawing. */
+    let cachedDirected = false;
+
     const NODE_RADIUS = 22;
 
     /**
@@ -41,6 +48,10 @@ const GraphRenderer = (() => {
         container.innerHTML = '';
         nodeElements = {};
         edgeElements = {};
+
+        cachedNodes = [...nodes];
+        cachedEdges = edges.map(e => [...e]);
+        cachedDirected = directed;
 
         svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
         svg.setAttribute('class', 'graph-svg');
@@ -590,6 +601,46 @@ const GraphRenderer = (() => {
         return 'node-edge';
     }
 
+    /**
+     * Update the cached position of a single node.
+     * Used by the interactivity module during drag operations.
+     *
+     * @param {number} nodeId - The node identifier.
+     * @param {number} x - New X coordinate in SVG space.
+     * @param {number} y - New Y coordinate in SVG space.
+     * @returns {void}
+     */
+    function updateNodePosition(nodeId, x, y) {
+        currentPositions.set(nodeId, { x, y });
+    }
+
+    /**
+     * Redraw all edges based on current node positions.
+     * Removes existing edge elements and weight labels from the SVG,
+     * then re-draws them using the cached edge data and updated positions.
+     *
+     * @returns {void}
+     */
+    function redrawEdges() {
+        if (!svg) return;
+
+        const existingEdges = svg.querySelectorAll('.graph-edge');
+        const existingWeights = svg.querySelectorAll('.graph-weight');
+        existingEdges.forEach(el => el.remove());
+        existingWeights.forEach(el => el.remove());
+
+        edgeElements = {};
+
+        for (const edge of cachedEdges) {
+            const [from, to, weight] = edge;
+            const fromPos = currentPositions.get(from);
+            const toPos = currentPositions.get(to);
+            if (fromPos && toPos) {
+                drawEdge(from, to, fromPos, toPos, weight, cachedDirected);
+            }
+        }
+    }
+
     return {
         init,
         render,
@@ -602,6 +653,8 @@ const GraphRenderer = (() => {
         processStep,
         getNodePositions,
         getCurrentRepresentation,
+        updateNodePosition,
+        redrawEdges,
     };
 })();
 

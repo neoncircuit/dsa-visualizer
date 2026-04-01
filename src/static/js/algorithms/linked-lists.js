@@ -2251,6 +2251,11 @@ const LinkedListAlgorithms = (() => {
                 'Avoid when you need random access by index or frequently access ' +
                 'elements in the middle of the list. Arrays provide O(1) random access, ' +
                 'while linked lists require O(n) traversal.',
+            realWorld:
+                'Used in implementing stacks (push = insert at head), undo/redo history buffers ' +
+                '(most recent action goes to the front), and LRU cache implementations (move ' +
+                'recently accessed item to the front). Powers the "new tab" behavior in browser ' +
+                'history and the prepend operation in text editors.',
         },
 
         llDeleteHead: {
@@ -2269,6 +2274,11 @@ const LinkedListAlgorithms = (() => {
                 'Avoid when the list is empty (check for null first). ' +
                 'If you need to delete arbitrary positions, arrays provide O(1) deletion, ' +
                 'while linked lists require O(n) traversal to find the node.',
+            realWorld:
+                'The core of stack pop operations (pop = delete head). Used in undo/redo stacks ' +
+                '(remove the most recent action), in breadth-first search queue processing, and in ' +
+                'playlist management (skip to next song). Powers the dequeue operation in queue ' +
+                'implementations built with linked lists.',
         },
 
         llSearch: {
@@ -2290,6 +2300,11 @@ const LinkedListAlgorithms = (() => {
                 'Avoid when you need fast random access or need to search ' +
                 'the collection repeatedly. Arrays with binary search provide O(log n) search, ' +
                 'while linked lists require O(n) sequential traversal.',
+            realWorld:
+                'Used in traversing hash table chains (separate chaining collision resolution), ' +
+                'in implementing the "find" operation in symbol tables, and in text editors for ' +
+                'finding text patterns. Powers the lookup in sparse matrix representations and the ' +
+                'node access in memory allocators (free list traversal).',
         },
 
         llTraverse: {
@@ -2311,6 +2326,11 @@ const LinkedListAlgorithms = (() => {
                 'or need random access. For simple iteration, this is the correct approach. ' +
                 'If you need to find specific elements, consider building an index or ' +
                 'using a different data structure.',
+            realWorld:
+                'Used in printing all elements of a data structure, in serializing linked data ' +
+                'to JSON/XML, and in computing aggregate values (sum, count, max) over a collection. ' +
+                'Powers the iteration step in map-reduce operations on linked data, the display ' +
+                'function in playlist applications, and the validation pass in data pipelines.',
         },
 
         llReverse: {
@@ -2331,6 +2351,11 @@ const LinkedListAlgorithms = (() => {
                 'Avoid when you only need to traverse the list backwards without ' +
                 'modifying it. If you need frequent reversals, consider using a ' +
                 'doubly linked list for O(1) reverse at head.',
+            realWorld:
+                'Used in undo/redo stacks that need to replay operations in reverse, in palindrome ' +
+                'checking for linked lists, and in block swapping algorithms. Powers the "reverse ' +
+                'playlist" feature in music apps, the backtracking step in some maze solvers, and ' +
+                'the in-place reversal used in merge sort implementations for linked lists.',
         },
 
         llInsertTail: {
@@ -2352,6 +2377,11 @@ const LinkedListAlgorithms = (() => {
                 'Avoid when you need fast insertions at the end. Use a doubly linked list ' +
                 'with a tail pointer for O(1) insertions, or consider arrays when ' +
                 'random access is needed. Single linked lists are inefficient for tail operations.',
+            realWorld:
+                'Used in implementing queues (enqueue = insert at tail), in task scheduling ' +
+                '(add new task to the end of the queue), and in log append operations (add new ' +
+                'entry at the end). Powers the FIFO behavior in print job spoolers, message queues ' +
+                'in messaging systems, and the buffer append in streaming data pipelines.',
         },
 
         llDeleteTail: {
@@ -2373,6 +2403,11 @@ const LinkedListAlgorithms = (() => {
                 'Use a doubly linked list for O(1) tail deletions. ' +
                 'For frequent tail operations, consider using a deque or circular ' +
                 'buffer instead of a single linked list.',
+            realWorld:
+                'Used in queue dequeue operations (remove oldest element), in circular buffer ' +
+                'implementations, and in sliding window algorithms (remove the oldest element from ' +
+                'the window). Powers the buffer eviction in streaming applications and the ' +
+                'oldest-entry removal in fixed-size caches.',
         },
 
         llInsertPos: {
@@ -2394,6 +2429,11 @@ const LinkedListAlgorithms = (() => {
                 'Avoid for frequent mid-list insertions on large lists — O(n) traversal ' +
                 'is expensive. Use a doubly linked list with an index cache, or an ' +
                 'array-backed structure when random-access insertion is the primary operation.',
+            realWorld:
+                'Used in maintaining sorted linked lists (insert in the correct position to keep ' +
+                'order), in text editor cursor positioning (insert text at a specific offset), and ' +
+                'in playlist reordering (move a song to position N). Powers the ordered insertion ' +
+                'in priority queues built with linked lists and the splice operation in version control systems.',
         },
 
         llDeletePos: {
@@ -2414,6 +2454,11 @@ const LinkedListAlgorithms = (() => {
                 'Avoid when position is frequently unknown — prefer delete-by-value instead. ' +
                 'For O(1) arbitrary deletion use a doubly linked list combined with a ' +
                 'node reference (pointer) rather than a positional index.',
+            realWorld:
+                'Used in text editor operations (delete the character at cursor position), in array ' +
+                'list implementations (remove element at index), and in game entity management ' +
+                '(remove the Nth entity). Powers the "delete row" operation in spreadsheet applications ' +
+                'and the element removal in ordered collections.',
         },
 
         llDeleteVal: {
@@ -2434,6 +2479,11 @@ const LinkedListAlgorithms = (() => {
                 'Avoid on large unsorted lists where the value may be near the tail — ' +
                 'O(n) worst case. Use a hash map to cache node references for O(1) ' +
                 'lookup-and-delete, or a sorted structure with binary search.',
+            realWorld:
+                'Used in removing a specific item from a collection: unfriending a user in social ' +
+                'networks, removing a song from a playlist, or deleting a product from a shopping cart. ' +
+                'Powers the cache invalidation (remove specific entry), the subscriber removal in event ' +
+                'systems, and the entity cleanup in game engines.',
         },
 
         llInsertAfterValue: {
@@ -2454,6 +2504,11 @@ const LinkedListAlgorithms = (() => {
                 'Avoid when you frequently insert after the same value — consider using a ' +
                 'hash map to cache node references for O(1) direct access. For random ' +
                 'position insertion, use insert-at-position instead for clearer semantics.',
+            realWorld:
+                'Used in dependency chains (add new task after a specific prerequisite), in text ' +
+                'editors (insert text after a bookmark), and in workflow systems (add a step after ' +
+                'a specific stage). Powers the "add comment after this line" feature in code review ' +
+                'tools and the node insertion in linked list-based polynomial representations.',
         },
 
         llDetectCycle: {
@@ -2474,6 +2529,12 @@ const LinkedListAlgorithms = (() => {
                 'Avoid when you know the list is acyclic (e.g., from a trusted source). ' +
                 'For most application code, cycles indicate a bug and should be fixed rather than ' +
                 'repeatedly checked at runtime.',
+            realWorld:
+                'Used in debugging memory leaks (detect circular references in garbage collectors), ' +
+                'in validating linked data integrity (detect corrupted next pointers), and in ' +
+                'cryptographic applications (detecting cycles in pseudorandom number generators). ' +
+                'Powers Floyd\'s algorithm in cycle detection for streaming data and the loop ' +
+                'detection in Tortoise and Hare problems.',
         },
 
         llMergeSorted: {
@@ -2493,6 +2554,11 @@ const LinkedListAlgorithms = (() => {
             avoid:
                 'Avoid when the input lists are not already sorted. If lists need to be sorted first, ' +
                 'consider whether a different data structure (like a heap) would be more efficient.',
+            realWorld:
+                'Used in the merge step of merge sort, in combining sorted search results from ' +
+                'multiple sources (multi-source search), and in merging sorted log files by timestamp. ' +
+                'Powers the "merge contacts" feature in address book applications and the union ' +
+                'operation in sorted set implementations.',
         },
 
         llMergeSort: {
@@ -2512,6 +2578,12 @@ const LinkedListAlgorithms = (() => {
             avoid:
                 'Avoid when memory is extremely constrained due to O(log n) stack space. ' +
                 'For small lists, insertion sort may be simpler and faster due to lower overhead.',
+            realWorld:
+                'The preferred sorting algorithm for linked lists because it achieves O(n log n) ' +
+                'without random access (unlike quicksort). Used in sorting linked data in databases, ' +
+                'in external sorting (sorting data too large for memory), and in sorting polyominoes ' +
+                'in combinatorial game solvers. Powers the stable sort in functional programming ' +
+                'language standard libraries (Haskell, Erlang).',
         },
     };
 

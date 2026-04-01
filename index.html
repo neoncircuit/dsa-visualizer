@@ -82,35 +82,44 @@
                     <option value="llTraverse">Traverse All</option>
                     <option value="llReverse">Reverse List</option>
                 </optgroup>
+                <optgroup label="Interesting">
+                    <option value="mazeRecursiveDFS">Maze: Recursive Backtracker</option>
+                    <option value="mazePrims">Maze: Prim's Algorithm</option>
+                    <option value="mazeBinaryTree">Maze: Binary Tree</option>
+                    <option value="pathBFS">Pathfinding: BFS</option>
+                    <option value="pathDFS">Pathfinding: DFS</option>
+                    <option value="pathAStar">Pathfinding: A*</option>
+                    <option value="pathGreedy">Pathfinding: Greedy Best-First</option>
+                </optgroup>
             </select>
         </div>
 
         <div class="controls-group">
             <label for="array-size">Size</label>
-            <input type="number" id="size-display" class="slider-input" min="5" max="100" value="30">
-            <input type="range" id="array-size" min="5" max="100" value="30">
+            <input type="number" id="size-display" class="slider-input" min="5" max="30" value="30">
+            <input type="range" id="array-size" min="5" max="30" value="30">
         </div>
 
-        <div class="controls-group search-target-group" style="display:none;">
+        <div class="controls-group search-target-group controls-hidden">
             <label for="search-target">Target</label>
             <input type="number" id="search-target" min="1" max="100" value="50">
         </div>
 
-        <div class="controls-group custom-array-group" style="display:none;">
+        <div class="controls-group custom-array-group controls-hidden">
             <label for="custom-array">Custom</label>
             <input type="text" id="custom-array" placeholder="e.g. 5,3,8,1,9" title="Enter comma-separated numbers">
-            <button id="btn-apply-custom" title="Apply custom array">Apply</button>
+            <button id="btn-apply-custom" class="btn" title="Apply custom array">Apply</button>
         </div>
 
-        <div class="controls-group ll-position-group" style="display:none;">
+        <div class="controls-group ll-position-group controls-hidden">
             <label for="ll-position">Position</label>
             <input type="number" id="ll-position" min="0" max="99" value="0">
         </div>
 
         <div class="controls-group">
             <label for="speed-slider">Speed</label>
-            <input type="number" id="speed-display" class="slider-input" min="1" max="100" value="50">
-            <input type="range" id="speed-slider" min="1" max="100" value="50">
+            <input type="number" id="speed-display" class="slider-input" min="1" max="100" value="20">
+            <input type="range" id="speed-slider" min="1" max="100" value="20">
         </div>
 
         <div class="controls-group">
@@ -131,7 +140,7 @@
             </select>
         </div>
 
-        <div class="controls-group graph-view-group" style="display:none;">
+        <div class="controls-group graph-view-group controls-hidden">
             <label for="graph-view">Graph View</label>
             <select id="graph-view">
                 <option value="graph">Graph</option>
@@ -141,38 +150,39 @@
             </select>
         </div>
 
-        <div class="controls-group graph-edit-group" style="display:none;">
-            <button id="btn-edit-graph" title="Toggle interactive graph editing">Edit Graph</button>
+        <div class="controls-group graph-edit-group controls-hidden">
+            <button id="btn-edit-graph" class="btn" title="Toggle interactive graph editing">Edit Graph</button>
+            <button id="btn-export-graph" class="btn" title="Export graph as JSON">Export</button>
         </div>
 
         <div class="controls-group">
-            <button id="btn-compare" title="Compare two algorithms">Compare</button>
+            <button id="btn-compare" class="btn" title="Compare two algorithms">Compare</button>
         </div>
 
-        <div class="controls-group benchmark-group" style="display:none;">
-            <button id="btn-benchmark" title="Benchmark current algorithm">Benchmark</button>
+        <div class="controls-group benchmark-group controls-hidden">
+            <button id="btn-benchmark" class="btn" title="Benchmark current algorithm">Benchmark</button>
         </div>
 
         <div class="controls-group buttons">
-            <button id="btn-generate" title="Generate new array">Generate</button>
-            <button id="btn-play" title="Start visualization">Play</button>
-            <button id="btn-pause" title="Pause visualization" disabled>Pause</button>
-            <button id="btn-step" title="Step through one operation">Step</button>
-            <button id="btn-reset" title="Reset to initial state">Reset</button>
+            <button id="btn-generate" class="btn" title="Generate new array">Generate</button>
+            <button id="btn-play" class="btn btn-success" title="Start visualization">Play</button>
+            <button id="btn-pause" class="btn btn-warning" title="Pause visualization" disabled>Pause</button>
+            <button id="btn-step" class="btn" title="Step through one operation">Step</button>
+            <button id="btn-reset" class="btn" title="Reset to initial state">Reset</button>
         </div>
 
         <div class="controls-group">
-            <button id="btn-sound" title="Toggle sound">Sound: ON</button>
+            <button id="btn-sound" class="btn" title="Toggle sound">Sound: ON</button>
             <label for="volume-slider">Vol</label>
             <input type="range" id="volume-slider" min="0" max="100" value="30">
         </div>
 
         <div class="controls-group">
-            <button id="btn-layout" title="Toggle vertical layout for recording">Landscape</button>
+            <button id="btn-layout" class="btn" title="Toggle vertical layout for recording">Landscape</button>
         </div>
 
         <div class="controls-group">
-            <button id="btn-theme" title="Toggle light/dark theme">Light</button>
+            <button id="btn-theme" class="btn" title="Toggle light/dark theme">Light</button>
         </div>
 
         <div class="controls-group">
@@ -184,11 +194,11 @@
                 <option value="landscape-720">Landscape 720p</option>
                 <option value="landscape-4k">Landscape 4K</option>
             </select>
-            <button id="btn-record" title="Start/stop recording">Record</button>
+            <button id="btn-record" class="btn" title="Start/stop recording">Record</button>
         </div>
 
         <div class="controls-group">
-            <button id="btn-feedback" title="Send feedback">Feedback</button>
+            <button id="btn-feedback" class="btn" title="Send feedback">Feedback</button>
         </div>
     </header>
 
@@ -210,6 +220,11 @@
             <div class="info-section">
                 <h3 class="info-section-heading">When to Avoid</h3>
                 <p class="info-description" id="algo-avoid-text"></p>
+            </div>
+
+            <div class="info-section">
+                <h3 class="info-section-heading">Real World Use Cases</h3>
+                <p class="info-description" id="algo-realworld-text"></p>
             </div>
 
             <div class="info-section">
@@ -327,11 +342,29 @@
 
         <!-- Right panel: Visualization (single or split) -->
         <section class="viz-panel" id="viz-panel">
-            <div class="viz-single" id="viz-single">
-                <div class="bars-container" id="bars-container"></div>
-                <div class="tree-graph-container compare-hidden" id="tree-graph-container"></div>
-                <div class="linked-list-container compare-hidden" id="linked-list-container"></div>
+
+            <!-- Column: main viz + algo log (normal mode) -->
+            <div class="viz-wrapper" id="viz-wrapper">
+                <div class="viz-single" id="viz-single">
+                    <div class="bars-container" id="bars-container"></div>
+                    <div class="tree-graph-container compare-hidden" id="tree-graph-container"></div>
+                    <div class="linked-list-container compare-hidden" id="linked-list-container"></div>
+                    <div class="maze-container compare-hidden" id="maze-container"></div>
+                </div>
+
+                <!-- Array State Panel (sorting / searching algorithms) -->
+                <div class="array-state-panel" id="array-state-panel">
+                    <div class="array-state-header">Array State</div>
+                    <div class="array-state-body" id="array-state-body"></div>
+                </div>
+
+                <!-- Chain of Thought Panel (tree / graph algorithms) -->
+                <div class="cot-panel" id="cot-panel" style="display:none;">
+                    <div class="cot-header">Chain of Thought</div>
+                    <div class="cot-body" id="cot-body"></div>
+                </div>
             </div>
+
             <div class="viz-compare compare-hidden" id="viz-compare">
                 <div class="viz-compare-top">
                     <div class="viz-half">
@@ -414,6 +447,21 @@
                             <tr><td>Reverse</td><td>O(n)</td><td>O(1)</td></tr>
                             <tr><td>Detect Cycle</td><td>O(n)</td><td>O(1)</td></tr>
                             <tr><td>Merge Sorted</td><td>O(n+m)</td><td>O(1)</td></tr>
+                        </tbody>
+                    </table>
+                    <h4 class="cheat-subheading">Maze &amp; Pathfinding</h4>
+                    <table class="cheat-table">
+                        <thead>
+                            <tr><th>Algorithm</th><th>Best</th><th>Avg</th><th>Worst</th><th>Space</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Recursive DFS</td><td>N</td><td>N</td><td>N</td><td>N</td></tr>
+                            <tr><td>Prim's</td><td>N log N</td><td>N log N</td><td>N log N</td><td>N</td></tr>
+                            <tr><td>Binary Tree</td><td>N</td><td>N</td><td>N</td><td>1</td></tr>
+                            <tr><td>BFS Path</td><td>N</td><td>N</td><td>N</td><td>N</td></tr>
+                            <tr><td>DFS Path</td><td>N</td><td>N</td><td>N</td><td>N</td></tr>
+                            <tr><td>A*</td><td>N</td><td>N log N</td><td>N log N</td><td>N</td></tr>
+                            <tr><td>Greedy</td><td>N</td><td>N log N</td><td>N^2</td><td>N</td></tr>
                         </tbody>
                     </table>
                 </div>

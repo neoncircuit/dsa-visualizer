@@ -278,15 +278,13 @@ function bindEvents() {
  */
 function init() {
     FeedbackService.init();
+    bindEvents();
 
     if (!FeedbackService.isReady()) {
         const btn = document.getElementById('btn-feedback');
         if (btn) btn.style.display = 'none';
-        return;
     }
-
-    bindEvents();
 }
 
-const Feedback = { init, showModal, hideModal };
+const Feedback = { init, showModal, hideModal, validate };
 export default Feedback;

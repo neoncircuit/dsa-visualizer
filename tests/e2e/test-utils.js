@@ -181,7 +181,7 @@ export async function exitCompareMode(page) {
  * @param {string} algorithmValue 
  */
 export async function selectCompareAlgorithm(page, algorithmValue) {
-  await page.selectOption('#compare-algorithm-select', algorithmValue);
+  await page.selectOption('#compare-select-b', algorithmValue);
   await page.waitForTimeout(300);
 }
 

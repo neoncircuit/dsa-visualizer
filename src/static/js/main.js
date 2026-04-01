@@ -19,9 +19,12 @@ import TreeAlgorithms from './algorithms/trees.js';
 import GraphAlgorithms from './algorithms/graphs.js';
 import LinkedListAlgorithms from './algorithms/linked-lists.js';
 import LinkedListRenderer from './linked-list-renderer.js';
+import MazeAlgorithms from './algorithms/maze.js';
+import MazeRenderer from './maze-renderer.js';
 import Benchmark from './benchmark.js';
 import FEATURES from './config.js';
 import Feedback from './feedback.js';
+import EventBus from './event-bus.js';
 
 (() => {
     'use strict';
@@ -60,6 +63,8 @@ import Feedback from './feedback.js';
     const graphViewGroup = document.querySelector('.graph-view-group');
     /** @type {HTMLButtonElement} */
     const btnEditGraph = document.getElementById('btn-edit-graph');
+    /** @type {HTMLButtonElement} */
+    const btnExportGraph = document.getElementById('btn-export-graph');
     /** @type {HTMLDivElement} */
     const graphEditGroup = document.querySelector('.graph-edit-group');
     /** @type {HTMLInputElement} */
@@ -68,6 +73,17 @@ import Feedback from './feedback.js';
     const customArrayGroup = document.querySelector('.custom-array-group');
     /** @type {HTMLButtonElement} */
     const btnApplyCustom = document.getElementById('btn-apply-custom');
+
+    /** @type {HTMLDivElement} */
+    const arrayStateBody = document.getElementById('array-state-body');
+    /** @type {HTMLDivElement} */
+    const arrayStatePanel = document.getElementById('array-state-panel');
+    /** @type {HTMLDivElement} */
+    const cotPanel = document.getElementById('cot-panel');
+    /** @type {HTMLDivElement} */
+    const cotBody = document.getElementById('cot-body');
+    /** @type {HTMLDivElement} */
+    const vizWrapper = document.getElementById('viz-wrapper');
 
     /** @type {HTMLButtonElement} */
     const btnGenerate = document.getElementById('btn-generate');
@@ -113,6 +129,8 @@ import Feedback from './feedback.js';
     const algoUseCaseText = document.getElementById('algo-usecase-text');
     /** @type {HTMLParagraphElement} */
     const algoAvoidText = document.getElementById('algo-avoid-text');
+    /** @type {HTMLParagraphElement} */
+    const algoRealWorldText = document.getElementById('algo-realworld-text');
 
     // ─── State ───
 
@@ -134,6 +152,10 @@ import Feedback from './feedback.js';
     let elapsedTimerId = null;
     /** @type {number} Cached max value of the current array, set once per generator init. */
     let cachedMaxVal = 1;
+    /** @type {Set<number>} Indices currently marked as sorted (persistent across steps). */
+    let sortedIndices = new Set();
+    /** @type {HTMLDivElement[]} Persistent cell elements for the array state panel. */
+    let stateCells = [];
 
     // ─── Algorithm Classification ───
 
@@ -147,12 +169,17 @@ import Feedback from './feedback.js';
     /** @type {string[]} */
     const LINKED_LIST_ALGORITHMS = ['llInsertHead', 'llInsertTail', 'llDeleteHead', 'llDeleteTail', 'llSearch', 'llTraverse', 'llReverse', 'llInsertPos', 'llDeletePos', 'llDeleteVal', 'llInsertAfterValue', 'llDetectCycle', 'llMergeSorted', 'llMergeSort'];
 
+    const MAZE_ALGORITHMS = ['mazeRecursiveDFS', 'mazePrims', 'mazeBinaryTree', 'pathBFS', 'pathDFS', 'pathAStar', 'pathGreedy'];
+    const MAZE_GENERATION = ['mazeRecursiveDFS', 'mazePrims', 'mazeBinaryTree'];
+
     // ─── Tree/Graph/Linked List State ───
 
     /** @type {HTMLDivElement} */
     const treeGraphContainer = document.getElementById('tree-graph-container');
     /** @type {HTMLDivElement} */
     const linkedListContainer = document.getElementById('linked-list-container');
+    /** @type {HTMLDivElement} */
+    const mazeContainer = document.getElementById('maze-container');
     /** @type {object|null} */
     let currentTree = null;
     /** @type {object|null} */
@@ -161,6 +188,8 @@ import Feedback from './feedback.js';
     let currentLinkedList = null;
     /** @type {number[]} */
     let currentHeap = [];
+    /** @type {number[][]|null} */
+    let currentMaze = null;
 
     // ─── Layout State ───
 
@@ -177,6 +206,7 @@ import Feedback from './feedback.js';
     TreeRenderer.init(treeGraphContainer);
     GraphRenderer.init(treeGraphContainer);
     LinkedListRenderer.init(linkedListContainer);
+    MazeRenderer.init(mazeContainer);
 
     generateArray();
     loadAlgorithm();
@@ -230,6 +260,7 @@ import Feedback from './feedback.js';
      */
     function generateArray() {
         stopPlayback();
+        clearArrayState();
         const size = parseInt(arraySizeSlider.value, 10);
         const type = arrayTypeSelect.value;
         currentArray = createArray(size, type);
@@ -238,6 +269,37 @@ import Feedback from './feedback.js';
         swapCount = 0;
         updateStats();
         Visualizer.render(currentArray);
+        initArrayState(currentArray);
+        initCotPanel(algorithmSelect.value);
+        generator = null;
+        updateButtonStates();
+    }
+
+    /**
+     * Generate a new maze grid and render it.
+     * For pathfinding algorithms, generates a fresh maze first.
+     *
+     * @returns {void}
+     */
+    function generateMaze() {
+        stopPlayback();
+        clearArrayState();
+        const algoKey = algorithmSelect.value;
+
+        if (isMazeGeneration(algoKey)) {
+            currentMaze = MazeAlgorithms.buildMazeGrid();
+        } else {
+            currentMaze = MazeAlgorithms.buildMazeGrid();
+            const gen = MazeAlgorithms.mazeRecursiveDFS(currentMaze);
+            while (!gen.done) gen.next();
+            currentMaze = gen.value;
+        }
+
+        comparisons = 0;
+        swapCount = 0;
+        updateStats();
+        MazeRenderer.render(currentMaze);
+        initCotPanel(algoKey);
         generator = null;
         updateButtonStates();
     }
@@ -370,20 +432,20 @@ import Feedback from './feedback.js';
 
         // Show/hide search target input
         const needsTarget = isSearch || algoKey === 'bstSearch';
-        searchTargetGroup.style.display = needsTarget ? 'flex' : 'none';
+        searchTargetGroup.classList.toggle('controls-hidden', !needsTarget);
 
         // Show/hide linked list position input
         const needsPosition = algoKey === 'llInsertPos' || algoKey === 'llDeletePos';
-        llPositionGroup.style.display = needsPosition ? 'flex' : 'none';
+        llPositionGroup.classList.toggle('controls-hidden', !needsPosition);
 
         // Show/hide graph view selector and edit button
         const isGraphAlgo = isGraphAlgorithm(algoKey);
-        graphViewGroup.style.display = isGraphAlgo ? 'flex' : 'none';
-        graphEditGroup.style.display = isGraphAlgo ? 'flex' : 'none';
+        graphViewGroup.classList.toggle('controls-hidden', !isGraphAlgo);
+        graphEditGroup.classList.toggle('controls-hidden', !isGraphAlgo);
 
         // Show custom array input only for sort/search (array-based algorithms)
-        const isArrayAlgo = !isGraphAlgo && !isTreeAlgorithm(algoKey) && !isLinkedListAlgorithm(algoKey);
-        customArrayGroup.style.display = isArrayAlgo ? 'flex' : 'none';
+        const isArrayAlgo = !isGraphAlgo && !isTreeAlgorithm(algoKey) && !isLinkedListAlgorithm(algoKey) && !isMazeAlgorithm(algoKey);
+        customArrayGroup.classList.toggle('controls-hidden', !isArrayAlgo);
 
         // Determine code and complexity source
         let codeSource, complexitySource;
@@ -405,6 +467,9 @@ import Feedback from './feedback.js';
         } else if (isLinkedListAlgorithm(algoKey)) {
             codeSource = LinkedListAlgorithms.CODE;
             complexitySource = LinkedListAlgorithms.COMPLEXITY;
+        } else if (isMazeAlgorithm(algoKey)) {
+            codeSource = MazeAlgorithms.CODE;
+            complexitySource = MazeAlgorithms.COMPLEXITY;
         } else {
             codeSource = SortingAlgorithms.CODE;
             complexitySource = SortingAlgorithms.COMPLEXITY;
@@ -430,6 +495,7 @@ import Feedback from './feedback.js';
             algoDescriptionText.textContent = info.description || '';
             algoUseCaseText.textContent = info.useCase || '';
             algoAvoidText.textContent = info.avoid || '';
+            algoRealWorldText.textContent = info.realWorld || '';
             if (isVertical) updateVizOverlay();
         }
 
@@ -487,6 +553,26 @@ import Feedback from './feedback.js';
      */
     function isLinkedListAlgorithm(key) {
         return LINKED_LIST_ALGORITHMS.includes(key);
+    }
+
+    /**
+     * Check if an algorithm key is a maze algorithm.
+     *
+     * @param {string} key - The algorithm key.
+     * @returns {boolean} True if it is a maze algorithm.
+     */
+    function isMazeAlgorithm(key) {
+        return MAZE_ALGORITHMS.includes(key);
+    }
+
+    /**
+     * Check if an algorithm key is a maze generation algorithm (not pathfinding).
+     *
+     * @param {string} key - The algorithm key.
+     * @returns {boolean} True if it is a maze generation algorithm.
+     */
+    function isMazeGeneration(key) {
+        return MAZE_GENERATION.includes(key);
     }
 
     // ─── Graph View & Interactive Builder ───
@@ -644,6 +730,34 @@ import Feedback from './feedback.js';
     });
 
     /**
+     * Export the current graph structure as a downloadable JSON file.
+     * Includes nodes, edges, and adjacency list representation.
+     *
+     * @returns {void}
+     */
+    btnExportGraph.addEventListener('click', () => {
+        if (!currentGraph) return;
+        const data = {
+            nodes: currentGraph.nodes,
+            edges: currentGraph.edges.map(e => {
+                const entry = { from: e[0], to: e[1] };
+                if (e[2] != null) entry.weight = e[2];
+                return entry;
+            }),
+            adjacencyList: currentGraph.adj,
+        };
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `dsa-graph-${Date.now()}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    });
+
+    /**
      * Switch the visualization between bars and tree/graph modes.
      *
      * @param {string} algoKey - The selected algorithm key.
@@ -653,9 +767,11 @@ import Feedback from './feedback.js';
         const isLL = isLinkedListAlgorithm(algoKey);
         const isHeap = algoKey === 'heapInsertMin' || algoKey === 'heapExtractMin';
         const isTG = isTreeAlgorithm(algoKey) || isGraphAlgorithm(algoKey) || isHeap;
-        barsContainer.classList.toggle('compare-hidden', isLL || isTG);
+        const isMaze = isMazeAlgorithm(algoKey);
+        barsContainer.classList.toggle('compare-hidden', isLL || isTG || isMaze);
         treeGraphContainer.classList.toggle('compare-hidden', !isTG);
         linkedListContainer.classList.toggle('compare-hidden', !isLL);
+        mazeContainer.classList.toggle('compare-hidden', !isMaze);
 
         if (isHeap) {
             TreeAlgorithms.resetIds();
@@ -674,6 +790,9 @@ import Feedback from './feedback.js';
             LinkedListAlgorithms.resetIds();
             currentLinkedList = LinkedListAlgorithms.buildSampleLinkedList(generateRandomLinkedListValues());
             LinkedListRenderer.render(currentLinkedList);
+        } else if (isMaze) {
+            currentMaze = MazeAlgorithms.buildMazeGrid();
+            MazeRenderer.render(currentMaze);
         }
     }
 
@@ -689,6 +808,10 @@ import Feedback from './feedback.js';
         SoundEngine.ensureContext();
         if (!generator) {
             initGenerator();
+            EventBus.emit('algorithm:start', {
+                algoKey: algorithmSelect.value,
+                arraySize: currentArray.length,
+            });
         }
 
         if (!startTime) {
@@ -797,7 +920,6 @@ import Feedback from './feedback.js';
                 const pos = Math.max(0, parseInt(llPositionInput.value, 10) || 0);
                 generator = LinkedListAlgorithms.llDeletePos(currentLinkedList, pos);
             } else if (algoKey === 'llDeleteVal') {
-                // Pick a random existing value for ambiguity (occasionally pick non-existent)
                 const values = LinkedListAlgorithms.getValues(currentLinkedList);
                 const pickExisting = Math.random() < 0.8 && values.length > 0;
                 const target = pickExisting
@@ -806,6 +928,23 @@ import Feedback from './feedback.js';
                 generator = LinkedListAlgorithms.llDeleteVal(currentLinkedList, target);
             } else {
                 generator = LinkedListAlgorithms[algoKey](currentLinkedList);
+            }
+        } else if (isMazeAlgorithm(algoKey)) {
+            MazeRenderer.clearAllStates();
+            if (isMazeGeneration(algoKey)) {
+                currentMaze = MazeAlgorithms.buildMazeGrid();
+                MazeRenderer.render(currentMaze);
+                generator = MazeAlgorithms[algoKey](currentMaze);
+            } else {
+                if (!currentMaze) {
+                    currentMaze = MazeAlgorithms.buildMazeGrid();
+                    const gen = MazeAlgorithms.mazeRecursiveDFS(currentMaze);
+                    while (!gen.done) gen.next();
+                    currentMaze = gen.value;
+                }
+                MazeRenderer.clearAllStates();
+                MazeRenderer.render(currentMaze);
+                generator = MazeAlgorithms[algoKey](currentMaze);
             }
         } else if (isSearchAlgorithm(algoKey)) {
             if (algoKey !== 'linearSearch' && algoKey !== 'sentinelLinearSearch') {
@@ -864,6 +1003,11 @@ import Feedback from './feedback.js';
                         currentLinkedList = updatedValue;
                     }
                     LinkedListRenderer.render(currentLinkedList);
+                } else if (isMazeAlgorithm(algoKey)) {
+                    if (Array.isArray(updatedValue)) {
+                        currentMaze = updatedValue;
+                        MazeRenderer.render(currentMaze);
+                    }
                 }
             }
             onComplete();
@@ -873,6 +1017,7 @@ import Feedback from './feedback.js';
         const step = result.value;
         const algoKey = algorithmSelect.value;
         processStepStats(step);
+        renderArrayState(step);
 
         if (algoKey === 'heapInsertMin' || algoKey === 'heapExtractMin') {
             if (step.indices && step.indices[0] >= 0 && step.indices[0] < currentHeap.length) {
@@ -886,11 +1031,24 @@ import Feedback from './feedback.js';
             GraphRenderer.processStep(step);
         } else if (isLinkedListAlgorithm(algoKey)) {
             LinkedListRenderer.processStep(step);
+        } else if (isMazeAlgorithm(algoKey)) {
+            MazeRenderer.processStep(step);
         } else {
             Visualizer.processStep(step, currentArray);
         }
 
         CodeHighlighter.highlightLine(step.codeLine);
+
+        // Append chain-of-thought entry for tree / graph algorithms
+        const thought = generateThought(step, algoKey);
+        if (thought) appendThought(step, thought);
+
+        EventBus.emit('algorithm:step', {
+            stepType: step.type,
+            indices: step.indices || [],
+            nodeId: step.nodeId || null,
+            codeLine: step.codeLine,
+        });
         return false;
     }
 
@@ -920,6 +1078,421 @@ import Feedback from './feedback.js';
         updateStats();
     }
 
+    // ─── Chain of Thought ───
+
+    /**
+     * Per-algorithm, per-step-type thought generators.
+     * Each leaf is a function that receives the step object and returns a human-readable string
+     * describing WHY the algorithm is making this decision.
+     * Returns null to suppress an entry for purely mechanical steps.
+     *
+     * @type {Object<string, Object<string, function({type:string, nodeId?:*, from?:*, to?:*, balance?:number, rotationType?:string}):string|null>>}
+     */
+    const THOUGHTS = {
+        // ── BST Insert ───────────────────────────────────────────────────────────
+        bstInsert: {
+            visit:    () => `Arrived at a node — checking which subtree to recurse into`,
+            compare:  (s) => s.codeLine <= 4
+                ? `Inserted value is less than current node — descend into left subtree`
+                : `Inserted value is greater than current node — descend into right subtree`,
+            insert:   () => `Found an empty position — placing the new node here`,
+        },
+        // ── BST Search ───────────────────────────────────────────────────────────
+        bstSearch: {
+            visit:    () => `Examining current node`,
+            compare:  (s) => s.codeLine <= 4
+                ? `Target is less than current node — search left subtree`
+                : `Target is greater than current node — search right subtree`,
+            found:    () => `Target value matches this node — search complete`,
+            notFound: () => `Reached a null child — value is not in the tree`,
+        },
+        // ── BST Delete ───────────────────────────────────────────────────────────
+        bstDelete: {
+            visit:    () => `Traversing tree to find the node to delete`,
+            compare:  (s) => s.codeLine <= 5
+                ? `Target is less than current node — go left`
+                : `Target is greater than current node — go right`,
+            found:    () => `Node to delete found — determining case: leaf, one child, or two children`,
+            delete:   () => `Removing node — relinking parent pointer`,
+            replace:  () => `Two-child case: replacing value with in-order successor (smallest in right subtree)`,
+            notFound: () => `Reached null — value not present in tree, nothing to delete`,
+        },
+        // ── BST Traversals ───────────────────────────────────────────────────────
+        bstInorder: {
+            visit: () => `In-order: left subtree → visit this node → right subtree`,
+        },
+        bstPreorder: {
+            visit: () => `Pre-order: visit this node → left subtree → right subtree`,
+        },
+        bstPostorder: {
+            visit: () => `Post-order: left subtree → right subtree → visit this node`,
+        },
+        bstLevelOrder: {
+            visit:   () => `Level-order (BFS): visiting nodes breadth-first, level by level`,
+            enqueue: () => `Enqueuing children of current node for the next level`,
+        },
+        // ── AVL Insert ───────────────────────────────────────────────────────────
+        avlInsert: {
+            insert:       () => `New node inserted — now tracing back up to check balance`,
+            visit:        () => `Descending to find insertion point`,
+            compare:      (s) => s.codeLine <= 4
+                ? `Value less than current node — go left`
+                : `Value greater than current node — go right`,
+            updateHeight: () => null,   // mechanical — no meaningful narrative
+            checkBalance: (s) => {
+                const bf = s.balance;
+                if (bf == null) return `Checking balance factor at this node`;
+                if (Math.abs(bf) <= 1) return `Balance factor ${bf >= 0 ? '+' : ''}${bf} — subtree is balanced (|BF| ≤ 1), continue up`;
+                return `Balance factor ${bf >= 0 ? '+' : ''}${bf} — imbalanced! Rotation required to restore AVL property`;
+            },
+            rotate: (s) => s.rotationType
+                ? `Performing ${s.rotationType} rotation to restore height balance`
+                : `Rotating subtree to restore AVL balance`,
+        },
+        // ── Heap Insert Min ──────────────────────────────────────────────────────
+        heapInsertMin: {
+            insert:  () => `New value appended at end of heap array — will bubble up`,
+            compare: () => `Comparing child with its parent — is min-heap order satisfied?`,
+            swap:    () => `Child is smaller than parent — swapping to bubble up`,
+            check:   () => `Child is not smaller than parent — heap property satisfied, stop`,
+            visit:   () => `Node settled into its correct position`,
+        },
+        // ── Heap Extract Min ─────────────────────────────────────────────────────
+        heapExtractMin: {
+            found:    () => `Root (minimum element) saved — will be returned after sift-down`,
+            overwrite:() => `Last element moved to root — now sifting down to restore heap order`,
+            visit:    () => `Sifting down: swapping node with its smallest child`,
+            compare:  () => `Comparing node with its children to find the smallest`,
+            check:    () => `Node is smaller than both children — heap property restored`,
+            swap:     () => `Swapping with smallest child to maintain min-heap order`,
+            notFound: () => `Heap is empty — nothing to extract`,
+        },
+        // ── BFS ──────────────────────────────────────────────────────────────────
+        bfsGraph: {
+            enqueue: (s) => s.from != null
+                ? `Node ${s.nodeId} (neighbor of ${s.from}) not yet visited — adding to queue`
+                : `Enqueuing start node ${s.nodeId}`,
+            visit:   (s) => s.from != null
+                ? `Discovered node ${s.nodeId} via edge from ${s.from}`
+                : `Starting BFS from node ${s.nodeId} — marking as visited`,
+            dequeue: (s) => `Dequeuing node ${s.nodeId} — processing all its unvisited neighbors`,
+            visited: (s) => `Node ${s.nodeId} fully processed — all reachable neighbors enqueued`,
+        },
+        // ── DFS ──────────────────────────────────────────────────────────────────
+        dfsGraph: {
+            push:    (s) => s.from != null
+                ? `Pushing node ${s.nodeId} onto stack (via edge from ${s.from})`
+                : `Starting DFS from node ${s.nodeId}`,
+            visit:   (s) => `Exploring node ${s.nodeId} — marking as visited`,
+            visited: (s) => `Node ${s.nodeId} fully explored — all neighbors visited, backtracking`,
+        },
+        // ── Dijkstra ─────────────────────────────────────────────────────────────
+        dijkstraGraph: {
+            visit:   (s) => s.from != null
+                ? `Now processing node ${s.nodeId} — smallest tentative distance in unvisited set`
+                : `Initialising source node ${s.nodeId} with distance 0`,
+            visited: (s) => `Node ${s.nodeId} finalized — its shortest path is confirmed`,
+            relax:   (s) => `Checking edge ${s.from} → ${s.to}: can we find a shorter path to ${s.to}?`,
+            update:  (s) => `Shorter path found! Updated distance to node ${s.to} via ${s.from}`,
+        },
+        // ── A* ───────────────────────────────────────────────────────────────────
+        aStarGraph: {
+            visit:   (s) => `Expanding node ${s.nodeId} — lowest f(n) = g(n) + h(n) in open set`,
+            visited: (s) => `Node ${s.nodeId} closed — optimal cost confirmed`,
+            relax:   (s) => `Evaluating neighbor ${s.to}: f(n) = g(n) + edge_cost + heuristic`,
+            update:  (s) => `Better path to ${s.to} via ${s.from} — updating f(n) and predecessor`,
+            found:   (s) => `Goal node ${s.nodeId} reached — reconstructing path`,
+            notFound:(s) => `Open set exhausted — no path exists to goal`,
+        },
+        // ── Bellman-Ford ─────────────────────────────────────────────────────────
+        bellmanFordGraph: {
+            visit:   (s) => s.nodeId === -1
+                ? `Starting new relaxation pass over all edges`
+                : `Initialising distances — source node ${s.nodeId} set to 0, all others to ∞`,
+            relax:   (s) => `Relaxing edge ${s.from} → ${s.to}: is path via ${s.from} shorter?`,
+            update:  (s) => `Distance to ${s.to} improved via ${s.from} — updated`,
+            found:   () => `All V-1 passes complete — shortest paths finalized (no negative cycle detected)`,
+            notFound:(s) => `Negative cycle detected at node ${s.nodeId} — distances are unreliable`,
+        },
+        // ── Kruskal ──────────────────────────────────────────────────────────────
+        kruskalGraph: {
+            visit:   (s) => s.nodeId === -1
+                ? `Examining next cheapest edge in sorted order`
+                : `Adding node ${s.nodeId} to MST`,
+            relax:   (s) => s.from != null
+                ? `Considering edge ${s.from}–${s.to}: are they in different components? (union-find check)`
+                : `Checking edge for MST inclusion`,
+            update:  (s) => `Different components — edge ${s.from}–${s.to} added to MST (merging sets)`,
+            found:   () => `MST complete — all vertices connected with minimum total weight`,
+        },
+        // ── Topological Sort ─────────────────────────────────────────────────────
+        topoSortGraph: {
+            visit:   (s) => s.nodeId === -1
+                ? `Initialising in-degree counts for all nodes`
+                : `Processing node ${s.nodeId} — decrementing in-degrees of its successors`,
+            visited: (s) => `Node ${s.nodeId} appended to topological order`,
+            relax:   (s) => `Edge ${s.from} → ${s.to}: decrementing in-degree of ${s.to}`,
+            enqueue: (s) => `Node ${s.to != null ? s.to : s.nodeId} in-degree reached 0 — ready to process`,
+            found:   (s) => `Node ${s.nodeId} added to topological sort result`,
+            notFound:() => `Cycle detected — topological sort is impossible for cyclic graphs`,
+        },
+        mazeRecursiveDFS: {
+            carve:    (s) => `Carving passage at (${s.row}, ${s.col})`,
+            backtrack:(s) => `Dead end at (${s.row}, ${s.col}) — backtracking to previous cell`,
+        },
+        mazePrims: {
+            carve:    (s) => `Carving passage at (${s.row}, ${s.col})`,
+            frontier: (s) => `Adding wall at (${s.row}, ${s.col}) to frontier`,
+        },
+        mazeBinaryTree: {
+            carve:    (s) => `Carving passage at (${s.row}, ${s.col})`,
+        },
+        pathBFS: {
+            visit:   (s) => `Dequeueing cell (${s.row}, ${s.col}) — processing neighbors`,
+            explore: (s) => `Exploring neighbor (${s.row}, ${s.col}) — adding to queue`,
+            found:   () => `Exit reached — reconstructing shortest path`,
+            path:    (s) => `Path cell (${s.row}, ${s.col})`,
+        },
+        pathDFS: {
+            visit:   (s) => `Visiting cell (${s.row}, ${s.col}) — exploring deeper`,
+            explore: (s) => `Exploring neighbor (${s.row}, ${s.col}) — pushing to stack`,
+            found:   () => `Exit reached — reconstructing path`,
+            path:    (s) => `Path cell (${s.row}, ${s.col})`,
+        },
+        pathAStar: {
+            visit:   (s) => `Expanding cell (${s.row}, ${s.col}) — lowest f-score in open set`,
+            explore: (s) => `Evaluating neighbor (${s.row}, ${s.col}) — checking if path improves`,
+            found:   () => `Goal reached — optimal path found via A*`,
+            path:    (s) => `Path cell (${s.row}, ${s.col})`,
+            frontier:(s) => `Adding (${s.row}, ${s.col}) to open set`,
+        },
+        pathGreedy: {
+            visit:   (s) => `Expanding cell (${s.row}, ${s.col}) — closest to goal by heuristic`,
+            explore: (s) => `Exploring neighbor (${s.row}, ${s.col}) — adding to open set`,
+            found:   () => `Goal reached — path found (may not be optimal)`,
+            path:    (s) => `Path cell (${s.row}, ${s.col})`,
+            frontier:(s) => `Adding (${s.row}, ${s.col}) to open set`,
+        },
+    };
+
+    /**
+     * Generate a human-readable "chain of thought" string for a given algorithm step.
+     *
+     * @param {{type: string, nodeId?: *, from?: *, to?: *, balance?: number, rotationType?: string, codeLine?: number}} step - The current algorithm step.
+     * @param {string} algoKey - The current algorithm key.
+     * @returns {string|null} Thought string, or null to skip this step.
+     */
+    function generateThought(step, algoKey) {
+        const algoThoughts = THOUGHTS[algoKey];
+        if (!algoThoughts) return null;
+        const generator = algoThoughts[step.type];
+        if (!generator) return null;
+        return generator(step);
+    }
+
+    /**
+     * Append a single chain-of-thought entry to the CoT panel and auto-scroll to it.
+     * Caps the log at 60 entries to prevent unbounded DOM growth.
+     *
+     * @param {{type: string}} step - The current algorithm step (used for the tag label and CSS class).
+     * @param {string} text - The thought string to display.
+     * @returns {void}
+     */
+    function appendThought(step, text) {
+        const entry = document.createElement('div');
+        entry.className = 'cot-entry';
+
+        const tag = document.createElement('span');
+        tag.className = `cot-tag ${step.type}`;
+        tag.textContent = step.type;
+
+        const msg = document.createElement('span');
+        msg.textContent = text;
+
+        entry.appendChild(tag);
+        entry.appendChild(msg);
+        cotBody.appendChild(entry);
+
+        // Cap at 60 entries to prevent unbounded growth
+        while (cotBody.children.length > 60) {
+            cotBody.removeChild(cotBody.firstChild);
+        }
+        cotBody.scrollTop = cotBody.scrollHeight;
+    }
+
+    /**
+     * Show or hide the Chain of Thought panel based on the current algorithm.
+     * Clears any existing entries.
+     *
+     * @param {string} algoKey - The current algorithm key.
+     * @returns {void}
+     */
+    function initCotPanel(algoKey) {
+        const show = isTreeAlgorithm(algoKey) || isGraphAlgorithm(algoKey) || isMazeAlgorithm(algoKey);
+        cotPanel.style.display = show ? '' : 'none';
+        cotBody.innerHTML = '';
+    }
+
+    /**
+     * Clear all chain-of-thought entries.
+     *
+     * @returns {void}
+     */
+    function clearCotPanel() {
+        cotBody.innerHTML = '';
+    }
+
+    /**
+     * Create persistent cell elements for the array state panel.
+     * Called once per array generation — cells are reused across all subsequent steps.
+     *
+     * @param {number[]} arr - The initial array.
+     * @returns {void}
+     */
+    function initArrayState(arr) {
+        const algoKey = algorithmSelect.value;
+        const isArrayAlgo = !isTreeAlgorithm(algoKey) && !isGraphAlgorithm(algoKey) && !isLinkedListAlgorithm(algoKey) && !isMazeAlgorithm(algoKey);
+        const isListMode = Visualizer.getMode() === 'list';
+
+        arrayStatePanel.style.display = (isArrayAlgo && !isListMode) ? '' : 'none';
+        arrayStateBody.innerHTML = '';
+        stateCells = [];
+        if (!isArrayAlgo || isListMode || arr.length === 0) return;
+
+        for (let i = 0; i < arr.length; i++) {
+            const cell = document.createElement('div');
+            cell.className = 'array-state-cell';
+
+            const valSpan = document.createElement('span');
+            valSpan.className = 'asc-value';
+            valSpan.textContent = arr[i];
+
+            const idxSpan = document.createElement('span');
+            idxSpan.className = 'asc-index';
+            idxSpan.textContent = i;
+
+            cell.appendChild(valSpan);
+            cell.appendChild(idxSpan);
+            arrayStateBody.appendChild(cell);
+            stateCells.push(cell);
+        }
+    }
+
+    /**
+     * Update the array state panel for a single algorithm step.
+     * Animates swaps with a translateX crossing transition scaled to current speed.
+     * Accumulates sorted state across steps.
+     *
+     * @param {{type: string, indices?: number[]}|null} step - The current step, or null on complete.
+     * @param {boolean} [complete=false] - Whether the algorithm just finished.
+     * @returns {void}
+     */
+    function renderArrayState(step, complete = false) {
+        if (stateCells.length === 0) return;
+
+        // Accumulate sorted indices
+        if (step && step.type === 'sorted' && step.indices) {
+            for (const i of step.indices) sortedIndices.add(i);
+        }
+        if (complete) {
+            for (let i = 0; i < stateCells.length; i++) sortedIndices.add(i);
+        }
+
+        const stateMap = {
+            compare:   'comparing',
+            swap:      'swapping',
+            overwrite: 'swapping',
+            sorted:    'sorted',
+            found:     'found',
+            check:     'searching',
+            eliminate: 'comparing',
+            pivot:     'pivot',
+        };
+        const activeClass = step ? (stateMap[step.type] || null) : null;
+        const indices = step && step.indices ? step.indices : [];
+
+        // For swap/overwrite: animate cells crossing before updating values
+        if (step && (step.type === 'swap' || step.type === 'overwrite') && indices.length >= 1) {
+            const i = indices[0];
+            const j = indices[1];
+            const cellA = stateCells[i];
+            const cellB = j != null ? stateCells[j] : null;
+
+            if (cellA && cellB) {
+                const rectA = cellA.getBoundingClientRect();
+                const rectB = cellB.getBoundingClientRect();
+                const dx = rectB.left - rectA.left;
+                const dur = Math.min(Math.max(getDelay() * 0.6, 60), 180);
+                const easing = 'cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+
+                cellA.style.transition = `transform ${dur}ms ${easing}, background ${dur}ms ease`;
+                cellB.style.transition = `transform ${dur}ms ${easing}, background ${dur}ms ease`;
+                cellA.classList.add('swapping');
+                cellB.classList.add('swapping');
+                cellA.style.transform = `translateX(${dx}px)`;
+                cellB.style.transform = `translateX(${-dx}px)`;
+                cellA.style.zIndex = '2';
+
+                setTimeout(() => {
+                    cellA.style.transition = 'none';
+                    cellB.style.transition = 'none';
+                    cellA.style.transform = '';
+                    cellB.style.transform = '';
+                    cellA.style.zIndex = '';
+                    cellA.classList.remove('swapping');
+                    cellB.classList.remove('swapping');
+                    // Sync values after animation
+                    cellA.querySelector('.asc-value').textContent = currentArray[i];
+                    cellB.querySelector('.asc-value').textContent = currentArray[j];
+                    applyStateCellClasses();
+                }, dur);
+                return; // let the animation handle the value update
+            }
+
+            // Single-index overwrite (e.g. merge sort)
+            if (cellA) {
+                cellA.querySelector('.asc-value').textContent = currentArray[i];
+            }
+        } else {
+            // Non-swap step: sync all values immediately
+            for (let i = 0; i < stateCells.length; i++) {
+                stateCells[i].querySelector('.asc-value').textContent = currentArray[i];
+            }
+        }
+
+        applyStateCellClasses();
+
+        /**
+         * Apply colour state classes to all persistent cells based on active indices and sorted set.
+         *
+         * @returns {void}
+         */
+        function applyStateCellClasses() {
+            const activeSet = new Set(indices);
+            for (let i = 0; i < stateCells.length; i++) {
+                const cell = stateCells[i];
+                cell.classList.remove('comparing', 'swapping', 'sorted', 'found', 'searching', 'pivot');
+                if (activeSet.has(i) && activeClass) {
+                    cell.classList.add(activeClass);
+                } else if (sortedIndices.has(i)) {
+                    cell.classList.add('sorted');
+                }
+            }
+        }
+    }
+
+    /**
+     * Clear the array state panel and reset sorted index tracking.
+     *
+     * @returns {void}
+     */
+    function clearArrayState() {
+        sortedIndices = new Set();
+        stateCells = [];
+        arrayStateBody.innerHTML = '';
+        clearCotPanel();
+    }
+
     /**
      * Handle algorithm completion. Stops playback, marks bars as sorted,
      * plays a completion sound, and resets button states.
@@ -936,6 +1509,18 @@ import Feedback from './feedback.js';
         }
         SoundEngine.playComplete();
         CodeHighlighter.clearHighlight();
+        renderArrayState(null, true);
+
+        const elapsedMs = startTime ? performance.now() - startTime : 0;
+        EventBus.emit('algorithm:complete', {
+            algoKey,
+            stats: {
+                comparisons,
+                swapCount,
+                elapsedMs,
+            },
+        });
+
         updateButtonStates();
     }
 
@@ -972,6 +1557,7 @@ import Feedback from './feedback.js';
      * @returns {void}
      */
     function reset() {
+        EventBus.emit('algorithm:reset', { algoKey: algorithmSelect.value });
         stopPlayback();
         CompareMode.stop();
         stopElapsedTimer();
@@ -979,7 +1565,7 @@ import Feedback from './feedback.js';
         isPlaying = false;
         elapsedTimeEl.textContent = '0.000s';
         const algoKey = algorithmSelect.value;
-        if (isTreeAlgorithm(algoKey) || isGraphAlgorithm(algoKey) || isLinkedListAlgorithm(algoKey)) {
+        if (isTreeAlgorithm(algoKey) || isGraphAlgorithm(algoKey) || isLinkedListAlgorithm(algoKey) || isMazeAlgorithm(algoKey)) {
             switchVizMode(algoKey);
         }
         generateArray();
@@ -1181,11 +1767,13 @@ import Feedback from './feedback.js';
     function toggleCompare() {
         const isOn = CompareMode.toggle();
         btnCompare.classList.toggle('active', isOn);
+        vizWrapper.classList.toggle('compare-hidden', isOn);
         vizSingle.classList.toggle('compare-hidden', isOn);
         vizCompare.classList.toggle('compare-hidden', !isOn);
         comparePanel.classList.toggle('compare-hidden', !isOn);
         mainContent.classList.toggle('compare-active', isOn);
         if (isOn) {
+            clearArrayState();
             populateCompareDropdowns();
         } else {
             generateArray();
@@ -1200,13 +1788,26 @@ import Feedback from './feedback.js';
     function playCompare() {
         SoundEngine.ensureContext();
         const target = parseInt(searchTargetInput.value, 10);
+
+        EventBus.emit('algorithm:compare:start', {
+            algoKey1: compareSelectA.value,
+            algoKey2: compareSelectB.value,
+            arraySize: currentArray.length,
+        });
+
         CompareMode.start(
             compareSelectA.value,
             compareSelectB.value,
             currentArray,
             target,
             getDelay,
-            () => { updateButtonStates(); }
+            () => {
+                EventBus.emit('algorithm:compare:complete', {
+                    algoKey1: compareSelectA.value,
+                    algoKey2: compareSelectB.value,
+                });
+                updateButtonStates();
+            }
         );
         isPlaying = true;
         updateButtonStates();
@@ -1249,7 +1850,7 @@ import Feedback from './feedback.js';
      */
     function updateBenchmarkVisibility() {
         const algoKey = algorithmSelect.value;
-        benchmarkGroup.style.display = isBenchmarkable(algoKey) ? 'flex' : 'none';
+        benchmarkGroup.classList.toggle('controls-hidden', !isBenchmarkable(algoKey));
     }
 
     /**
@@ -1315,7 +1916,13 @@ import Feedback from './feedback.js';
 
     // ─── Event Listeners ───
 
-    btnGenerate.addEventListener('click', generateArray);
+    btnGenerate.addEventListener('click', () => {
+        if (isMazeAlgorithm(algorithmSelect.value)) {
+            generateMaze();
+        } else {
+            generateArray();
+        }
+    });
     btnPlay.addEventListener('click', () => {
         if (CompareMode.isActive()) {
             playCompare();
@@ -1353,6 +1960,7 @@ import Feedback from './feedback.js';
     algorithmSelect.addEventListener('change', () => {
         reset();
         loadAlgorithm();
+        initCotPanel(algorithmSelect.value);
         // For sorted-array searches, auto-sort the array for display
         const val = algorithmSelect.value;
         if (val !== 'linearSearch' && val !== 'sentinelLinearSearch' && isSearchAlgorithm(val)) {
@@ -1540,6 +2148,7 @@ import Feedback from './feedback.js';
         const isLight = document.body.classList.toggle('light');
         btnTheme.textContent = isLight ? 'Dark' : 'Light';
         localStorage.setItem('theme', isLight ? 'light' : 'dark');
+        EventBus.emit('theme:change', { theme: isLight ? 'light' : 'dark' });
     });
 
     // Restore saved theme preference
@@ -1619,5 +2228,29 @@ import Feedback from './feedback.js';
 
     if (FEATURES.FEEDBACK) {
         Feedback.init();
+    }
+
+    if (FEATURES.VISUAL_POLISH) {
+        import('./enhancements/visual-polish.js').then(({ default: VisualPolish }) => {
+            VisualPolish.init();
+        });
+    }
+
+    if (FEATURES.GAMIFICATION) {
+        import('./enhancements/gamification.js').then(({ default: Gamification }) => {
+            Gamification.init();
+        });
+    }
+
+    if (FEATURES.EDUCATIONAL) {
+        import('./enhancements/educational.js').then(({ default: Educational }) => {
+            Educational.init();
+        });
+    }
+
+    if (FEATURES.INTERACTIVITY) {
+        import('./enhancements/interactivity.js').then(({ default: Interactivity }) => {
+            Interactivity.init();
+        });
     }
 })();

@@ -60,6 +60,13 @@
 - **What happened**: The linked list SVG viewBox width was calculated from node top-left positions. The rightmost node's right edge (`x + NODE_WIDTH`) was outside the viewBox, clipping it.
 - **Rule**: When calculating an SVG viewBox from a collection of positioned rectangles, always add `NODE_WIDTH` and `NODE_HEIGHT` to the bounding box so the full extent of every node is visible, not just its origin point.
 
+## UI and Visual Design
+
+### 19. Use Accent Left Borders to Create Section Hierarchy in Dense Panels
+- **What happened**: The info panel had 8 sections packed into a narrow column. All section headings were the same size and colour as body text, making the panel hard to scan.
+- **Rule**: In dense, narrow panels with multiple labelled sections, a 2px left border in the accent colour on headings is more space-efficient than larger fonts or heavy backgrounds. It creates a clear visual rhythm without consuming horizontal space.
+- **How to apply**: Apply `border-left: 2px solid var(--accent); padding-left: 0.5rem` to section headings. Increase `gap` on section containers and `line-height` on description text. Use distinct colours for "live" vs "static" values (e.g., green for updating stats, accent for fixed complexity values).
+
 ## Architecture and File Organisation
 
 ### 13. Split Large Algorithm Files Before They Grow Further
@@ -167,3 +174,92 @@
 - **Lesson**: Features that depend on external services should gracefully degrade. If the adapter reports `isReady() === false`, hide the feature's entry point (button, menu item) entirely. This is preferable to showing a button that errors on click or showing a "not configured" message.
 - **Pattern**: In the module's `init()`, call `adapter.isReady()`. If false, find the UI trigger element and set `display: none`. Combined with the feature flag, this creates two gates: the feature flag controls whether the module loads, and `isReady()` controls whether it is visible.
 - **Rule**: Any feature that requires external credentials must check `isReady()` during initialization and hide its UI entry point if not configured. Never show a button that leads to an expected failure.
+
+## Feature Development
+
+### 28. Challenge Mode Should Only Include Algorithms That Auto-Complete
+- **Context**: Challenge Mode was designed to auto-run an algorithm and then quiz the user. Searching algorithms require a target input, tree/graph/linked-list algorithms have different execution models and state dependencies. Attempting to auto-play these would require injecting values into input fields or managing complex state transitions.
+- **Lesson**: When designing a "random pick and auto-run" feature, only include algorithms that can complete without user interaction after a single play button click. For sorting algorithms, this means selecting from the set that works on any randomized array without additional configuration.
+- **Pattern**: Define a curated pool of algorithm keys (e.g., `CHALLENGE_ALGORITHMS` array) that excludes algorithms requiring user input (search targets, position values, graph start nodes). The challenge button programmatically sets the algorithm select value, dispatches a change event, and triggers play.
+- **Rule**: Auto-run features must verify the algorithm can complete autonomously. Maintain an explicit allowlist rather than filtering by algorithm category, since categories can contain edge cases.
+
+### 29. SVG Node Dragging Requires Coordinate Space Conversion
+- **Context**: Graph nodes are rendered in SVG with a viewBox that maps SVG coordinates to screen pixels. Mouse events give screen coordinates, but node positions are in SVG coordinate space. Directly assigning mouse coordinates to node positions would place them incorrectly.
+- **Lesson**: When implementing drag on SVG elements with a viewBox, you must convert between screen coordinates and SVG coordinates using the viewBox attributes and the container's bounding rectangle. The formula is: `svgX = vbX + (mouseX / containerWidth) * vbWidth`.
+- **Pattern**: Parse the viewBox string (`min-x min-y width height`) on mousedown and cache the values. On mousemove, convert mouse position to SVG space using the cached viewBox and container dimensions. Update the SVG element attributes directly for real-time feedback.
+- **Rule**: Never mix coordinate spaces. Always convert mouse/touch events to the SVG's viewBox coordinate system before updating element positions.
+
+### 30. Graph Renderer Must Cache Edge Data for Redrawing
+- **Context**: Adding node drag required redrawing edges when a node moves. The original `render()` function created edge elements from the passed `edges` array and stored them in `edgeElements`, but did not keep a reference to the original edge data. Without caching, `redrawEdges()` had no data to work with.
+- **Lesson**: When a renderer needs to support partial updates (like redrawing only edges while keeping nodes in place), it must cache the input data that produced the current state. The cache allows partial re-renders without a full `render()` call.
+- **Pattern**: Store copies of the input parameters (`cachedNodes`, `cachedEdges`, `cachedDirected`) at the start of `render()`. Partial update methods (`updateNodePosition`, `redrawEdges`) use the cached data instead of requiring the caller to pass it again.
+- **Rule**: If a renderer may need to redraw any subset of its elements, cache all input data during the full render so partial updates can be performed without external state.
+
+### 31. JSON Export Should Use Standard Blob + Anchor Pattern
+- **Context**: Exporting graph data as a downloadable JSON file requires creating a Blob, generating a temporary URL, programmatically clicking an anchor element, then cleaning up the URL and element.
+- **Lesson**: Browser-based file downloads follow a consistent pattern: `new Blob()` -> `URL.createObjectURL()` -> create/append/click `<a>` -> `URL.revokeObjectURL()`. This pattern works for any text-based export (JSON, CSV, SVG).
+- **Pattern**: Create a helper function that accepts a content string, MIME type, and filename. The function handles the full lifecycle including cleanup. For JSON, use `JSON.stringify(data, null, 2)` for readable output.
+- **Rule**: Never leave object URLs unreleased. Always revoke the URL and remove the temporary anchor element after the download starts. Use a try/finally pattern to ensure cleanup even if the click throws.
+
+### 32. Keep README Algorithm Counts Accurate After Every Phase
+- **Context**: The README showed outdated algorithm counts (14 sorting instead of 19, 5 searching instead of 8, etc.) and marked linked lists as "planned" despite them being fully implemented. The project structure section also listed files as "Planned" that had been delivered.
+- **Lesson**: README drifts from reality quickly on active projects. After completing any phase that adds algorithms or features, the README must be updated to reflect the current state. Outdated information in the README is worse than no information because it misleads contributors and users.
+- **Pattern**: After each phase completion, run a diff: compare the README's algorithm tables against the actual algorithm keys in the codebase, verify file listings match the actual directory structure, and remove any "Planned" or "TODO" annotations for completed work.
+- **Rule**: Every phase completion must include a README audit. Algorithm counts, file listings, and feature descriptions must match the implemented code.
+
+## Data Model Extension
+
+### 33. When Adding a New Field to All Algorithm Entries, Use Parallel Subagents
+- **Context**: Adding a `realWorld` field to 62 algorithm entries across 7 files. Each file has a COMPLEXITY object with entries that follow the same structure. Doing this sequentially would be slow and error-prone.
+- **Lesson**: When a data model change affects many entries across multiple files, use parallel subagents to apply the changes simultaneously. Each subagent handles one file, ensuring consistent application of the new field across the entire codebase.
+- **Pattern**: Define the new field values for all entries upfront, then dispatch one subagent per file. Each subagent reads the file, adds the field to every entry, and verifies with `node --check`. Run all subagents in parallel for maximum throughput.
+- **Rule**: For cross-cutting data model changes (adding a field to N entries across M files), parallelize the work across files. Verify each file independently before considering the change complete. Run the full build and test suite after all files are updated to catch any integration issues.
+
+### 34. Reuse Existing CSS Classes When Adding New UI Sections
+- **Context**: Adding a "Real World Use Cases" section to the info panel. The panel already has a consistent pattern of `.info-section` > `.info-section-heading` + `.info-description` for each content block.
+- **Lesson**: Before writing new CSS, check if existing class patterns already handle the desired styling. If the new section follows the same structural pattern as existing sections, reusing the classes ensures visual consistency and avoids CSS bloat.
+- **Pattern**: When adding a new section that mirrors existing ones (same heading style, same text style), use the same CSS classes. Only add new CSS when the section needs a distinct visual treatment.
+- **Rule**: Check existing class patterns before creating new ones. If the new element fits an existing pattern, reuse the classes. New CSS classes should only be created for genuinely new visual treatments.
+
+## CSS Layout and Flex
+
+### 35. `flex: 1 1 0; height: 0` Is the Correct Way to Give Flex Children a Resolvable Height
+- **What happened**: `.viz-single` had `flex: 65; min-height: 0`. Browsers cannot resolve `height: 100%` on children of a flex item unless that flex item has a concrete pixel height. With only `flex-grow`, the computed height is "auto" — which percentage-height grandchildren cannot inherit.
+- **Rule**: When a flex child must be a percentage-height parent, use `flex: 1 1 0; height: 0`. The `height: 0` baseline gives the browser a concrete starting value; flex then grows it to fill available space; the resulting computed height is a real pixel value that `height: 100%` children can inherit.
+- **How to apply**: Set `flex: 1 1 0; height: 0` on the flex item, then `height: 100%` on any direct child that should fill it. This pattern replaces the common but unreliable `min-height: 0` approach for percentage-height grandchildren.
+
+### 36. Applying `display: flex` to Both `html` and `body` Creates an Unintended Flex Relationship
+- **What happened**: Both `html` and `body` were given `display: flex; flex-direction: column`. This made `body` a flex child of `html`. Without `flex: 1` on `body`, it shrunk to zero usable height, collapsing the entire layout.
+- **Rule**: Do not apply `display: flex` to `html`. Use `html { height: 100% }` to give the viewport a full-height anchor, and `body { height: 100%; display: flex; flex-direction: column }` for the actual column layout. `html` has no role in the flex chain; it just provides the 100% height reference.
+- **How to apply**: Split combined `html, body { ... display: flex ... }` rules into separate blocks. `html` gets only `height: 100%`. `body` gets the flex container properties.
+
+## JavaScript Variable Scoping
+
+### 37. `let` Declarations Are Not Hoisted — Declare State Variables at the Top of Their Scope
+- **What happened**: `let stateCells = []` was declared inside a long IIFE near `initArrayState` (~line 980). A function defined much earlier (`clearArrayState`, called at line 247) referenced `stateCells`. Because `let` is in the Temporal Dead Zone (TDZ) until its declaration is reached, calling `clearArrayState` before execution reached line 980 threw `ReferenceError: Cannot access 'stateCells' before initialization`.
+- **Rule**: Declare all shared state variables (`let`, `const`) at the very top of their containing scope block, before any function that references them. The TDZ applies to the entire block from the opening brace to the `let` declaration, not just code written before the declaration.
+- **How to apply**: Group all module-level or IIFE-level state variables into a single "state declarations" block near the top. Never declare a state variable next to the function that initialises it if other functions may reference it earlier.
+
+## UI Component Sizing
+
+### 38. `input[type="number"]` Spinner Arrows Consume ~17px of Field Width
+- **What happened**: A Speed input field sized at 44px was meant to display values up to "100" (3 characters). But the browser-native up/down spinner arrows occupied ~17px on the right side, leaving only ~27px for text — enough for 2 characters, not 3.
+- **Rule**: Either account for spinner width (add ~20px to the desired text area width) or remove spinners entirely for small inputs where the slider provides the same control. Removing spinners is cleaner for compact UI components.
+- **How to apply**: To remove spinners cross-browser: add `::-webkit-inner-spin-button, ::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0 }` and `[type="number"] { -moz-appearance: textfield }`. Then size the input based on text area alone (approximately `character_count × 8px + horizontal_padding`).
+
+## Canvas-Based Rendering for Grid Algorithms
+
+### 39. Canvas Renderers Should Take Deep Copies to Avoid External Mutation
+- **What happened**: The `MazeRenderer.render()` method receives a grid array and stores it. If the caller later modifies the same array (e.g., during algorithm execution), the renderer's internal state would be corrupted because JavaScript arrays are passed by reference.
+- **Rule**: Always deep-copy input data in a renderer's `render()` method (`grid.map(row => [...row])`). The renderer should never depend on the caller not mutating the data after rendering.
+- **How to apply**: In `render(grid)`, create a deep copy immediately: `currentGrid = grid.map(row => [...row])`. Then all subsequent `processStep()` calls modify only the internal copy.
+
+### 40. Grid Algorithms With Dual-Phase Workflows Need Fallback Generation
+- **What happened**: Pathfinding algorithms require a completed maze to operate on. If a user selects a pathfinding algorithm directly (without first running a maze generator), there is no maze to pathfind through. A synchronous fallback is needed.
+- **Rule**: When an algorithm depends on the output of another algorithm, check whether the prerequisite state exists. If not, generate it synchronously before starting the dependent algorithm. The user should see the completed prerequisite before the dependent algorithm begins.
+- **How to apply**: In `initGenerator()`, check `if (!currentMaze)` for pathfinding algorithms. If null, generate a fresh maze by running `mazeRecursiveDFS` synchronously (drain the generator with a while loop). Then render the completed maze before starting the pathfinder.
+
+### 41. New Algorithm Families Must Update All Dispatch Tables in main.js
+- **What happened**: Adding maze algorithms required changes in 10+ locations in main.js: imports, constants, classifier function, state variables, renderer init, switchVizMode, loadAlgorithm, initGenerator, executeStep, initCotPanel, initArrayState, reset, THOUGHTS, and the Generate button handler.
+- **Rule**: When adding a new algorithm family, use `grep` to find every occurrence of existing algorithm family checks (e.g., `isTreeAlgorithm`, `isLinkedListAlgorithm`) and add corresponding branches for the new family. Missing any one location leaves the feature partially broken. Follow the 10-point integration checklist.
+- **How to apply**: The integration checklist for a new algorithm family: (1) Import algorithms and renderer, (2) Add algorithm array and classifier function, (3) Add state variables and DOM refs, (4) Initialize renderer, (5) Update switchVizMode, (6) Update loadAlgorithm (code/complexity source, UI visibility), (7) Update initGenerator, (8) Update executeStep (step processing and result handling), (9) Update initCotPanel and initArrayState, (10) Update reset, THOUGHTS, and Generate button handler.

@@ -1805,6 +1805,12 @@ const GraphAlgorithms = (() => {
                 'Not ideal when the graph is very deep and the target is far from the start. ' +
                 'Uses more memory than DFS because it stores all nodes at the current level. ' +
                 'For weighted shortest paths, use Dijkstra instead.',
+            realWorld:
+                'Powers the "six degrees of separation" analysis in social networks, web crawler frontiers ' +
+                '(discover all links at the current depth before going deeper), GPS navigation for shortest ' +
+                'routes in unweighted road networks, and multiplayer game matchmaking. Used in peer-to-peer ' +
+                'networks for finding nearby nodes, in garbage collection algorithms for marking reachable ' +
+                'objects, and in solving puzzles like the shortest number of moves in Rubik\'s cube.',
         },
         dfs: {
             name: 'Depth-First Search',
@@ -1824,6 +1830,12 @@ const GraphAlgorithms = (() => {
                 'Not suitable for finding the shortest path in unweighted graphs (use BFS instead). ' +
                 'Can get stuck in very deep or infinite branches without a depth limit. ' +
                 'Recursive version may cause stack overflow on very deep graphs.',
+            realWorld:
+                'Used in maze generation and solving, topological sorting (build dependency order), ' +
+                'cycle detection in deadlocks and compilation units, and finding connected components. ' +
+                'Powers the "solve" function in Sudoku solvers, the backtracking in constraint satisfaction ' +
+                'problems, the Git object traversal, and the file system search (find command). ' +
+                'Also used in compiler parsing (abstract syntax tree construction).',
         },
         dijkstra: {
             name: "Dijkstra's Shortest Path",
@@ -1843,6 +1855,12 @@ const GraphAlgorithms = (() => {
                 'Does not work correctly with negative edge weights (use Bellman-Ford instead). ' +
                 'Overkill for unweighted graphs where BFS gives the same result more simply. ' +
                 'The priority queue adds overhead compared to simpler approaches on small graphs.',
+            realWorld:
+                'The backbone of GPS navigation systems (Google Maps, Apple Maps, Waze). Used in network ' +
+                'routing protocols (OSPF, IS-IS) for finding the shortest path between routers, in logistics ' +
+                'and delivery optimization (traveling salesman approximations), in robotics for path planning, ' +
+                'and in gaming AI for NPC navigation. Also powers the "shortest path" feature in flight ' +
+                'booking systems and public transit planners.',
         },
         astar: {
             name: 'A* Pathfinding',
@@ -1863,6 +1881,11 @@ const GraphAlgorithms = (() => {
                 'Requires a good heuristic function - poor heuristics can make it slower than Dijkstra. ' +
                 'Does not work with negative edge weights. For finding paths to all nodes, ' +
                 'Dijkstra may be more appropriate since A* targets a specific goal.',
+            realWorld:
+                'Used in video game pathfinding (every game with NPCs navigating a map: Age of Empires, ' +
+                'Starcraft, Minecraft mobs), in robotics for real-time path planning with obstacle avoidance, ' +
+                'in GPS systems with traffic-aware routing, and in logistics for delivery route optimization. ' +
+                'Powers the pathfinding in Google Maps when real-time traffic data is available as the heuristic.',
         },
         bellmanFord: {
             name: 'Bellman-Ford',
@@ -1881,6 +1904,11 @@ const GraphAlgorithms = (() => {
             avoid:
                 'Much slower than Dijkstra (O(V*E) vs O((V+E)log V)) for graphs with only positive weights. ' +
                 'Use Dijkstra when you know all edge weights are non-negative for better performance.',
+            realWorld:
+                'Used in networking protocols like RIP (Routing Information Protocol) for distance-vector routing. ' +
+                'Essential in financial systems for detecting arbitrage opportunities in currency exchange ' +
+                '(negative cycles represent risk-free profit). Used in distributed systems where each node only ' +
+                'knows its neighbors, and in applications where negative edge weights exist (unlike Dijkstra).',
         },
         kruskal: {
             name: "Kruskal's MST",
@@ -1900,6 +1928,11 @@ const GraphAlgorithms = (() => {
                 'For dense graphs, Prim\'s algorithm may be faster. Not suitable for directed graphs ' +
                 'or when you need the shortest path (use Dijkstra instead). Does not work for ' +
                 'disconnected graphs (produces minimum spanning forest instead).',
+            realWorld:
+                'Used in network design: laying fiber-optic cables between cities at minimum cost, designing ' +
+                'water pipeline networks, and planning electrical grid connections. Powers cluster analysis ' +
+                'in data science (single-linkage clustering), image segmentation in computer vision, and the ' +
+                'minimum spanning forest computation for disconnected components in social network analysis.',
         },
         topologicalSort: {
             name: 'Topological Sort',
@@ -1918,6 +1951,12 @@ const GraphAlgorithms = (() => {
                 'Only works on directed acyclic graphs (DAGs). If the graph has cycles, no valid ' +
                 'topological order exists. For cyclic graphs, consider finding strongly connected ' +
                 'components first.',
+            realWorld:
+                'Used in build systems (Make, Maven, npm) to determine compilation/installation order, ' +
+                'in package managers to resolve dependencies, in spreadsheet cell evaluation order, ' +
+                'and in course scheduling (prerequisite chains). Powers the `tsort` Unix utility, Docker ' +
+                'layer ordering, and the compilation order in large codebases with thousands of ' +
+                'interdependent modules.',
         },
     };
 

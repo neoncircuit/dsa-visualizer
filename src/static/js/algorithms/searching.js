@@ -1884,6 +1884,11 @@ const SearchingAlgorithms = (() => {
                 'Avoid when the list is large and already sorted. Binary Search will be ' +
                 'much faster in that case. Also avoid if you need to search the same list ' +
                 'many times, because sorting it once and using Binary Search saves time overall.',
+            realWorld:
+                'The most common search in practice. Used when searching unsorted data: finding a name in a contact list, ' +
+                'scanning a log file for an error message, or checking if a username exists in a database. ' +
+                'Powers the `Array.prototype.indexOf()` and `Array.prototype.includes()` methods in JavaScript. ' +
+                'Also used in string matching (naive substring search).',
         },
         binarySearch: {
             name: 'Binary Search',
@@ -1904,6 +1909,11 @@ const SearchingAlgorithms = (() => {
                 'Cannot be used on an unsorted list. If items are added or removed often, ' +
                 'keeping the list sorted is expensive. Also not worth it if you only search once, ' +
                 'because sorting the list first takes longer than just doing a Linear Search.',
+            realWorld:
+                'Used everywhere sorted data needs fast lookup: dictionary lookups, spell checkers, ' +
+                'database indexes (B-trees use binary search within nodes), version control systems ' +
+                '(Git uses binary search for bisecting commits to find bugs), and auto-complete systems. ' +
+                'Powers Python\'s `bisect` module and Java\'s `Arrays.binarySearch()`.',
         },
         jumpSearch: {
             name: 'Jump Search',
@@ -1924,6 +1934,10 @@ const SearchingAlgorithms = (() => {
                 'Avoid when the list is unsorted, because Jump Search needs items in order. ' +
                 'For very large sorted lists, Binary Search is faster. Also not a good choice when ' +
                 'the list changes often, since keeping it sorted adds extra work.',
+            realWorld:
+                'Used in systems where sequential access is much faster than random access, such as searching data on ' +
+                'magnetic tape or in compressed files where jumping to a specific block is expensive. Also applied in ' +
+                'inverted index searching in search engines and in some database implementations for block-level data scanning.',
         },
         ternarySearch: {
             name: 'Ternary Search',
@@ -1944,6 +1958,11 @@ const SearchingAlgorithms = (() => {
                 'Avoid when the list is unsorted, because Ternary Search needs items in order. ' +
                 'For most practical cases Binary Search is faster because it does fewer comparisons. ' +
                 'Not worth the extra complexity unless you are solving optimization problems on unimodal functions.',
+            realWorld:
+                'Used in optimization problems to find the maximum or minimum of a unimodal function (peak finding). ' +
+                'Applied in numerical methods for finding roots, in computer graphics for ray-surface intersection tests, ' +
+                'and in some implementations of the `pow()` function in math libraries. ' +
+                'Also used in competitive programming for ternary search on answer problems.',
         },
         fibonacciSearch: {
             name: 'Fibonacci Search',
@@ -1964,6 +1983,11 @@ const SearchingAlgorithms = (() => {
                 'Avoid when the list is unsorted or when you have fast random access to any position. ' +
                 'On modern computers with fast memory, Binary Search is usually just as fast and simpler. ' +
                 'Also not a good choice for very small lists where Linear Search would be easier.',
+            realWorld:
+                'Used in systems where division operations are expensive, such as some embedded processors without ' +
+                'hardware division. Applied in searching on systems with Fibonacci coding compression. ' +
+                'Historically relevant for searching on tape drives where the access pattern aligned with Fibonacci numbers. ' +
+                'Also used in some specialized database index structures.',
         },
         interpolationSearch: {
             name: 'Interpolation Search',
@@ -1979,6 +2003,11 @@ const SearchingAlgorithms = (() => {
             avoid:
                 'Avoid with non-uniform distributions (clustered values); the formula can produce bad probes, degrading to O(n). ' +
                 'Also avoid with very small arrays where binary search is simpler.',
+            realWorld:
+                'Used in phone book lookups and dictionary searches where values are uniformly distributed ' +
+                '(names starting with "M" are roughly in the middle). Applied in database indexing for uniformly distributed keys, ' +
+                'in numerical tables for fast value lookups, and in some implementations of the `std::lower_bound` ' +
+                'optimization for known distributions.',
         },
         exponentialSearch: {
             name: 'Exponential Search',
@@ -1995,6 +2024,11 @@ const SearchingAlgorithms = (() => {
             avoid:
                 'No advantage over binary search on small or medium bounded arrays. ' +
                 'Slightly more complex for the same O(log n) result.',
+            realWorld:
+                'Used when searching unbounded or infinite streams (e.g., searching a geometrically growing log file). ' +
+                'Applied in networking for finding the optimal packet size, in file systems for locating data in sparse files, ' +
+                'and as a preprocessing step before binary search when the array size is unknown. ' +
+                'Common in distributed systems for range queries on sorted partitions.',
         },
         sentinelLinearSearch: {
             name: 'Sentinel Linear Search',
@@ -2012,6 +2046,11 @@ const SearchingAlgorithms = (() => {
                 'Only marginally faster than linear search. ' +
                 'Avoid when the array cannot be temporarily modified. ' +
                 'Binary search is far better on sorted data.',
+            realWorld:
+                'Used in high-performance implementations of linear search where the inner loop must be as tight as possible. ' +
+                'Applied in low-level string matching routines, in embedded systems with strict timing constraints, ' +
+                'and in some C standard library `memchr()` implementations. The technique of placing a sentinel at the end ' +
+                'eliminates one comparison per iteration.',
         },
     };
 

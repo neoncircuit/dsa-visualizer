@@ -1109,6 +1109,10 @@ const TreeAlgorithms = (() => {
                 'Avoid when data arrives in sorted or nearly sorted order, as the tree ' +
                 'becomes a linked list with O(n) operations. Use a self-balancing tree ' +
                 'such as AVL or Red-Black when worst-case guarantees matter.',
+            realWorld:
+                'Used to build database indexes, implement symbol tables in compilers, and create in-memory sorted collections. ' +
+                'Powers the `std::map` and `std::set` containers in C++, and forms the basis for more advanced tree structures. ' +
+                'Used in file systems for directory indexing and in autocomplete systems for storing sorted word lists.',
         },
 
         bstSearch: {
@@ -1130,6 +1134,10 @@ const TreeAlgorithms = (() => {
                 'Avoid when the tree is not balanced, because search degrades to O(n). ' +
                 'If the data is static, a sorted array with binary search uses less memory ' +
                 'and has better cache performance.',
+            realWorld:
+                'The fundamental operation behind database queries, dictionary lookups, and symbol table access in compilers. ' +
+                'Used in spell checkers to verify word existence, in IP routing tables for longest-prefix matching, ' +
+                'and in version control systems for efficient file lookup. Powers the `in` operator for sets in many languages.',
         },
 
         bstInorder: {
@@ -1150,6 +1158,11 @@ const TreeAlgorithms = (() => {
             avoid:
                 'Avoid when you only need one specific element. A targeted search is ' +
                 'O(log n) on a balanced tree, much faster than traversing all n nodes.',
+            realWorld:
+                'Used to extract sorted data from a BST without an explicit sort step. ' +
+                'Powers the `sorted()` output from tree-based data structures, the "flatten to sorted list" operation in databases, ' +
+                'and the code generation phase in compilers that outputs symbols in alphabetical order. ' +
+                'Also used in expression tree evaluation (infix notation).',
         },
 
         bstPreorder: {
@@ -1170,6 +1183,11 @@ const TreeAlgorithms = (() => {
             avoid:
                 'Avoid when you need elements in sorted order. In-order traversal is the ' +
                 'right choice for that. Pre-order does not produce sorted output from a BST.',
+            realWorld:
+                'Used to serialize/deserialize tree structures (save to disk and restore). ' +
+                'Powers the copy operation for tree data structures, the "deep clone" in JSON/XML processing, ' +
+                'and the code generation phase in compilers that produces prefix notation. ' +
+                'Also used in file system operations for exporting directory trees and in markup document traversal.',
         },
 
         bstPostorder: {
@@ -1191,6 +1209,11 @@ const TreeAlgorithms = (() => {
                 'Avoid when you need sorted output or when you want to process parents ' +
                 'before children. Use in-order for sorted output and pre-order for ' +
                 'top-down processing.',
+            realWorld:
+                'Used to safely delete a tree (delete children before parent to avoid dangling references). ' +
+                'Powers the evaluation of expression trees in compilers and calculators, the "calculate directory sizes" ' +
+                'operation in file systems, and the dependency resolution in build systems (build children before parent). ' +
+                'Also used in memory management for freeing tree-allocated resources.',
         },
 
         bstDelete: {
@@ -1214,6 +1237,10 @@ const TreeAlgorithms = (() => {
                 'For applications requiring guaranteed performance, use a self-balancing tree ' +
                 'such as AVL or Red-Black tree. If deletions are frequent, consider lazy deletion ' +
                 'or tombstone marking to improve performance.',
+            realWorld:
+                'Used in database index maintenance when records are removed, in memory management for freeing tree nodes, ' +
+                'and in compiler symbol tables when variables go out of scope. Essential for implementing the "erase" operation ' +
+                'in C++ `std::map`/`std::set` and for maintaining balanced search structures in databases.',
         },
 
         avlInsert: {
@@ -1238,6 +1265,11 @@ const TreeAlgorithms = (() => {
                 'uses extra space. Also avoid when rotations are too expensive - ' +
                 'Red-Black trees require fewer rotations on average. For simple ' +
                 'applications without strict timing requirements, a regular BST may suffice.',
+            realWorld:
+                'Used in database indexing where guaranteed O(log n) operations are critical (e.g., financial trading systems, ' +
+                'real-time inventory management). Powers the `std::map` in some standard library implementations, the Windows NT ' +
+                'kernel\'s virtual memory management, and in-memory indexes for real-time applications. ' +
+                'Preferred over regular BSTs when data ordering is adversarial.',
         },
     };
 
@@ -1747,6 +1779,11 @@ const TreeAlgorithms = (() => {
                 'Avoid when you need depth-first operations or when memory is constrained. ' +
                 'The queue can use significant space for wide trees. ' +
                 'For simple printing without level information, pre-order may be more memory efficient.',
+            realWorld:
+                'Used in social network friend recommendations (find connections at distance N), web crawler scheduling ' +
+                '(process pages by depth), and multiplayer game matchmaking (find players at similar skill levels). ' +
+                'Powers the "Find Nearest" feature in location services, the shortest path in unweighted graphs (maze solving), ' +
+                'and the breadth-first component labeling in image processing.',
         },
     };
 
@@ -2325,6 +2362,11 @@ const TreeAlgorithms = (() => {
                 'Avoid when you need fast search or deletion of arbitrary elements. ' +
                 'Heaps are optimized for root access, not for arbitrary lookups. ' +
                 'For balanced search operations, use a BST or balanced tree instead.',
+            realWorld:
+                'Used in priority queue implementations: operating system process schedulers, event-driven simulations, ' +
+                'Dijkstra\'s shortest path algorithm, and Huffman coding for data compression. ' +
+                'Powers the "next smallest element" extraction in streaming algorithms, the merge step in external sorting, ' +
+                'and the task scheduler in real-time operating systems.',
         },
         heapExtractMin: {
             name: 'Min-Heap Extract',
@@ -2345,6 +2387,11 @@ const TreeAlgorithms = (() => {
                 'Avoid when you need to preserve all elements. Extract removes the root element permanently. ' +
                 'For peeking at the minimum without removing, use a different data structure ' +
                 'or add a separate peek operation. Not suitable for maintaining a sorted list of all elements.',
+            realWorld:
+                'Used in scheduling the next task in operating systems (always pick the highest priority), ' +
+                'in Dijkstra\'s algorithm for processing the closest unvisited node, in Huffman coding for building ' +
+                'the compression tree, and in streaming median algorithms. Powers the "pop minimum" operation that makes ' +
+                'heaps essential for greedy algorithms.',
         },
     };
 

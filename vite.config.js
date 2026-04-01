@@ -19,6 +19,7 @@ export default defineConfig({
                         './src/static/js/algorithms/trees.js',
                         './src/static/js/algorithms/graphs.js',
                         './src/static/js/algorithms/linked-lists.js',
+                        './src/static/js/algorithms/maze.js',
                     ],
                 },
             },

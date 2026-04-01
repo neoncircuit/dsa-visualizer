@@ -2289,6 +2289,10 @@ const COMPLEXITY = {
                 'Avoid for large or randomly ordered lists. It moves backward one step at a time, which is ' +
                 'slow. Insertion Sort does the same job but faster because it shifts items instead of swapping. ' +
                 'Use Merge Sort or Quick Sort for big data.',
+            realWorld:
+                'Primarily an educational algorithm. Occasionally appears in simple embedded systems where code ' +
+                'size is critical (the entire algorithm fits in a few bytes). Used to teach the concept that ' +
+                'sorting can be done with minimal code complexity.',
         },
 
         cocktailShakerSort: {
@@ -2309,6 +2313,10 @@ const COMPLEXITY = {
                 'Avoid for medium or large lists. It is still O(n^2) and not much faster than Bubble Sort ' +
                 'in practice. Use Insertion Sort for small or nearly sorted data, or Merge Sort and Quick Sort ' +
                 'for anything bigger.',
+            realWorld:
+                'Used in some implementations of the "flash sort" pre-processing step. Occasionally appears in ' +
+                'legacy financial systems for small dataset sorting. Mostly educational, but its bidirectional ' +
+                'nature makes it useful for detecting nearly-sorted data quickly.',
         },
 
         pancakeSort: {
@@ -2329,6 +2337,10 @@ const COMPLEXITY = {
                 'Avoid for any practical sorting task. It is slow and does many unnecessary swaps compared to ' +
                 'other algorithms. Use Insertion Sort for small lists or Merge Sort and Quick Sort for larger ones. ' +
                 'It is best kept as a puzzle, not a tool.',
+            realWorld:
+                'The theoretical basis for a problem in computational biology (genome rearrangement by reversals). ' +
+                'Researchers study pancake sorting to understand the minimum number of reversals needed to sort a ' +
+                'permutation, which models chromosome rearrangement in evolution.',
         },
 
         combSort: {
@@ -2347,6 +2359,10 @@ const COMPLEXITY = {
             avoid:
                 'For guaranteed O(n log n) performance, use merge sort or heap sort instead. ' +
                 'The shrink factor is a heuristic that works well in practice but not guaranteed.',
+            realWorld:
+                'Used in some image processing pipelines for small pixel array sorting. Occasionally appears in ' +
+                'embedded systems as a drop-in improvement over bubble sort with minimal code changes. The gap ' +
+                'shrink factor makes it tunable for specific hardware characteristics.',
         },
 
         oddEvenSort: {
@@ -2364,6 +2380,10 @@ const COMPLEXITY = {
             avoid:
                 'On single-threaded systems, this is just bubble sort with extra steps. ' +
                 'Use regular bubble sort or a better algorithm for sequential execution.',
+            realWorld:
+                'Used in parallel computing as a demonstration of sorting on multiple processors. Each processor ' +
+                'handles either odd or even indexed pairs simultaneously, making it a teaching tool for parallel ' +
+                'algorithm design. Used in GPU-based sorting research.',
         },
 
         radixSort: {
@@ -2382,6 +2402,10 @@ const COMPLEXITY = {
             avoid:
                 'Not suitable for floating-point numbers or arbitrary-precision integers. ' +
                 'Requires knowing the range of values beforehand. Use comparison sorts for unknown ranges.',
+            realWorld:
+                'Used for sorting large datasets of integers in database systems, IP address sorting in networking ' +
+                'tools, and sorting phone numbers or IDs. Powers the suffix array construction in bioinformatics ' +
+                '(genome sequencing). Used in PostgreSQL for certain index operations and in the DC3 suffix array algorithm.',
         },
 
         bucketSort: {
@@ -2399,6 +2423,10 @@ const COMPLEXITY = {
             avoid:
                 'Poor performance when values cluster in one bucket (degrades to insertion sort). ' +
                 'Requires knowing the range of values. Use radix sort for integers.',
+            realWorld:
+                'Used in distributed sorting systems (MapReduce shuffle phase), histogram-based image processing ' +
+                '(color quantization), and load balancing. Applied in floating-point number sorting for graphics ' +
+                'rendering and in natural language processing for vocabulary-based document sorting.',
         },
 
         timSort: {
@@ -2419,6 +2447,11 @@ const COMPLEXITY = {
                 'Overkill for tiny arrays where simple insertion sort suffices. ' +
                 'Requires O(n) extra space like merge sort. For purely random data with no natural runs, ' +
                 'the overhead of detecting runs adds complexity without much benefit.',
+            realWorld:
+                'The default sorting algorithm in Python (sorted(), list.sort()), Java (Arrays.sort for objects), ' +
+                'and the Android platform. Designed to handle real-world data that is often partially sorted. Used ' +
+                "in OpenJDK, Rust's stable sort, and many other standard libraries because it performs well on both " +
+                'random and partially ordered data.',
         },
 
 };

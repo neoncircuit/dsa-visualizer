@@ -1180,6 +1180,11 @@ const COMPLEXITY = {
                 'Avoid for literally everything. Even a list of 10 items could take millions of shuffles. ' +
                 'The expected time grows faster than exponentially. If you use this in production, ' +
                 'your code reviewer will cry. We cap it at 1000 tries so your browser does not freeze.',
+            realWorld:
+                'No real-world applications exist. Bogo Sort is a teaching tool used to illustrate why ' +
+                'algorithm analysis matters and why random shuffling is not a viable sorting strategy. ' +
+                'Sometimes used as a benchmark for "worst possible sort" in computer science education ' +
+                'and April Fools\' day code submissions.',
         },
 
         thanosSort: {
@@ -1200,6 +1205,11 @@ const COMPLEXITY = {
                 'Avoid when you actually need all your data to survive. This algorithm solves the sorting problem ' +
                 'by making the problem smaller, not by doing real work. Half your data disappears each round. ' +
                 'If your boss asks why the database is empty, do not blame Thanos.',
+            realWorld:
+                'No real-world applications exist. Thanos Sort is a humorous take on the idea of reducing ' +
+                'problem size by removing data. The name references the Marvel villain who erased half of ' +
+                'all life. Occasionally referenced in tech talks about data loss and the importance of ' +
+                'backup strategies.',
         },
 
         stalinSort: {
@@ -1220,6 +1230,11 @@ const COMPLEXITY = {
                 'Avoid when you need all your data to survive the sorting process. This is not really sorting, ' +
                 'it is filtering with extra propaganda. The output is sorted but incomplete. ' +
                 'Use a real algorithm like Merge Sort or Quick Sort if you value your data.',
+            realWorld:
+                'No real-world applications exist. Stalin Sort is a satirical algorithm that removes elements ' +
+                'violating sorted order rather than rearranging them. Used as a joke in programming communities ' +
+                'and to illustrate the difference between sorting and filtering. The name references the ' +
+                'Soviet leader\'s practice of erasing people from photographs.',
         },
 
 
@@ -1239,6 +1254,11 @@ const COMPLEXITY = {
             avoid:
                 'Avoid for any real sorting task. The timing depends on the maximum value, ' +
                 'and thread scheduling is unpredictable. This is a novelty algorithm.',
+            realWorld:
+                'No real-world applications exist. Sleep Sort is a novelty algorithm that exploits ' +
+                'concurrent timers. However, the concept of value-proportional scheduling appears in ' +
+                'some real-time systems where tasks are prioritized by urgency. Used in programming ' +
+                'education to teach concurrency concepts.',
         },
 
 
@@ -1257,6 +1277,11 @@ const COMPLEXITY = {
             avoid:
                 'Avoid when you have deadlines. The probability of a miracle occurring is inversely ' +
                 'proportional to how badly you need the array sorted. Not recommended for production.',
+            realWorld:
+                'No real-world applications exist. Miracle Sort is a joke about waiting for cosmic rays ' +
+                '(radiation-induced bit flips) to sort data. However, the concept of relying on ' +
+                'environmental interference is analogous to "waiting for a monkey to type Shakespeare." ' +
+                'Used to illustrate that algorithms must actively solve problems rather than passively waiting.',
         },
 
 };

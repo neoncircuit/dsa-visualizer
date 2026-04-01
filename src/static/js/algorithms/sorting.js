@@ -2072,6 +2072,10 @@ const SortingAlgorithms = (() => {
                 'Avoid for medium or large lists. It compares every pair many times, making it ' +
                 'one of the slowest sorts. Use Insertion Sort instead for small or nearly sorted data, ' +
                 'or Merge/Quick Sort for anything bigger.',
+            realWorld:
+                'Used in some embedded systems and PLCs (programmable logic controllers) where code ' +
+                'simplicity matters more than speed. Also appears in network packet sorting where the ' +
+                'list is tiny and already nearly sorted.',
         },
         selectionSort: {
             name: 'Selection Sort',
@@ -2091,6 +2095,10 @@ const SortingAlgorithms = (() => {
                 'Avoid for large lists. It always takes the same amount of time even if the list ' +
                 'is already sorted. Not stable either, so equal items may get rearranged. ' +
                 'Insertion Sort is almost always a better choice for small data.',
+            realWorld:
+                'Used in hardware-level sorting circuits (sorting networks) and in situations where ' +
+                'write operations are expensive, such as flash memory with limited write cycles. The ' +
+                'minimal swap count makes it ideal for EEPROM wear leveling.',
         },
         insertionSort: {
             name: 'Insertion Sort',
@@ -2110,6 +2118,11 @@ const SortingAlgorithms = (() => {
                 'Avoid for large, randomly ordered lists. Each new item may need to shift many ' +
                 'others over, making it slow. For big data, Merge Sort or Quick Sort will be ' +
                 'much faster.',
+            realWorld:
+                'The go-to sort in many standard libraries for small arrays (typically under 10-20 ' +
+                'elements). Python\'s Timsort, Java\'s Arrays.sort, and V8\'s Quicksort all fall back ' +
+                'to Insertion Sort for tiny sub-arrays. Also used for online sorting (processing ' +
+                'elements as they arrive).',
         },
         mergeSort: {
             name: 'Merge Sort',
@@ -2130,6 +2143,11 @@ const SortingAlgorithms = (() => {
                 'Avoid when memory is tight. It needs a full copy of the list as extra space. ' +
                 'For small lists, the overhead of splitting and merging is not worth it. ' +
                 'Insertion Sort will be faster for lists under about 20 items.',
+            realWorld:
+                'Used in external sorting (sorting datasets too large to fit in RAM, like database ' +
+                'merge operations). Powers Java\'s Arrays.sort for objects, Python\'s Timsort merge ' +
+                'phase, and Git\'s object packing. Also the basis for parallel sorting algorithms ' +
+                'in Hadoop and MapReduce.',
         },
         quickSort: {
             name: 'Quick Sort',
@@ -2150,6 +2168,10 @@ const SortingAlgorithms = (() => {
                 'Avoid when the list is already sorted or nearly sorted (hits worst case O(n^2)). ' +
                 'Not stable, so equal items may swap order. Also avoid when you need guaranteed ' +
                 'speed. Use Merge Sort instead if worst-case performance matters.',
+            realWorld:
+                'The default in-place sort for C\'s qsort(), C++\'s std::sort, and many language ' +
+                'standard libraries. Used in browsers for DOM sorting, in databases for in-memory ' +
+                'index sorting, and in competitive programming for its speed and simplicity.',
         },
         countingSort: {
             name: 'Counting Sort',
@@ -2170,6 +2192,11 @@ const SortingAlgorithms = (() => {
                 'Avoid when the range of values is very large compared to the number of items, ' +
                 'because the count array wastes memory. Not suitable for negative numbers or ' +
                 'floating-point values without extra work. Also not a stable sort in this simple form.',
+            realWorld:
+                'Used for counting sort-based algorithms in radix sort (digit-by-digit sorting). ' +
+                'Applied in frequency counting (histograms, vote tallying), integer sorting when the ' +
+                'range is small (e.g., sorting ages 0-120, grades 0-100), and in some string sorting ' +
+                'algorithms like the American Flag sort.',
         },
         heapSort: {
             name: 'Heap Sort',
@@ -2189,6 +2216,11 @@ const SortingAlgorithms = (() => {
                 'Avoid when you need a stable sort (equal items may get rearranged). Also slower in ' +
                 'practice than Quick Sort due to poor cache behavior, since it jumps around the array. ' +
                 'For most general-purpose sorting, Quick Sort or Merge Sort will be faster.',
+            realWorld:
+                'Used in real-time systems where worst-case O(n log n) is required (audio processing, ' +
+                'medical devices). Powers the heap-based priority queue in operating system schedulers, ' +
+                'Dijkstra\'s algorithm, and event-driven simulators. Also used in embedded systems ' +
+                'with memory constraints.',
         },
         gnomeSort: {
             name: 'Gnome Sort',
@@ -2208,6 +2240,10 @@ const SortingAlgorithms = (() => {
                 'Avoid for large or randomly ordered lists. It moves backward one step at a time, which is ' +
                 'slow. Insertion Sort does the same job but faster because it shifts items instead of swapping. ' +
                 'Use Merge Sort or Quick Sort for big data.',
+            realWorld:
+                'Primarily an educational algorithm. Occasionally appears in simple embedded systems ' +
+                'where code size is critical (the entire algorithm fits in a few bytes). Used to teach ' +
+                'the concept that sorting can be done with minimal code complexity.',
         },
         cocktailShakerSort: {
             name: 'Cocktail Shaker Sort',
@@ -2227,6 +2263,10 @@ const SortingAlgorithms = (() => {
                 'Avoid for medium or large lists. It is still O(n^2) and not much faster than Bubble Sort ' +
                 'in practice. Use Insertion Sort for small or nearly sorted data, or Merge Sort and Quick Sort ' +
                 'for anything bigger.',
+            realWorld:
+                'Used in some implementations of the "flash sort" pre-processing step. Occasionally ' +
+                'appears in legacy financial systems for small dataset sorting. Mostly educational, ' +
+                'but its bidirectional nature makes it useful for detecting nearly-sorted data quickly.',
         },
         pancakeSort: {
             name: 'Pancake Sort',
@@ -2246,6 +2286,10 @@ const SortingAlgorithms = (() => {
                 'Avoid for any practical sorting task. It is slow and does many unnecessary swaps compared to ' +
                 'other algorithms. Use Insertion Sort for small lists or Merge Sort and Quick Sort for larger ones. ' +
                 'It is best kept as a puzzle, not a tool.',
+            realWorld:
+                'The theoretical basis for a problem in computational biology (genome rearrangement by ' +
+                'reversals). Researchers study pancake sorting to understand the minimum number of ' +
+                'reversals needed to sort a permutation, which models chromosome rearrangement in evolution.',
         },
         shellSort: {
             name: 'Shell Sort',
@@ -2265,12 +2309,37 @@ const SortingAlgorithms = (() => {
                 'Avoid for very large datasets where O(n log n) algorithms like Merge Sort or Quick Sort ' +
                 'will be noticeably faster. The exact speed depends on the gap sequence chosen, which can be ' +
                 'tricky to tune. Not stable, so equal items may get rearranged.',
+            realWorld:
+                'Used in some embedded systems and legacy codebases where the simplicity of insertion ' +
+                'sort is desired but with better average performance. The Unix `sort` command historically ' +
+                'used a Shell sort variant. Useful when you need something better than insertion sort but ' +
+                'cannot afford merge sort\'s memory overhead.',
+        },
+        combSort: {
+            name: 'Comb Sort',
+            best: 'O(n log n)',
+            average: 'O(n\u00B2 / 2^p)',
+            worst: 'O(n\u00B2)',
+            space: 'O(1)',
+            description:
+                'An improved version of Bubble Sort. Instead of comparing only adjacent items, it compares ' +
+                'items separated by a "gap". Start with a large gap and shrink it by a factor (usually 1.3) ' +
+                'each pass. The final passes with gap = 1 behave like Bubble Sort, but the list is mostly sorted by then.',
+            useCase:
+                'A simple improvement over Bubble Sort that is easy to implement. The gap-based comparison ' +
+                'helps move small items to the front faster than regular Bubble Sort. Good for medium-sized ' +
+                'lists when you want something better than Bubble Sort without the complexity of Quick Sort.',
+            avoid:
+                'Avoid for very large datasets where O(n log n) algorithms will be significantly faster. ' +
+                'The gap shrink factor affects performance and is not always optimal. Not stable, so equal ' +
+                'items may get rearranged. Quick Sort or Merge Sort are better choices for large data.',
+            realWorld:
+                'Used in some image processing pipelines for small pixel array sorting. Occasionally appears ' +
+                'in embedded systems as a drop-in improvement over bubble sort with minimal code changes. ' +
+                'The gap shrink factor makes it tunable for specific hardware characteristics.',
         },
 
     };
-
-
-    // ─── Generator Functions ───
 
     /**
      * Bubble Sort generator.
@@ -2484,6 +2553,7 @@ const SortingAlgorithms = (() => {
      */
     function* countingSort(arr) {
         const n = arr.length;
+        if (n === 0) return;
 
         // Find max value
         let max = arr[0];

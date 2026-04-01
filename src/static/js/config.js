@@ -8,10 +8,10 @@
  */
 const FEATURES = {
     FEEDBACK: true,
-    VISUAL_POLISH: false,
-    GAMIFICATION: false,
-    EDUCATIONAL: false,
-    INTERACTIVITY: false,
+    VISUAL_POLISH: true,
+    GAMIFICATION: true,
+    EDUCATIONAL: true,
+    INTERACTIVITY: true,
 };
 
 export default FEATURES;

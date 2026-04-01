@@ -78,6 +78,7 @@ const Visualizer = (() => {
         for (let i = 0; i < arr.length; i++) {
             const bar = document.createElement('div');
             bar.className = 'bar';
+            bar.draggable = true;
             bar.style.height = `${(arr[i] / maxVal) * 100}%`;
             if (showLabels) {
                 bar.setAttribute('data-value', arr[i]);
