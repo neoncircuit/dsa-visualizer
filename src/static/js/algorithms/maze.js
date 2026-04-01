@@ -79,17 +79,18 @@ const MazeAlgorithms = (() => {
     }
 
     /**
+     * @param {number[][]} grid
      * @param {number} r
      * @param {number} c
      * @param {number} rows
      * @param {number} cols
      * @returns {number[][]}
      */
-    function getMazeNeighbors(r, c, rows, cols) {
+    function getMazeNeighbors(grid, r, c, rows, cols) {
         const dirs = shuffle([[0, 2], [0, -2], [2, 0], [-2, 0]]);
         return dirs
             .map(([dr, dc]) => [r + dr, c + dc])
-            .filter(([nr, nc]) => nr > 0 && nr < rows - 1 && nc > 0 && nc < cols - 1);
+            .filter(([nr, nc]) => nr > 0 && nr < rows - 1 && nc > 0 && nc < cols - 1 && grid[nr][nc] === WALL);
     }
 
     /**
@@ -2030,7 +2031,7 @@ const MazeAlgorithms = (() => {
 
         while (stack.length > 0) {
             const [r, c] = stack[stack.length - 1];
-            const nbrs = getMazeNeighbors(r, c, rows, cols);
+            const nbrs = getMazeNeighbors(grid, r, c, rows, cols);
 
             if (nbrs.length > 0) {
                 const [nr, nc] = nbrs[0];

@@ -37,6 +37,7 @@ Select an algorithm from the dropdown in the controls bar. Algorithms are organi
 - **Heaps** -- Min-heap insert and extract operations
 - **Graphs** -- Traversal, shortest path, MST, and topological sort
 - **Linked Lists** -- Insert, delete, search, traverse, reverse, and more
+- **Interesting** -- Maze generation and grid pathfinding algorithms
 
 ### Array Configuration
 
@@ -59,6 +60,7 @@ The visualizer adapts to the selected algorithm type:
 - **SVG Tree** -- Node-and-edge tree diagram (BST, AVL, heap operations)
 - **SVG Graph** -- Node-and-edge graph diagram (BFS, DFS, Dijkstra, etc.)
 - **SVG Linked List** -- Horizontal node-and-arrow chain (linked list operations)
+- **Canvas Grid** -- Cell-based maze/pathfinding grid (maze generation, BFS/DFS/A*/Greedy pathfinding)
 
 ## Playback Controls
 

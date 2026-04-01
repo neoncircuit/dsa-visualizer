@@ -18,6 +18,7 @@ tests/
 │   ├── tree-algorithms.spec.js            # Tree algorithm tests
 │   ├── graph-algorithms.spec.js           # Graph algorithm tests
 │   ├── linked-list-algorithms.spec.js     # Linked list algorithm tests
+│   ├── maze-algorithms.spec.js             # Maze and pathfinding tests
 │   └── advanced-features.spec.js          # Compare mode, shortcuts, etc.
 └── *.test.js                              # Unit tests (Vitest)
 ```
@@ -68,7 +69,12 @@ tests/
    - Search and traverse
    - Advanced operations (reverse, detect cycle, merge, sort)
 
-7. **Advanced Features Tests** (`advanced-features.spec.js`)
+7. **Maze and Pathfinding Algorithm Tests** (`maze-algorithms.spec.js`)
+   - Maze generation (Recursive Backtracker, Prim's, Binary Tree)
+   - Grid pathfinding (BFS, DFS, A*, Greedy Best-First)
+   - Fallback maze generation for pathfinding without prior maze
+
+8. **Advanced Features Tests** (`advanced-features.spec.js`)
    - Compare mode
    - Keyboard shortcuts
    - Sound toggle
@@ -227,6 +233,7 @@ ALGORITHM_CATEGORIES = {
   SEARCHING: ['linearSearch', 'binarySearch', ...],
   TREES: { BST: [...], AVL: [...], HEAP: [...] },
   GRAPHS: ['bfs', 'dfs', 'dijkstra', ...],
+  MAZE: { GENERATION: ['mazeRecursiveDFS', 'mazePrims', 'mazeBinaryTree'], PATHFINDING: ['pathBFS', 'pathDFS', 'pathAStar', 'pathGreedy'] },
   LINKED_LISTS: ['llInsertHead', 'llDeleteHead', ...]
 }
 ```

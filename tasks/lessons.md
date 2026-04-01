@@ -259,6 +259,16 @@
 - **Rule**: When an algorithm depends on the output of another algorithm, check whether the prerequisite state exists. If not, generate it synchronously before starting the dependent algorithm. The user should see the completed prerequisite before the dependent algorithm begins.
 - **How to apply**: In `initGenerator()`, check `if (!currentMaze)` for pathfinding algorithms. If null, generate a fresh maze by running `mazeRecursiveDFS` synchronously (drain the generator with a while loop). Then render the completed maze before starting the pathfinder.
 
+### 42. Helper Functions for Maze/Grid Algorithms Must Accept and Use the Grid Reference
+- **What happened**: `getMazeNeighbors` was declared without a `grid` parameter. The DFS maze generator passed only position coordinates, so the function could not filter out already-carved cells. Every neighbor was treated as valid, causing the generator to re-visit carved cells endlessly and producing a checkerboard pattern instead of corridors.
+- **Rule**: Any helper function that inspects cell state (wall, passage, visited) must receive the grid as a parameter and check `grid[nr][nc]` before returning a neighbor as valid. Never assume the caller will pre-filter.
+- **How to apply**: Signature: `function getMazeNeighbors(grid, r, c, rows, cols)`. Filter: `.filter(([nr, nc]) => inBounds && grid[nr][nc] === WALL)`. Verify the call site passes `grid` as the first argument.
+
+### 43. Draining a Generator Synchronously Requires Capturing the Return Value Correctly
+- **What happened**: Synchronous maze pre-generation used `while (!gen.done) gen.next(); currentMaze = gen.value;`. JS generator objects do not have a `.done` property -- `gen.done` is always `undefined` (falsy), so the loop ran zero times and `gen.value` was also `undefined`. Pathfinding algorithms received an all-walls grid and terminated immediately.
+- **Rule**: Always capture the iterator result object from `.next()` and check `.done` on that object, not on the generator itself. After the loop, read `.value` from the final result object.
+- **How to apply**: `let r = gen.next(); while (!r.done) r = gen.next(); const result = r.value;`. This correctly exhausts the generator and captures the `return` value. Use nullish coalescing (`result ?? fallback`) when a fallback is acceptable.
+
 ### 41. New Algorithm Families Must Update All Dispatch Tables in main.js
 - **What happened**: Adding maze algorithms required changes in 10+ locations in main.js: imports, constants, classifier function, state variables, renderer init, switchVizMode, loadAlgorithm, initGenerator, executeStep, initCotPanel, initArrayState, reset, THOUGHTS, and the Generate button handler.
 - **Rule**: When adding a new algorithm family, use `grep` to find every occurrence of existing algorithm family checks (e.g., `isTreeAlgorithm`, `isLinkedListAlgorithm`) and add corresponding branches for the new family. Missing any one location leaves the feature partially broken. Follow the 10-point integration checklist.

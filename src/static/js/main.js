@@ -291,8 +291,9 @@ import EventBus from './event-bus.js';
         } else {
             currentMaze = MazeAlgorithms.buildMazeGrid();
             const gen = MazeAlgorithms.mazeRecursiveDFS(currentMaze);
-            while (!gen.done) gen.next();
-            currentMaze = gen.value;
+            let genResult = gen.next();
+            while (!genResult.done) genResult = gen.next();
+            currentMaze = genResult.value ?? currentMaze;
         }
 
         comparisons = 0;
@@ -939,8 +940,9 @@ import EventBus from './event-bus.js';
                 if (!currentMaze) {
                     currentMaze = MazeAlgorithms.buildMazeGrid();
                     const gen = MazeAlgorithms.mazeRecursiveDFS(currentMaze);
-                    while (!gen.done) gen.next();
-                    currentMaze = gen.value;
+                    let genResult = gen.next();
+                    while (!genResult.done) genResult = gen.next();
+                    currentMaze = genResult.value ?? currentMaze;
                 }
                 MazeRenderer.clearAllStates();
                 MazeRenderer.render(currentMaze);

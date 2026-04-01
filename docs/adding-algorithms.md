@@ -111,6 +111,7 @@ function* myNewSort(arr) {
 | Searching | `check`, `found`, `eliminate`, `notFound`                     |
 | Trees     | `visit`, `compare`, `insert`, `found`, `notFound`             |
 | Graphs    | `enqueue`, `dequeue`, `visit`, `visited`, `push`, `relax`, `update` |
+| Maze      | `carve`, `backtrack`, `visit`, `explore`, `found`, `path`, `frontier` |
 
 ### 3. Add Complexity Data
 
@@ -169,6 +170,7 @@ Searching format:
 | Searching algorithms   | `src/static/js/algorithms/searching.js`    |
 | Tree algorithms        | `src/static/js/algorithms/trees.js`        |
 | Graph algorithms       | `src/static/js/algorithms/graphs.js`       |
+| Maze algorithms        | `src/static/js/algorithms/maze.js`         |
 | Dropdowns + cheat sheet| `index.html`                               |
 | Styles                 | `src/static/css/main.css`                  |
 | Main controller        | `src/static/js/main.js`                    |
@@ -183,3 +185,4 @@ Typical pseudocode line counts per category, for sizing the portrait code panel:
 | Searching | 6   | 33  | 17     | 20      |
 | Trees     | 9   | 13  | 9      | 10      |
 | Graphs    | 16  | 23  | 17     | 19      |
+| Maze      | 15  | 19  | 17     | 17      |

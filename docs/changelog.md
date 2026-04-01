@@ -13,6 +13,12 @@ All notable changes to the DSA Visualizer project will be documented in this fil
   - Algorithm file (`algorithms/maze.js`): all 7 generators, MinHeap class for A*/Greedy, full 10-language CODE snippets, COMPLEXITY entries with real-world use cases
   - Integration: maze container in HTML, visibility toggling, CoT panel support, Generate button routing, fallback maze generation for pathfinding without a prior maze
 
+### Fixed
+
+- **Bug -- Maze generators produce checkerboard instead of valid maze**: `getMazeNeighbors` in `maze.js` lacked a `grid` parameter and did not filter for unvisited walls. The DFS re-visited already-carved cells endlessly. Fixed by adding `grid` as the first parameter and filtering `grid[nr][nc] === WALL`.
+
+- **Bug -- Pathfinding algorithms end immediately after first step**: Synchronous maze pre-generation loop used `while (!gen.done) gen.next(); currentMaze = gen.value;` -- but JS generators do not have a `.done` property (always `undefined`), so the loop never executed and `gen.value` was also `undefined`. Pathfinding received an all-walls grid. Fixed by capturing the iterator result: `let r = gen.next(); while (!r.done) r = gen.next(); currentMaze = r.value ?? currentMaze;`.
+
 ### Added (Previous)
 
 - **Array State Panel**: Added a persistent two-row panel below the visualizer showing live numeric values and indices for every array element

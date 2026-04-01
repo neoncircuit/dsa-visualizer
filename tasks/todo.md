@@ -330,3 +330,21 @@ Grid: 21x21 `number[][]` (0=WALL 1=PASSAGE 2=START 3=END 4=VISITED 5=EXPLORING 6
 - [x] Switching from sort to maze: bars hidden, canvas shown
 - [x] Generate on pathfinding algo: generates fresh maze (not array)
 - [x] Pathfinding with no prior maze: fallback synchronous maze generated before pathfinder runs
+
+## Phase 8 Bug Fixes
+
+### BF-1: Maze generators produce checkerboard instead of valid maze
+Root cause: `getMazeNeighbors` in `maze.js` (line 88) has no `grid` parameter and never filters for unvisited walls — the DFS re-visits already-carved cells forever, never carving corridor walls.
+- [x] Fix `getMazeNeighbors` signature: add `grid` as first parameter; filter `grid[nr][nc] === WALL` (maze.js line 88)
+- [x] Update call site in `mazeRecursiveDFS`: `getMazeNeighbors(grid, r, c, rows, cols)` (maze.js line 2033)
+
+### BF-2: Pathfinding algorithms end immediately after first step
+Root cause: Synchronous maze pre-generation loop in `main.js` uses `while (!gen.done)` — `gen.done` is never a property on a JS generator object (always `undefined`); `gen.value` is similarly `undefined`. Pathfinding receives an all-walls grid and finds no passable neighbors.
+- [x] Fix sync loop in `generateMaze()` (main.js ~line 293): replace `while (!gen.done) gen.next(); currentMaze = gen.value;` with `let r = gen.next(); while (!r.done) r = gen.next(); currentMaze = r.value ?? currentMaze;`
+- [x] Fix same sync loop in `initGenerator()` (main.js ~line 941-943)
+
+### BF-3: Verification
+- [x] DFS maze carves full corridors — no checkerboard
+- [x] Prim's and Binary Tree also produce valid mazes
+- [x] Pathfinding explores full maze and traces path to end
+- [x] Pathfinding with no prior maze: fallback sync generation works correctly
