@@ -73,8 +73,6 @@ const MazeAlgorithms = (() => {
      */
     function buildMazeGrid(rows = ROWS, cols = COLS) {
         const grid = Array.from({ length: rows }, () => Array(cols).fill(WALL));
-        grid[1][1] = PASSAGE;
-        grid[rows - 2][cols - 2] = PASSAGE;
         return grid;
     }
 
@@ -2278,7 +2276,7 @@ const MazeAlgorithms = (() => {
         const endR = rows - 2;
         const endC = cols - 2;
         const open = new MinHeap();
-        const visited = new Set(['1,1']);
+        const visited = new Set();
         const prev = new Map();
 
         open.push({ row: 1, col: 1, priority: manhattan(1, 1, endR, endC) });

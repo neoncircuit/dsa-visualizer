@@ -259,40 +259,40 @@ body {
     flex-direction: column;
     background: var(--bg-secondary);
     border-right: 1px solid var(--border-color);
-    overflow-y: auto;
-    padding: 0.5rem 0.65rem;
-    gap: 0.45rem;
+    overflow-y: hidden;
+    padding: 0.4rem 0.6rem;
+    gap: 0.3rem;
 }
 
 .info-panel-title {
-    font-size: 0.95rem;
+    font-size: 0.85rem;
     font-weight: 700;
     color: var(--accent);
     letter-spacing: 0.02em;
-    padding-bottom: 0.25rem;
+    padding-bottom: 0.2rem;
     border-bottom: 1px solid var(--border-color);
 }
 
 .info-section {
     display: flex;
     flex-direction: column;
-    gap: 0.15rem;
+    gap: 0.1rem;
 }
 
 .info-section-heading {
-    font-size: 0.6rem;
+    font-size: 0.55rem;
     font-weight: 700;
     color: var(--accent);
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    padding-left: 0.4rem;
+    padding-left: 0.35rem;
     border-left: 2px solid var(--accent);
     opacity: 0.8;
 }
 
 .info-description {
-    font-size: 0.68rem;
-    line-height: 1.45;
+    font-size: 0.62rem;
+    line-height: 1.35;
     color: var(--text-primary);
 }
 
@@ -306,16 +306,16 @@ body {
 }
 
 .complexity-table td {
-    padding: 0.2rem 0;
+    padding: 0.12rem 0;
 }
 
 .complexity-label {
-    font-size: 0.7rem;
+    font-size: 0.62rem;
     color: var(--text-secondary);
 }
 
 .complexity-value {
-    font-size: 0.75rem;
+    font-size: 0.67rem;
     font-weight: 600;
     color: var(--accent);
     text-align: right;
@@ -441,7 +441,7 @@ body {
 }
 
 .complexity-value-large {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     font-weight: 700;
     color: var(--accent);
 }
@@ -455,7 +455,7 @@ body {
 
 /* Separate the live stats block from complexity info */
 .info-section:has(#comparisons-count) {
-    padding-top: 0.2rem;
+    padding-top: 0.1rem;
     border-top: 1px solid var(--border-color);
 }
 
@@ -477,14 +477,14 @@ body {
 
 .lang-tab {
     flex: 1;
-    padding: 0.35rem 0.3rem;
+    padding: 0.25rem 0.2rem;
     background: none;
     border: none;
     border-bottom: 2px solid transparent;
     border-right: 1px solid var(--border-color);
     color: var(--text-secondary);
     font-family: var(--font-mono);
-    font-size: 0.72rem;
+    font-size: 0.65rem;
     cursor: pointer;
     transition: all 0.15s;
     text-align: center;
@@ -506,18 +506,18 @@ body {
 
 .code-display {
     flex: 1;
-    padding: 0.5rem 0;
-    overflow-y: auto;
+    padding: 0.3rem 0;
+    overflow-y: hidden;
     overflow-x: auto;
-    font-size: 0.68rem;
-    line-height: 1.55;
+    font-size: 0.62rem;
+    line-height: 1.4;
     white-space: pre;
     tab-size: 4;
 }
 
 .code-line {
     display: block;
-    padding: 0.02rem 0.6rem;
+    padding: 0.01rem 0.5rem;
     transition: background 0.15s;
     border-left: 3px solid transparent;
     color: var(--text-primary);
@@ -539,9 +539,9 @@ body {
 
 .code-line .line-number {
     display: inline-block;
-    width: 1.5rem;
+    width: 1.3rem;
     text-align: right;
-    margin-right: 0.6rem;
+    margin-right: 0.5rem;
     color: var(--text-secondary);
     opacity: 0.4;
     user-select: none;

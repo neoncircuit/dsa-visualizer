@@ -348,3 +348,24 @@ Root cause: Synchronous maze pre-generation loop in `main.js` uses `while (!gen.
 - [x] Prim's and Binary Tree also produce valid mazes
 - [x] Pathfinding explores full maze and traces path to end
 - [x] Pathfinding with no prior maze: fallback sync generation works correctly
+
+### BF-4: Maze pathfinding ends immediately after reset/algorithm change
+Root cause: `switchVizMode()` creates a fresh wall grid (all walls, only start/end passages) and assigns it to `currentMaze`. `initGenerator()` checks `if (!currentMaze)` which is false because the variable is a wall grid, not null. The pathfinder runs on the all-walls grid, finds no passable neighbors, and terminates immediately. Additionally, `reset()` unconditionally calls `generateArray()` even for maze algorithms, which further clobbers state.
+- [x] Add `mazeReady` boolean flag to track whether `currentMaze` has been properly carved (main.js state declarations)
+- [x] Set `mazeReady = true` in `generateMaze()` after maze is carved (main.js)
+- [x] Set `mazeReady = false` in `generateArray()`, `switchVizMode()` when creating fresh wall grid (main.js)
+- [x] Change `initGenerator()` guard from `if (!currentMaze)` to `if (!currentMaze || !mazeReady)` for pathfinding algorithms (main.js)
+- [x] Set `mazeReady = true` after synchronous fallback maze generation in `initGenerator()` (main.js)
+- [x] Fix `reset()` to call `generateMaze()` for maze algorithms instead of `generateArray()` (main.js)
+- [x] `pnpm build` passes
+
+### BF-5: Endpoint cell isolated -- maze generators cannot carve path to end
+Root cause: `buildMazeGrid()` pre-marks both (1,1) and (rows-2, cols-2) as PASSAGE (1). The maze generators' neighbor filter (`getMazeNeighbors`) only returns cells where `grid[nr][nc] === WALL`. Since the endpoint is already a passage, no cell ever tries to carve a corridor toward it. The wall between the endpoint and its nearest neighbor remains intact, isolating the end cell. Pathfinders reach cells adjacent to the endpoint but cannot enter it, so they terminate without finding a path (or with trivially short searches).
+- [x] Remove pre-marking of (1,1) and (rows-2, cols-2) in `buildMazeGrid()` -- all maze generators already mark (1,1) themselves, and the endpoint is carved naturally by the generator (maze.js)
+- [x] Add `refreshStartEnd()` call at the end of `MazeRenderer.render()` so START/END markers appear on initial render (maze-renderer.js)
+- [x] `pnpm build` passes
+
+### BF-6: Greedy Best-First pathfinding ends after one step
+Root cause: `pathGreedy` initialises `visited` with `['1,1']` (the start node). The lazy-deletion loop pops (1,1) from the heap, checks `visited.has(key)`, finds it already present, and skips it. The heap is now empty, so the loop terminates after yielding only the initial frontier step.
+- [x] Remove `'1,1'` from the initial `visited` Set in `pathGreedy` -- the start node is correctly added to `visited` when popped from the heap (maze.js line 2281)
+- [x] `pnpm build` passes

@@ -190,6 +190,8 @@ import EventBus from './event-bus.js';
     let currentHeap = [];
     /** @type {number[][]|null} */
     let currentMaze = null;
+    /** @type {boolean} Whether currentMaze has been properly carved (not just a wall grid). */
+    let mazeReady = false;
 
     // ─── Layout State ───
 
@@ -272,6 +274,7 @@ import EventBus from './event-bus.js';
         initArrayState(currentArray);
         initCotPanel(algorithmSelect.value);
         generator = null;
+        mazeReady = false;
         updateButtonStates();
     }
 
@@ -302,6 +305,7 @@ import EventBus from './event-bus.js';
         MazeRenderer.render(currentMaze);
         initCotPanel(algoKey);
         generator = null;
+        mazeReady = true;
         updateButtonStates();
     }
 
@@ -793,6 +797,7 @@ import EventBus from './event-bus.js';
             LinkedListRenderer.render(currentLinkedList);
         } else if (isMaze) {
             currentMaze = MazeAlgorithms.buildMazeGrid();
+            mazeReady = false;
             MazeRenderer.render(currentMaze);
         }
     }
@@ -934,15 +939,17 @@ import EventBus from './event-bus.js';
             MazeRenderer.clearAllStates();
             if (isMazeGeneration(algoKey)) {
                 currentMaze = MazeAlgorithms.buildMazeGrid();
+                mazeReady = false;
                 MazeRenderer.render(currentMaze);
                 generator = MazeAlgorithms[algoKey](currentMaze);
             } else {
-                if (!currentMaze) {
+                if (!currentMaze || !mazeReady) {
                     currentMaze = MazeAlgorithms.buildMazeGrid();
                     const gen = MazeAlgorithms.mazeRecursiveDFS(currentMaze);
                     let genResult = gen.next();
                     while (!genResult.done) genResult = gen.next();
                     currentMaze = genResult.value ?? currentMaze;
+                    mazeReady = true;
                 }
                 MazeRenderer.clearAllStates();
                 MazeRenderer.render(currentMaze);
@@ -1567,10 +1574,14 @@ import EventBus from './event-bus.js';
         isPlaying = false;
         elapsedTimeEl.textContent = '0.000s';
         const algoKey = algorithmSelect.value;
-        if (isTreeAlgorithm(algoKey) || isGraphAlgorithm(algoKey) || isLinkedListAlgorithm(algoKey) || isMazeAlgorithm(algoKey)) {
-            switchVizMode(algoKey);
+        if (isMazeAlgorithm(algoKey)) {
+            generateMaze();
+        } else {
+            if (isTreeAlgorithm(algoKey) || isGraphAlgorithm(algoKey) || isLinkedListAlgorithm(algoKey)) {
+                switchVizMode(algoKey);
+            }
+            generateArray();
         }
-        generateArray();
         CodeHighlighter.clearHighlight();
     }
 

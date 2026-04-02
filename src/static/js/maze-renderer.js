@@ -162,6 +162,8 @@ const MazeRenderer = (() => {
                 drawCell(r, c, grid[r][c]);
             }
         }
+
+        refreshStartEnd();
     }
 
     /**
