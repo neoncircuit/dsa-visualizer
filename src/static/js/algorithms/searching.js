@@ -1889,6 +1889,12 @@ const SearchingAlgorithms = (() => {
                 'scanning a log file for an error message, or checking if a username exists in a database. ' +
                 'Powers the `Array.prototype.indexOf()` and `Array.prototype.includes()` methods in JavaScript. ' +
                 'Also used in string matching (naive substring search).',
+            mentalModel:
+                'Walk through every element one by one. Like looking for your keys by checking every surface ' +
+                'in the room systematically.',
+            difficulty: 'Easy',
+            patterns: ['Search', 'Sequential', 'Linear'],
+            leetcodeTags: ['search', 'array', 'basic', 'interview-common'],
         },
         binarySearch: {
             name: 'Binary Search',
@@ -1914,6 +1920,12 @@ const SearchingAlgorithms = (() => {
                 'database indexes (B-trees use binary search within nodes), version control systems ' +
                 '(Git uses binary search for bisecting commits to find bugs), and auto-complete systems. ' +
                 'Powers Python\'s `bisect` module and Java\'s `Arrays.binarySearch()`.',
+            mentalModel:
+                'Like searching for a word in a dictionary. Open to the middle, if your word comes earlier ' +
+                'go to the first half, if later go to the second half. Repeat until you find it or run out of pages.',
+            difficulty: 'Easy',
+            patterns: ['Modified Binary Search', 'Two Pointers', 'Divide and Conquer'],
+            leetcodeTags: ['binary-search', 'search', 'array', 'easy', 'interview-common']
         },
         jumpSearch: {
             name: 'Jump Search',

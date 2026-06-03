@@ -19,6 +19,7 @@ import TreeAlgorithms from './algorithms/trees.js';
 import GraphAlgorithms from './algorithms/graphs.js';
 import LinkedListAlgorithms from './algorithms/linked-lists.js';
 import LinkedListRenderer from './linked-list-renderer.js';
+import PatternAlgorithms from './algorithms/patterns.js';
 import MazeAlgorithms from './algorithms/maze.js';
 import MazeRenderer from './maze-renderer.js';
 import Benchmark from './benchmark.js';
@@ -57,6 +58,10 @@ import EventBus from './event-bus.js';
     const llTargetInput = document.getElementById('ll-target');
     /** @type {HTMLDivElement} */
     const llTargetGroup = document.querySelector('.ll-target-group');
+    /** @type {HTMLInputElement} */
+    const windowSizeInput = document.getElementById('window-size');
+    /** @type {HTMLDivElement} */
+    const windowSizeGroup = document.querySelector('.window-size-group');
     /** @type {HTMLSelectElement} */
     const graphViewSelect = document.getElementById('graph-view');
     /** @type {HTMLDivElement} */
@@ -131,6 +136,23 @@ import EventBus from './event-bus.js';
     const algoAvoidText = document.getElementById('algo-avoid-text');
     /** @type {HTMLParagraphElement} */
     const algoRealWorldText = document.getElementById('algo-realworld-text');
+    /** @type {HTMLParagraphElement} */
+    const algoMentalModelText = document.getElementById('algo-mentalmodel-text');
+
+    // ─── Interview Mode ───
+
+    /** @type {HTMLButtonElement} */
+    const btnInterview = document.getElementById('btn-interview');
+    /** @type {HTMLSelectElement} */
+    const patternFilter = document.getElementById('pattern-filter');
+    /** @type {HTMLDivElement} */
+    const interviewFilterGroup = document.querySelector('.interview-filter');
+    /** @type {HTMLDivElement} */
+    const interviewSection = document.querySelector('.interview-section');
+    /** @type {HTMLDivElement} */
+    const difficultyBadgeContainer = document.getElementById('difficulty-badge-container');
+    /** @type {HTMLDivElement} */
+    const patternTagsContainer = document.getElementById('pattern-tags-container');
 
     // ─── State ───
 
@@ -156,6 +178,8 @@ import EventBus from './event-bus.js';
     let sortedIndices = new Set();
     /** @type {HTMLDivElement[]} Persistent cell elements for the array state panel. */
     let stateCells = [];
+    /** @type {boolean} Whether interview preparation mode is active. */
+    let interviewMode = false;
 
     // ─── Algorithm Classification ───
 
@@ -169,8 +193,162 @@ import EventBus from './event-bus.js';
     /** @type {string[]} */
     const LINKED_LIST_ALGORITHMS = ['llInsertHead', 'llInsertTail', 'llDeleteHead', 'llDeleteTail', 'llSearch', 'llTraverse', 'llReverse', 'llInsertPos', 'llDeletePos', 'llDeleteVal', 'llInsertAfterValue', 'llDetectCycle', 'llMergeSorted', 'llMergeSort'];
 
+    const PATTERN_ALGORITHMS = ['slidingWindowMaxSum', 'prefixSumRangeSum', 'monotonicStackNextGreater', 'overlappingIntervalsMerge'];
+
     const MAZE_ALGORITHMS = ['mazeRecursiveDFS', 'mazePrims', 'mazeBinaryTree', 'pathBFS', 'pathDFS', 'pathAStar', 'pathGreedy'];
     const MAZE_GENERATION = ['mazeRecursiveDFS', 'mazePrims', 'mazeBinaryTree'];
+
+    // ─── Interview Preparation ───
+
+    /** @type {string[]} Easy difficulty algorithms for interview preparation */
+    const EASY_ALGORITHMS = [
+        'bubbleSort', 'selectionSort', 'insertionSort',
+        'linearSearch', 'binarySearch', 'bstInsert',
+        'bstSearch', 'llInsertHead', 'llDeleteHead',
+        'llSearch', 'llTraverse', 'llReverse',
+        'llInsertTail', 'llDeleteTail',
+        'twoPointersTargetSum', 'slidingWindowMaxSum', 'prefixSumRangeSum'
+    ];
+
+    /** @type {string[]} Medium difficulty algorithms for interview preparation */
+    const MEDIUM_ALGORITHMS = [
+        'mergeSort', 'quickSort', 'heapSort', 'shellSort',
+        'avlInsert', 'heapInsertMin', 'heapExtractMin',
+        'bfs', 'dfs', 'llInsertPos', 'llDeletePos', 'llDeleteVal',
+        'llInsertAfterValue', 'llDetectCycle',
+        'monotonicStackNextGreater', 'overlappingIntervalsMerge'
+    ];
+
+    /** @type {string[]} Hard difficulty algorithms for interview preparation */
+    const HARD_ALGORITHMS = [
+        'dijkstra', 'astar', 'kruskal', 'bellmanFord',
+        'topologicalSort', 'llMergeSorted', 'llMergeSort'
+    ];
+
+    /** @type {string[]} Pattern categories for interview preparation */
+    const TWO_POINTERS_ALGOS = ['binarySearch', 'llMergeSorted'];
+    const BINARY_SEARCH_ALGOS = ['binarySearch', 'jumpSearch', 'exponentialSearch'];
+    const BFS_DFS_ALGOS = ['bfs', 'dfs', 'bstLevelOrder', 'bstInorder', 'bstPreorder', 'bstPostorder'];
+
+    /**
+     * Check if an algorithm is part of interview preparation.
+     *
+     * @param {string} key - The algorithm key.
+     * @returns {boolean} True if the algorithm is interview-relevant.
+     */
+    function isInterviewAlgorithm(key) {
+        return EASY_ALGORITHMS.includes(key) ||
+               MEDIUM_ALGORITHMS.includes(key) ||
+               HARD_ALGORITHMS.includes(key);
+    }
+
+    /**
+     * Get the interview difficulty of an algorithm.
+     *
+     * @param {string} key - The algorithm key.
+     * @returns {string|null} The difficulty ('Easy', 'Medium', 'Hard') or null if not set.
+     */
+    function getDifficulty(key) {
+        const source = getAlgorithmSource(key);
+        const info = source?.COMPLEXITY?.[key];
+        return info?.difficulty || null;
+    }
+
+    /**
+     * Get the interview patterns of an algorithm.
+     *
+     * @param {string} key - The algorithm key.
+     * @returns {string[]} Array of pattern tags (empty if none).
+     */
+    function getPatterns(key) {
+        const source = getAlgorithmSource(key);
+        const info = source?.COMPLEXITY?.[key];
+        return info?.patterns || [];
+    }
+
+    /**
+     * Filter the algorithm dropdown to show only interview-relevant algorithms.
+     */
+    function filterInterviewAlgorithms() {
+        const options = algorithmSelect.querySelectorAll('option');
+        options.forEach(opt => {
+            if (opt.value && isInterviewAlgorithm(opt.value)) {
+                opt.style.display = '';
+            } else if (opt.value) {
+                opt.style.display = 'none';
+            }
+        });
+    }
+
+    /**
+     * Restore all algorithms in the dropdown.
+     */
+    function restoreAllAlgorithms() {
+        const options = algorithmSelect.querySelectorAll('option');
+        options.forEach(opt => {
+            opt.style.display = '';
+        });
+    }
+
+    /**
+     * Filter algorithms by pattern.
+     *
+     * @param {string} pattern - The pattern to filter by ('all' for no filter).
+     */
+    function filterByPattern(pattern) {
+        const options = algorithmSelect.querySelectorAll('option');
+        let firstVisible = null;
+
+        options.forEach(opt => {
+            if (!opt.value) return;
+            if (pattern === 'all') {
+                opt.style.display = isInterviewAlgorithm(opt.value) ? '' : 'none';
+            } else {
+                const algoPatterns = getPatterns(opt.value);
+                const patternLower = pattern.toLowerCase();
+                const matches = algoPatterns.some(p => p.toLowerCase().includes(patternLower));
+                opt.style.display = (matches && isInterviewAlgorithm(opt.value)) ? '' : 'none';
+            }
+            if (!firstVisible && opt.style.display !== 'none') firstVisible = opt.value;
+        });
+
+        // If the currently selected algorithm is now hidden, switch to the first visible one
+        const selected = algorithmSelect.options[algorithmSelect.selectedIndex];
+        if (selected && selected.style.display === 'none' && firstVisible) {
+            algorithmSelect.value = firstVisible;
+            reset();
+            loadAlgorithm();
+        }
+    }
+
+    /**
+     * Update the interview metadata display for the current algorithm.
+     *
+     * @param {string} algoKey - The algorithm key.
+     */
+    function updateInterviewMetadata(algoKey) {
+        if (interviewMode) {
+            interviewSection.classList.remove('controls-hidden');
+
+            const difficulty = getDifficulty(algoKey);
+            if (difficulty) {
+                difficultyBadgeContainer.innerHTML = `<span class="difficulty-badge ${difficulty.toLowerCase()}">${difficulty}</span>`;
+            } else {
+                difficultyBadgeContainer.innerHTML = '';
+            }
+
+            const patterns = getPatterns(algoKey);
+            if (patterns.length > 0) {
+                patternTagsContainer.innerHTML = patterns.map(p =>
+                    `<span class="pattern-tag">${p}</span>`
+                ).join('');
+            } else {
+                patternTagsContainer.innerHTML = '';
+            }
+        } else {
+            interviewSection.classList.add('controls-hidden');
+        }
+    }
 
     // ─── Tree/Graph/Linked List State ───
 
@@ -443,13 +621,17 @@ import EventBus from './event-bus.js';
         const needsPosition = algoKey === 'llInsertPos' || algoKey === 'llDeletePos';
         llPositionGroup.classList.toggle('controls-hidden', !needsPosition);
 
+        // Show/hide window size input for pattern algorithms
+        const needsWindowSize = algoKey === 'slidingWindowMaxSum';
+        windowSizeGroup.classList.toggle('controls-hidden', !needsWindowSize);
+
         // Show/hide graph view selector and edit button
         const isGraphAlgo = isGraphAlgorithm(algoKey);
         graphViewGroup.classList.toggle('controls-hidden', !isGraphAlgo);
         graphEditGroup.classList.toggle('controls-hidden', !isGraphAlgo);
 
         // Show custom array input only for sort/search (array-based algorithms)
-        const isArrayAlgo = !isGraphAlgo && !isTreeAlgorithm(algoKey) && !isLinkedListAlgorithm(algoKey) && !isMazeAlgorithm(algoKey);
+        const isArrayAlgo = !isGraphAlgo && !isTreeAlgorithm(algoKey) && !isLinkedListAlgorithm(algoKey) && !isMazeAlgorithm(algoKey) && !isPatternAlgorithm(algoKey);
         customArrayGroup.classList.toggle('controls-hidden', !isArrayAlgo);
 
         // Determine code and complexity source
@@ -472,6 +654,9 @@ import EventBus from './event-bus.js';
         } else if (isLinkedListAlgorithm(algoKey)) {
             codeSource = LinkedListAlgorithms.CODE;
             complexitySource = LinkedListAlgorithms.COMPLEXITY;
+        } else if (isPatternAlgorithm(algoKey)) {
+            codeSource = PatternAlgorithms.CODE;
+            complexitySource = PatternAlgorithms.COMPLEXITY;
         } else if (isMazeAlgorithm(algoKey)) {
             codeSource = MazeAlgorithms.CODE;
             complexitySource = MazeAlgorithms.COMPLEXITY;
@@ -501,7 +686,11 @@ import EventBus from './event-bus.js';
             algoUseCaseText.textContent = info.useCase || '';
             algoAvoidText.textContent = info.avoid || '';
             algoRealWorldText.textContent = info.realWorld || '';
+            algoMentalModelText.textContent = info.mentalModel || '';
             if (isVertical) updateVizOverlay();
+
+            // Show interview metadata if in interview mode
+            updateInterviewMetadata(algoKey);
         }
 
         // Switch viz mode (builds tree/graph if needed)
@@ -568,6 +757,16 @@ import EventBus from './event-bus.js';
      */
     function isMazeAlgorithm(key) {
         return MAZE_ALGORITHMS.includes(key);
+    }
+
+    /**
+     * Check if an algorithm key is a pattern-based algorithm.
+     *
+     * @param {string} key - The algorithm key.
+     * @returns {boolean} True if it is a pattern algorithm.
+     */
+    function isPatternAlgorithm(key) {
+        return PATTERN_ALGORITHMS.includes(key);
     }
 
     /**
@@ -934,6 +1133,29 @@ import EventBus from './event-bus.js';
                 generator = LinkedListAlgorithms.llDeleteVal(currentLinkedList, target);
             } else {
                 generator = LinkedListAlgorithms[algoKey](currentLinkedList);
+            }
+        } else if (isPatternAlgorithm(algoKey)) {
+            if (algoKey === 'twoPointersTargetSum') {
+                currentArray = [...currentArray].sort((a, b) => a - b);
+                Visualizer.render(currentArray);
+                initArrayState(currentArray);
+                generator = PatternAlgorithms.twoPointersTargetSum(currentArray);
+            } else if (algoKey === 'slidingWindowMaxSum') {
+                const k = parseInt(windowSizeInput.value, 10) || 3;
+                generator = PatternAlgorithms.slidingWindowMaxSum(currentArray, k);
+            } else if (algoKey === 'prefixSumRangeSum') {
+                const left = Math.floor(Math.random() * (currentArray.length - 2));
+                const right = left + Math.floor(Math.random() * 3) + 2;
+                generator = PatternAlgorithms.prefixSumRangeSum(currentArray, left, right);
+            } else if (algoKey === 'monotonicStackNextGreater') {
+                generator = PatternAlgorithms.monotonicStackNextGreater(currentArray);
+            } else if (algoKey === 'overlappingIntervalsMerge') {
+                const intervals = [
+                    [1, 3], [2, 4], [6, 8]
+                ];
+                generator = PatternAlgorithms.overlappingIntervalsMerge(intervals);
+            } else {
+                generator = PatternAlgorithms[algoKey](currentArray);
             }
         } else if (isMazeAlgorithm(algoKey)) {
             MazeRenderer.clearAllStates();
@@ -2164,10 +2386,40 @@ import EventBus from './event-bus.js';
         EventBus.emit('theme:change', { theme: isLight ? 'light' : 'dark' });
     });
 
-    // Restore saved theme preference
-    if (localStorage.getItem('theme') === 'light') {
-        document.body.classList.add('light');
-        btnTheme.textContent = 'Dark';
+    // ─── Interview Mode ───
+
+    btnInterview.addEventListener('click', () => {
+        if (generator || isPlaying) reset();
+        interviewMode = !interviewMode;
+        document.body.classList.toggle('interview-mode', interviewMode);
+        btnInterview.classList.toggle('active', interviewMode);
+        btnInterview.textContent = interviewMode ? 'Exit Interview' : 'Interview';
+        localStorage.setItem('interviewMode', interviewMode ? 'on' : 'off');
+
+        if (interviewMode) {
+            interviewFilterGroup.classList.remove('controls-hidden');
+            filterInterviewAlgorithms();
+        } else {
+            interviewFilterGroup.classList.add('controls-hidden');
+            restoreAllAlgorithms();
+            patternFilter.value = 'all';
+        }
+    });
+
+    patternFilter.addEventListener('change', () => {
+        if (!interviewMode) return;
+        const pattern = patternFilter.value;
+        filterByPattern(pattern);
+    });
+
+    // Restore saved interview mode preference
+    if (localStorage.getItem('interviewMode') === 'on') {
+        interviewMode = true;
+        document.body.classList.add('interview-mode');
+        btnInterview.classList.add('active');
+        btnInterview.textContent = 'Exit Interview';
+        interviewFilterGroup.classList.remove('controls-hidden');
+        filterInterviewAlgorithms();
     }
 
     // ─── Recording ───

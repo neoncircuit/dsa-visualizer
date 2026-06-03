@@ -6,6 +6,20 @@ All notable changes to the DSA Visualizer project will be documented in this fil
 
 ### Added
 
+- **Phase 9: Interview Preparation Mode**: Comprehensive interview prep system that filters and enriches the existing algorithm set for coding interview practice
+  - **Interview metadata** on all algorithms: `difficulty` (Easy/Medium/Hard), `patterns` (string tags), `leetcodeTags`, and `mentalModel` analogies added to every COMPLEXITY entry across all algorithm files (sorting, searching, trees, graphs, linked lists, patterns)
+  - **Interview toggle button** in controls bar: filters the dropdown to interview-relevant algorithms only; shows Easy/Medium/Hard difficulty badge and pattern tags in the info panel
+  - **Pattern filter dropdown**: filter by Two Pointers, Sliding Window, Modified Binary Search, Prefix Sum, Top K Elements, Binary Tree Traversal, BFS, DFS, Backtracking, Matrix Traversal, Fast/Slow Pointers, Linked List Reversal, Monotonic Stack, and Overlapping Intervals
+  - **Interview difficulty classification**: `EASY_ALGORITHMS`, `MEDIUM_ALGORITHMS`, `HARD_ALGORITHMS` arrays in `main.js` covering all relevant algorithms; `isInterviewAlgorithm()`, `getDifficulty()`, `getPatterns()` helper functions
+  - **Pattern visualizations** (`src/static/js/algorithms/patterns.js`): 5 new algorithm generators with full 10-language CODE, COMPLEXITY, difficulty/patterns/leetcodeTags/mentalModel metadata
+    - `twoPointersTargetSum` — Two Pointers: Two Sum on a sorted array; array pre-sorted in `initGenerator()` before visualization begins
+    - `slidingWindowMaxSum` — Sliding Window: maximum sum subarray of size k
+    - `prefixSumRangeSum` — Prefix Sum: O(n) build + O(1) range sum query
+    - `monotonicStackNextGreater` — Monotonic Stack: next greater element
+    - `overlappingIntervalsMerge` — Overlapping Intervals: merge into non-overlapping set
+  - **Edge case hardening**: pattern filter auto-switches to first visible algorithm when current selection is filtered out; interview mode toggle stops any running visualization before changing mode
+  - **New step types** in `visualizer.js` stateMap: `move-left`, `move-right` (both map to `'comparing'`) for Two Pointers pointer movement
+
 - **Phase 8: Maze Generation and Grid Pathfinding**: Added 7 new "Interesting" algorithms under a new optgroup in the algorithm dropdown
   - Maze generation (3 algorithms): Recursive Backtracker (iterative DFS), Prim's (randomised frontier), Binary Tree (random N/E carving)
   - Grid pathfinding (4 algorithms): BFS (shortest path guarantee), DFS (any path), A* (optimal with Manhattan heuristic), Greedy Best-First (heuristic-only)

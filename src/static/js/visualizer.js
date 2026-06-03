@@ -204,7 +204,7 @@ const Visualizer = (() => {
         // Only clear non-sorted states to preserve the sorted markers
         const elements = mode === 'bars' ? bars : cells;
         for (const el of elements) {
-            el.classList.remove('comparing', 'swapping', 'searching', 'pivot');
+            el.classList.remove('comparing', 'swapping', 'searching', 'pivot', 'window', 'window-boundary', 'prefix-building', 'prefix-range', 'stack-active', 'stack-pop', 'interval-overlap', 'interval-merged');
         }
         updateHeights(arr);
 
@@ -219,6 +219,21 @@ const Visualizer = (() => {
             eliminate: 'comparing',
             pivot: 'pivot',
             notFound: null,
+            // Pattern-specific states
+            init: 'window',
+            'initial-max': 'window-boundary',
+            slide: 'window',
+            'new-max': 'window-boundary',
+            'build-prefix': 'prefix-building',
+            'query-range': 'prefix-range',
+            'push-stack': 'stack-active',
+            'pop-stack': 'stack-pop',
+            'compare-stack': 'stack-active',
+            'analyze-interval': 'interval-overlap',
+            'merge-interval': 'interval-merged',
+            'move-left': 'comparing',
+            'move-right': 'comparing',
+            complete: 'sorted',
         };
 
         const cssClass = stateMap[step.type];

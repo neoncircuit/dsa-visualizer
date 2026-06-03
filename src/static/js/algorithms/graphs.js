@@ -1811,6 +1811,12 @@ const GraphAlgorithms = (() => {
                 'routes in unweighted road networks, and multiplayer game matchmaking. Used in peer-to-peer ' +
                 'networks for finding nearby nodes, in garbage collection algorithms for marking reachable ' +
                 'objects, and in solving puzzles like the shortest number of moves in Rubik\'s cube.',
+            mentalModel:
+                'Like ripples spreading from a stone dropped in water. Explore level by level, visiting ' +
+                'all neighbors before their neighbors.',
+            difficulty: 'Medium',
+            patterns: ['BFS', 'Graphs', 'Traversal', 'Shortest Path'],
+            leetcodeTags: ['graph', 'bfs', 'shortest-path', 'interview-common', 'level-order']
         },
         dfs: {
             name: 'Depth-First Search',
@@ -1836,6 +1842,12 @@ const GraphAlgorithms = (() => {
                 'Powers the "solve" function in Sudoku solvers, the backtracking in constraint satisfaction ' +
                 'problems, the Git object traversal, and the file system search (find command). ' +
                 'Also used in compiler parsing (abstract syntax tree construction).',
+            mentalModel:
+                'Like exploring a maze by always turning left and going as far as possible. When you hit a dead end, ' +
+                'backtrack to the last intersection and try the next unexplored path.',
+            difficulty: 'Medium',
+            patterns: ['DFS', 'Graphs', 'Traversal', 'Backtracking'],
+            leetcodeTags: ['graph', 'dfs', 'traversal', 'backtracking', 'medium', 'interview-common']
         },
         dijkstra: {
             name: "Dijkstra's Shortest Path",
@@ -1861,6 +1873,13 @@ const GraphAlgorithms = (() => {
                 'and delivery optimization (traveling salesman approximations), in robotics for path planning, ' +
                 'and in gaming AI for NPC navigation. Also powers the "shortest path" feature in flight ' +
                 'booking systems and public transit planners.',
+            mentalModel:
+                'Like planning a road trip by always choosing the nearest unvisited city. Keep a priority queue ' +
+                'of cities sorted by distance, and always expand from the closest one. Guaranteed to find ' +
+                'the shortest route to all destinations.',
+            difficulty: 'Hard',
+            patterns: ['Graphs', 'Shortest Path', 'Greedy', 'Priority Queue'],
+            leetcodeTags: ['graph', 'shortest-path', 'dijkstra', 'priority-queue', 'hard', 'interview-common']
         },
         astar: {
             name: 'A* Pathfinding',

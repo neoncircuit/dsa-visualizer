@@ -110,6 +110,16 @@ body {
     gap: 0.4rem;
 }
 
+/* Visual separators between major control groups */
+.controls-group:not(.controls-hidden):has(select#algorithm-select),
+.controls-group:not(.controls-hidden):has(button#btn-generate),
+.controls-group:not(.controls-hidden):has(button#btn-compare),
+.controls-group:not(.controls-hidden):has(button#btn-layout) {
+    margin-right: 0.8rem;
+    padding-right: 0.8rem;
+    border-right: 1px solid var(--border-color);
+}
+
 /* Conditional groups: keep space in layout so stable controls never shift position */
 .controls-group.controls-hidden {
     visibility: hidden;
@@ -235,6 +245,62 @@ body {
     background: var(--btn-info);
     border-color: var(--btn-info-hover);
     color: var(--accent);
+}
+
+/* ── Interview Mode Styling ── */
+.interview-filter {
+    transition: opacity 0.2s ease;
+}
+
+.interview-filter label {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    margin-right: 0.3rem;
+}
+
+.interview-filter select {
+    font-size: 0.7rem;
+}
+
+.difficulty-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.difficulty-badge.easy {
+    background: #9ece6a;
+    color: #1a1b26;
+}
+
+.difficulty-badge.medium {
+    background: #e0af68;
+    color: #1a1b26;
+}
+
+.difficulty-badge.hard {
+    background: #f7768e;
+    color: #1a1b26;
+}
+
+.pattern-tag {
+    display: inline-block;
+    padding: 2px 6px;
+    background: #7aa2f7;
+    color: #1a1b26;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 600;
+    margin-right: 4px;
+    margin-bottom: 4px;
+}
+
+.pattern-tag:last-child {
+    margin-right: 0;
 }
 
 .buttons {
@@ -921,6 +987,84 @@ body.vertical .cot-panel { display: none !important; }
 
 .bar.pivot {
     background: var(--bar-found);
+}
+
+/* ── Pattern Algorithm States ── */
+
+.bar.window {
+    background: #7aa2f7;
+    box-shadow: 0 0 10px rgba(122, 162, 247, 0.5);
+}
+
+.bar.window-boundary {
+    background: #bb9af7;
+    box-shadow: 0 0 10px rgba(187, 154, 247, 0.5);
+}
+
+.bar.prefix-building {
+    background: #9ece6a;
+}
+
+.bar.prefix-range {
+    background: #e0af68;
+    box-shadow: 0 0 10px rgba(224, 175, 104, 0.5);
+}
+
+.bar.stack-active {
+    background: #f7768e;
+}
+
+.bar.stack-pop {
+    background: #ff9e64;
+}
+
+.bar.interval-overlap {
+    background: #7dcfff;
+}
+
+.bar.interval-merged {
+    background: #bb9af7;
+    box-shadow: 0 0 10px rgba(187, 154, 247, 0.5);
+}
+
+.list-cell.window {
+    background: #7aa2f7;
+    color: #1a1b26;
+}
+
+.list-cell.window-boundary {
+    background: #bb9af7;
+    color: #1a1b26;
+}
+
+.list-cell.prefix-building {
+    background: #9ece6a;
+    color: #1a1b26;
+}
+
+.list-cell.prefix-range {
+    background: #e0af68;
+    color: #1a1b26;
+}
+
+.list-cell.stack-active {
+    background: #f7768e;
+    color: #1a1b26;
+}
+
+.list-cell.stack-pop {
+    background: #ff9e64;
+    color: #1a1b26;
+}
+
+.list-cell.interval-overlap {
+    background: #7dcfff;
+    color: #1a1b26;
+}
+
+.list-cell.interval-merged {
+    background: #bb9af7;
+    color: #1a1b26;
 }
 
 .bar[data-value]::after {

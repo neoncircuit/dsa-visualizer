@@ -28,7 +28,7 @@ graph TD
 
 ### Features
 
-- Real-time visualization of 19 sorting, 8 searching, 10 tree, 7 graph, 14 linked list, and 7 maze/pathfinding algorithms
+- Real-time visualization of 19 sorting, 8 searching, 10 tree, 7 graph, 14 linked list, 7 maze/pathfinding, and 5 interview pattern algorithms
 - 3-panel layout: algorithm info (left), code (center), visualization (right)
 - Synchronized code highlighting with step-numbered inline comments
 - Multi-language code display: Pseudocode, Python, Java, C++, C, C#, JavaScript, TypeScript, Go, Rust
@@ -56,6 +56,9 @@ graph TD
 - Post-algorithm quizzes with multiple-choice questions, explanations, and score tracking
 - Challenge Mode: random algorithm with timed quiz
 - Feedback system with adapter pattern (Supabase/Firebase)
+- Interview Preparation mode: toggle to filter algorithms by interview relevance (Easy/Medium/Hard difficulty badges, pattern tags)
+- Pattern filter dropdown: filter by Two Pointers, Sliding Window, Prefix Sum, Monotonic Stack, Overlapping Intervals, and more
+- Mental model analogies and difficulty/pattern metadata on all algorithms
 - Adjustable array size, speed, and distribution type (random, nearly sorted, reversed, few unique)
 - Fisher-Yates shuffle for truly randomized starting arrays
 - Reset generates a fresh random array each time
@@ -147,6 +150,16 @@ Fun/meme sorts also include Sleep Sort and Miracle Sort.
 | Merge Sorted Lists | O(n + m)   | O(n + m)   | O(n + m)   | O(1)     |
 | Merge Sort         | O(n log n) | O(n log n) | O(n log n) | O(log n) |
 
+#### Patterns (Interview) (5)
+
+| Algorithm | Best | Average | Worst | Space |
+|---|---|---|---|---|
+| Two Pointers: Two Sum (Sorted) | O(n) | O(n) | O(n) | O(1) |
+| Sliding Window: Max Sum Subarray | O(k) | O(n) | O(n) | O(1) |
+| Prefix Sum: Range Sum Query | O(1) | O(n) | O(n) | O(n) |
+| Monotonic Stack: Next Greater Element | O(n) | O(n) | O(n) | O(n) |
+| Overlapping Intervals: Merge Intervals | O(n log n) | O(n log n) | O(n log n) | O(n) |
+
 ### Recording Quality Presets
 
 | Preset           | Resolution | Bitrate  | FPS |
@@ -171,6 +184,8 @@ Fun/meme sorts also include Sleep Sort and Miracle Sort.
 
 ### Getting Started
 
+
+**New to DSA?** Start with [docs/learning-path.md](docs/learning-path.md) - A beginner-friendly guide that explains concepts step by step with real-world analogies.
 See [docs/setup.md](docs/setup.md) for full setup instructions, Docker deployment, and troubleshooting.
 
 Quick start:
@@ -227,7 +242,9 @@ dsa-visualizer/
                     graphs.js         Graph generators + 10-language code
                     linked-lists.js   Linked list operations + 10-language code
                     maze.js           Maze generation + grid pathfinding + 10-language code
+                    patterns.js       Interview pattern algorithms (Two Pointers, Sliding Window, Prefix Sum, etc.)
     docs/
+        learning-path.md             Beginner-friendly DSA learning guide
         setup.md                     Setup and deployment guide
         adding-algorithms.md         Guide for adding new algorithms
         linked-lists.md              Linked list implementation spec
@@ -281,6 +298,8 @@ graph LR
         T --> J
         U --> J
         LL --> J
+        B --> PA[patterns.js]
+        PA --> J
     end
     J --> C
     J --> V

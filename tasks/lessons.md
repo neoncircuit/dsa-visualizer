@@ -288,3 +288,30 @@
 - **What happened**: `pathGreedy` used lazy deletion -- nodes are added to `visited` when popped from the priority queue, not when pushed. But `visited` was initialised with `['1,1']`. When the start node was popped, `visited.has('1,1')` returned true and the node was skipped. The heap was then empty, so the algorithm terminated after a single frontier yield.
 - **Rule**: In lazy-deletion search (where duplicates are allowed in the open set and filtered on pop), the visited/closed set must start empty. The start node is marked visited when it is popped and processed, not before. Pre-adding the start node defeats the lazy-deletion pattern and causes the algorithm to skip its own starting point.
 - **How to apply**: `const visited = new Set();` (empty). The `if (visited.has(key)) continue; visited.add(key);` block at the top of the loop handles marking the start node on its first pop. Compare with `pathAStar` which correctly uses `const closed = new Set()` (empty).
+
+## Interview Preparation Mode
+
+### 47. Pattern Algorithm Step Objects Must Always Include `indices` for the Bar Visualizer
+- **What happened**: `twoPointersTargetSum` initially yielded `{ type, left, right, sum, target, codeLine }` without an `indices` array. `Visualizer.processStep(step, arr)` uses `step.indices` exclusively to determine which bars to colour. Without it, no bars were highlighted and the pointers were invisible.
+- **Rule**: Every pattern algorithm that renders on the bar visualizer must include `indices: [...]` in every yielded step. The content of `indices` must reference positions in the array currently held by `currentArray` — if the generator operates on a derived or transformed array, that array must become `currentArray` before the generator is called.
+- **How to apply**: For a two-pointer algorithm: `yield { type: 'compare', indices: [left, right], left, right, codeLine }`. For a sliding window: `yield { type: 'slide', indices: Array.from({length: k}, (_, i) => start + i), codeLine }`.
+
+### 48. Algorithms That Require Sorted Input Must Pre-Sort `currentArray` Before Calling the Generator
+- **What happened**: `twoPointersTargetSum` needs a sorted array to produce correct pointer convergence. If called on an unsorted `currentArray`, the bars would show unsorted heights but the pointer indices would refer to a sorted logical order, causing a mismatch between the visual and the logic.
+- **Rule**: When an algorithm requires pre-sorted input, sort `currentArray` in-place (or reassign it) inside `initGenerator()` before instantiating the generator. Also call `Visualizer.render(currentArray)` and `initArrayState(currentArray)` immediately after, so the bars and state panel reflect the sorted state before the first step runs.
+- **How to apply**: In the `isPatternAlgorithm` branch of `initGenerator()`: `currentArray = [...currentArray].sort((a, b) => a - b); Visualizer.render(currentArray); initArrayState(currentArray); generator = PatternAlgorithms.twoPointersTargetSum(currentArray);`.
+
+### 49. New Step Types for the Bar Visualizer Must Be Added to `stateMap` in `visualizer.js`
+- **What happened**: Added `move-left` and `move-right` step types for the Two Pointers algorithm. The `processStep()` stateMap in `visualizer.js` only had entries for known types. Unknown types produced `cssClass = undefined`, so no bars were coloured — a silent failure with no console error.
+- **Rule**: Whenever a new step type is introduced in any algorithm that renders via `Visualizer.processStep()`, add it to `stateMap` in `visualizer.js` immediately. Map it to an existing CSS class (`'comparing'`, `'searching'`, `'found'`, etc.) or a new one if genuinely distinct.
+- **How to apply**: In `processStep()` stateMap: `'move-left': 'comparing', 'move-right': 'comparing'`. Verify that the target CSS class exists in `main.css` before using it.
+
+### 50. Filter UI Must Handle the Case Where the Selected Algorithm Becomes Hidden
+- **What happened**: When the pattern filter was changed to a category that did not include the currently selected algorithm, the dropdown showed no selected option. The algorithm still ran as if the old selection was active — info panel and code panel loaded stale data.
+- **Rule**: After applying a filter that hides options, check whether the currently selected option is now hidden. If it is, programmatically switch to the first visible option, then call `reset()` and `loadAlgorithm()` to bring the UI into a consistent state.
+- **How to apply**: At the end of `filterByPattern()`: track `firstVisible` while iterating, then `if (selected.style.display === 'none' && firstVisible) { algorithmSelect.value = firstVisible; reset(); loadAlgorithm(); }`.
+
+### 51. Mode Toggles That Change the Algorithm Set Must Stop Any Running Visualization First
+- **What happened**: Toggling Interview Mode while an algorithm was visualizing could leave the generator running in the background against an algorithm key that was now hidden from the dropdown. Subsequent calls to `reset()` or `loadAlgorithm()` would operate on stale state.
+- **Rule**: Any toggle that modifies the visible algorithm set (interview mode, compare mode) must call `reset()` before making the change if a generator is active or the visualization is playing.
+- **How to apply**: At the start of the toggle handler: `if (generator || isPlaying) reset();`. This eliminates the entire class of stale-state issues caused by mid-run mode switches.

@@ -12,6 +12,7 @@ const FEATURES = {
     GAMIFICATION: true,
     EDUCATIONAL: true,
     INTERACTIVITY: true,
+    INTERVIEW_PREP: true,
 };
 
 export default FEATURES;

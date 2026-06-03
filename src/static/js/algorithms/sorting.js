@@ -2076,6 +2076,13 @@ const SortingAlgorithms = (() => {
                 'Used in some embedded systems and PLCs (programmable logic controllers) where code ' +
                 'simplicity matters more than speed. Also appears in network packet sorting where the ' +
                 'list is tiny and already nearly sorted.',
+            mentalModel:
+                'Imagine bubbles rising to the surface of water. The largest bubbles rise fastest. ' +
+                'Each pass through the array lets the next largest number "bubble up" to its correct position ' +
+                'at the end, like bubbles floating to the top.',
+            difficulty: 'Easy',
+            patterns: ['Sorting', 'Comparison'],
+            leetcodeTags: ['sorting', 'array', 'basic'],
         },
         selectionSort: {
             name: 'Selection Sort',
@@ -2099,6 +2106,12 @@ const SortingAlgorithms = (() => {
                 'Used in hardware-level sorting circuits (sorting networks) and in situations where ' +
                 'write operations are expensive, such as flash memory with limited write cycles. The ' +
                 'minimal swap count makes it ideal for EEPROM wear leveling.',
+            mentalModel:
+                'Like picking teams from a group. Scan everyone to find the best person, pick them, ' +
+                'then scan the remaining people for the next best. Repeat until everyone is chosen.',
+            difficulty: 'Easy',
+            patterns: ['Sorting', 'Selection'],
+            leetcodeTags: ['sorting', 'array', 'basic'],
         },
         insertionSort: {
             name: 'Insertion Sort',
@@ -2123,6 +2136,12 @@ const SortingAlgorithms = (() => {
                 'elements). Python\'s Timsort, Java\'s Arrays.sort, and V8\'s Quicksort all fall back ' +
                 'to Insertion Sort for tiny sub-arrays. Also used for online sorting (processing ' +
                 'elements as they arrive).',
+            mentalModel:
+                'Already described in the main description: sorting playing cards in your hand by ' +
+                'sliding each new card into its correct position among the sorted ones.',
+            difficulty: 'Easy',
+            patterns: ['Sorting', 'Insertion'],
+            leetcodeTags: ['sorting', 'array', 'basic'],
         },
         mergeSort: {
             name: 'Merge Sort',
@@ -2148,6 +2167,13 @@ const SortingAlgorithms = (() => {
                 'merge operations). Powers Java\'s Arrays.sort for objects, Python\'s Timsort merge ' +
                 'phase, and Git\'s object packing. Also the basis for parallel sorting algorithms ' +
                 'in Hadoop and MapReduce.',
+            mentalModel:
+                'Divide a deck of cards in half repeatedly until you have single cards. Then merge ' +
+                'sorted piles back together by always picking the smaller top card. Like organizing ' +
+                'a messy deck by splitting, sorting small piles, and combining them.',
+            difficulty: 'Medium',
+            patterns: ['Sorting', 'Divide and Conquer', 'Merge'],
+            leetcodeTags: ['sorting', 'divide-conquer', 'array'],
         },
         quickSort: {
             name: 'Quick Sort',
@@ -2172,6 +2198,13 @@ const SortingAlgorithms = (() => {
                 'The default in-place sort for C\'s qsort(), C++\'s std::sort, and many language ' +
                 'standard libraries. Used in browsers for DOM sorting, in databases for in-memory ' +
                 'index sorting, and in competitive programming for its speed and simplicity.',
+            mentalModel:
+                'Pick a "pivot" element. Throw everything smaller to the left, everything larger ' +
+                'to the right. Now do the same for each side. Like organizing books by picking one, ' +
+                'then splitting into "lighter" and "heavier" piles recursively.',
+            difficulty: 'Medium',
+            patterns: ['Sorting', 'Divide and Conquer', 'Partitioning'],
+            leetcodeTags: ['sorting', 'divide-conquer', 'array', 'interview-common'],
         },
         countingSort: {
             name: 'Counting Sort',
@@ -2197,6 +2230,13 @@ const SortingAlgorithms = (() => {
                 'Applied in frequency counting (histograms, vote tallying), integer sorting when the ' +
                 'range is small (e.g., sorting ages 0-120, grades 0-100), and in some string sorting ' +
                 'algorithms like the American Flag sort.',
+            mentalModel:
+                'Count how many times each value appears. Then reconstruct the sorted list by writing ' +
+                'each value the counted number of times. Like sorting ballots by counting votes for each ' +
+                'candidate, then reporting results in order.',
+            difficulty: 'Easy',
+            patterns: ['Sorting', 'Counting', 'Non-Comparison'],
+            leetcodeTags: ['sorting', 'counting', 'interview-common'],
         },
         heapSort: {
             name: 'Heap Sort',
@@ -2221,6 +2261,13 @@ const SortingAlgorithms = (() => {
                 'medical devices). Powers the heap-based priority queue in operating system schedulers, ' +
                 'Dijkstra\'s algorithm, and event-driven simulators. Also used in embedded systems ' +
                 'with memory constraints.',
+            mentalModel:
+                'Build a binary heap (parent always larger than children). Repeatedly remove the ' +
+                'largest element from the top and fix the heap. Like repeatedly taking the biggest ' +
+                'item from a priority queue and reorganizing what remains.',
+            difficulty: 'Medium',
+            patterns: ['Sorting', 'Heap', 'Priority Queue'],
+            leetcodeTags: ['sorting', 'heap', 'priority-queue', 'interview-common'],
         },
         gnomeSort: {
             name: 'Gnome Sort',

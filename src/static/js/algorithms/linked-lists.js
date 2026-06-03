@@ -2256,6 +2256,11 @@ const LinkedListAlgorithms = (() => {
                 '(most recent action goes to the front), and LRU cache implementations (move ' +
                 'recently accessed item to the front). Powers the "new tab" behavior in browser ' +
                 'history and the prepend operation in text editors.',
+            mentalModel:
+                'Like adding a new leader at the front of a line. Everyone else steps back one position.',
+            difficulty: 'Easy',
+            patterns: ['Linked Lists', 'Insertion', 'Head Operation'],
+            leetcodeTags: ['linked-list', 'insertion', 'easy', 'interview-common']
         },
 
         llDeleteHead: {
@@ -2279,6 +2284,11 @@ const LinkedListAlgorithms = (() => {
                 '(remove the most recent action), in breadth-first search queue processing, and in ' +
                 'playlist management (skip to next song). Powers the dequeue operation in queue ' +
                 'implementations built with linked lists.',
+            mentalModel:
+                'Like removing the first person in line. The second person becomes the new leader.',
+            difficulty: 'Easy',
+            patterns: ['Linked Lists', 'Deletion', 'Head Operation'],
+            leetcodeTags: ['linked-list', 'deletion', 'easy', 'interview-common']
         },
 
         llSearch: {
@@ -2305,6 +2315,11 @@ const LinkedListAlgorithms = (() => {
                 'in implementing the "find" operation in symbol tables, and in text editors for ' +
                 'finding text patterns. Powers the lookup in sparse matrix representations and the ' +
                 'node access in memory allocators (free list traversal).',
+            mentalModel:
+                'Like searching for a name in a paper chain. You start at one end and read each tag until you find it or run out of tags.',
+            difficulty: 'Easy',
+            patterns: ['Linked Lists', 'Sequential Search', 'Traversal'],
+            leetcodeTags: ['linked-list', 'search', 'easy', 'interview-common']
         },
 
         llTraverse: {
@@ -2331,6 +2346,11 @@ const LinkedListAlgorithms = (() => {
                 'to JSON/XML, and in computing aggregate values (sum, count, max) over a collection. ' +
                 'Powers the iteration step in map-reduce operations on linked data, the display ' +
                 'function in playlist applications, and the validation pass in data pipelines.',
+            mentalModel:
+                'Like reading a train of carriages from the engine to the last car, noting each one.',
+            difficulty: 'Easy',
+            patterns: ['Linked Lists', 'Traversal'],
+            leetcodeTags: ['linked-list', 'traversal', 'easy']
         },
 
         llReverse: {
@@ -2356,6 +2376,11 @@ const LinkedListAlgorithms = (() => {
                 'checking for linked lists, and in block swapping algorithms. Powers the "reverse ' +
                 'playlist" feature in music apps, the backtracking step in some maze solvers, and ' +
                 'the in-place reversal used in merge sort implementations for linked lists.',
+            mentalModel:
+                'Like flipping a row of dominoes so each one points the other direction. You walk forward once, turning each domino as you go.',
+            difficulty: 'Easy',
+            patterns: ['Linked List Reversal', 'Linked Lists', 'In-Place'],
+            leetcodeTags: ['linked-list', 'reversal', 'easy', 'interview-common']
         },
 
         llInsertTail: {
@@ -2382,6 +2407,11 @@ const LinkedListAlgorithms = (() => {
                 '(add new task to the end of the queue), and in log append operations (add new ' +
                 'entry at the end). Powers the FIFO behavior in print job spoolers, message queues ' +
                 'in messaging systems, and the buffer append in streaming data pipelines.',
+            mentalModel:
+                'Like joining a queue at the back. You walk the entire line to the end, then take your place.',
+            difficulty: 'Easy',
+            patterns: ['Linked Lists', 'Insertion', 'Tail Operation'],
+            leetcodeTags: ['linked-list', 'insertion', 'easy']
         },
 
         llDeleteTail: {
@@ -2408,6 +2438,11 @@ const LinkedListAlgorithms = (() => {
                 'implementations, and in sliding window algorithms (remove the oldest element from ' +
                 'the window). Powers the buffer eviction in streaming applications and the ' +
                 'oldest-entry removal in fixed-size caches.',
+            mentalModel:
+                'Like removing the last person in a queue. You walk the entire line to find who is second-to-last, then tell them to ignore the person behind them.',
+            difficulty: 'Easy',
+            patterns: ['Linked Lists', 'Deletion', 'Tail Operation'],
+            leetcodeTags: ['linked-list', 'deletion', 'easy']
         },
 
         llInsertPos: {
@@ -2434,6 +2469,11 @@ const LinkedListAlgorithms = (() => {
                 'order), in text editor cursor positioning (insert text at a specific offset), and ' +
                 'in playlist reordering (move a song to position N). Powers the ordered insertion ' +
                 'in priority queues built with linked lists and the splice operation in version control systems.',
+            mentalModel:
+                'Like inserting a new person at position 5 in a queue. Walk forward 5 spots, then slot them in — the rest shuffle back one.',
+            difficulty: 'Medium',
+            patterns: ['Linked Lists', 'Insertion', 'Index Access'],
+            leetcodeTags: ['linked-list', 'insertion', 'medium', 'interview-common']
         },
 
         llDeletePos: {
@@ -2459,6 +2499,11 @@ const LinkedListAlgorithms = (() => {
                 'list implementations (remove element at index), and in game entity management ' +
                 '(remove the Nth entity). Powers the "delete row" operation in spreadsheet applications ' +
                 'and the element removal in ordered collections.',
+            mentalModel:
+                'Like removing person number 5 from a queue. Walk forward 5 spots, then tell position 4 to point past position 5.',
+            difficulty: 'Medium',
+            patterns: ['Linked Lists', 'Deletion', 'Index Access'],
+            leetcodeTags: ['linked-list', 'deletion', 'medium', 'interview-common']
         },
 
         llDeleteVal: {
@@ -2484,6 +2529,11 @@ const LinkedListAlgorithms = (() => {
                 'networks, removing a song from a playlist, or deleting a product from a shopping cart. ' +
                 'Powers the cache invalidation (remove specific entry), the subscriber removal in event ' +
                 'systems, and the entity cleanup in game engines.',
+            mentalModel:
+                'Like finding and removing a specific person from a queue by name. Scan from the front, remember who is behind them, then bridge the gap.',
+            difficulty: 'Medium',
+            patterns: ['Linked Lists', 'Deletion', 'Value Search'],
+            leetcodeTags: ['linked-list', 'deletion', 'medium', 'interview-common']
         },
 
         llInsertAfterValue: {
@@ -2509,6 +2559,11 @@ const LinkedListAlgorithms = (() => {
                 'editors (insert text after a bookmark), and in workflow systems (add a step after ' +
                 'a specific stage). Powers the "add comment after this line" feature in code review ' +
                 'tools and the node insertion in linked list-based polynomial representations.',
+            mentalModel:
+                'Like finding someone in a queue by name and saying "my friend joins right behind you". Scan to the target, then splice the new person in.',
+            difficulty: 'Medium',
+            patterns: ['Linked Lists', 'Insertion', 'Value Search'],
+            leetcodeTags: ['linked-list', 'insertion', 'medium']
         },
 
         llDetectCycle: {
@@ -2535,6 +2590,13 @@ const LinkedListAlgorithms = (() => {
                 'cryptographic applications (detecting cycles in pseudorandom number generators). ' +
                 'Powers Floyd\'s algorithm in cycle detection for streaming data and the loop ' +
                 'detection in Tortoise and Hare problems.',
+            mentalModel:
+                'Two runners on a track - one walks (slow) and one sprints (fast). If the track is a loop, ' +
+                'the fast runner will eventually catch up to the slow one from behind. If it\'s a straight line, ' +
+                'the fast runner reaches the finish line first.',
+            difficulty: 'Medium',
+            patterns: ['Fast/Slow Pointers', 'Linked Lists', 'Cycle Detection'],
+            leetcodeTags: ['linked-list', 'two-pointers', 'cycle-detection', 'medium', 'interview-common']
         },
 
         llMergeSorted: {
@@ -2559,6 +2621,11 @@ const LinkedListAlgorithms = (() => {
                 'multiple sources (multi-source search), and in merging sorted log files by timestamp. ' +
                 'Powers the "merge contacts" feature in address book applications and the union ' +
                 'operation in sorted set implementations.',
+            mentalModel:
+                'Like merging two sorted decks of cards. Compare the top card of each deck and always take the smaller one — one pass produces a fully sorted deck.',
+            difficulty: 'Hard',
+            patterns: ['Linked Lists', 'Two Pointers', 'Merge', 'Divide and Conquer'],
+            leetcodeTags: ['linked-list', 'two-pointers', 'merge', 'hard', 'interview-common']
         },
 
         llMergeSort: {
@@ -2584,6 +2651,11 @@ const LinkedListAlgorithms = (() => {
                 'in external sorting (sorting data too large for memory), and in sorting polyominoes ' +
                 'in combinatorial game solvers. Powers the stable sort in functional programming ' +
                 'language standard libraries (Haskell, Erlang).',
+            mentalModel:
+                'Like sorting a row of books by repeatedly splitting the row in half, sorting each half, then merging the two sorted halves back together.',
+            difficulty: 'Hard',
+            patterns: ['Linked Lists', 'Fast/Slow Pointers', 'Divide and Conquer', 'Merge'],
+            leetcodeTags: ['linked-list', 'sorting', 'divide-and-conquer', 'hard', 'interview-common']
         },
     };
 

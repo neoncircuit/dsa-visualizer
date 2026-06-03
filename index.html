@@ -8,6 +8,7 @@
 </head>
 <body>
     <header class="controls-bar">
+        <!-- ── Algorithm Controls ── -->
         <div class="controls-group">
             <label for="algorithm-select">Algorithm</label>
             <select id="algorithm-select">
@@ -91,6 +92,13 @@
                     <option value="pathAStar">Pathfinding: A*</option>
                     <option value="pathGreedy">Pathfinding: Greedy Best-First</option>
                 </optgroup>
+                <optgroup label="Patterns (Interview)">
+                    <option value="twoPointersTargetSum">Two Pointers: Two Sum (Sorted)</option>
+                    <option value="slidingWindowMaxSum">Sliding Window: Max Sum Subarray</option>
+                    <option value="prefixSumRangeSum">Prefix Sum: Range Sum Query</option>
+                    <option value="monotonicStackNextGreater">Monotonic Stack: Next Greater Element</option>
+                    <option value="overlappingIntervalsMerge">Overlapping Intervals: Merge Intervals</option>
+                </optgroup>
             </select>
         </div>
 
@@ -98,22 +106,6 @@
             <label for="array-size">Size</label>
             <input type="number" id="size-display" class="slider-input" min="5" max="30" value="30">
             <input type="range" id="array-size" min="5" max="30" value="30">
-        </div>
-
-        <div class="controls-group search-target-group controls-hidden">
-            <label for="search-target">Target</label>
-            <input type="number" id="search-target" min="1" max="100" value="50">
-        </div>
-
-        <div class="controls-group custom-array-group controls-hidden">
-            <label for="custom-array">Custom</label>
-            <input type="text" id="custom-array" placeholder="e.g. 5,3,8,1,9" title="Enter comma-separated numbers">
-            <button id="btn-apply-custom" class="btn" title="Apply custom array">Apply</button>
-        </div>
-
-        <div class="controls-group ll-position-group controls-hidden">
-            <label for="ll-position">Position</label>
-            <input type="number" id="ll-position" min="0" max="99" value="0">
         </div>
 
         <div class="controls-group">
@@ -140,6 +132,28 @@
             </select>
         </div>
 
+        <!-- ── Contextual Controls (conditionally shown) ── -->
+        <div class="controls-group search-target-group controls-hidden">
+            <label for="search-target">Target</label>
+            <input type="number" id="search-target" min="1" max="100" value="50">
+        </div>
+
+        <div class="controls-group custom-array-group controls-hidden">
+            <label for="custom-array">Custom</label>
+            <input type="text" id="custom-array" placeholder="e.g. 5,3,8,1,9" title="Enter comma-separated numbers">
+            <button id="btn-apply-custom" class="btn" title="Apply custom array">Apply</button>
+        </div>
+
+        <div class="controls-group ll-position-group controls-hidden">
+            <label for="ll-position">Position</label>
+            <input type="number" id="ll-position" min="0" max="99" value="0">
+        </div>
+
+        <div class="controls-group window-size-group controls-hidden">
+            <label for="window-size">Window (K)</label>
+            <input type="number" id="window-size" min="2" max="10" value="3">
+        </div>
+
         <div class="controls-group graph-view-group controls-hidden">
             <label for="graph-view">Graph View</label>
             <select id="graph-view">
@@ -155,20 +169,52 @@
             <button id="btn-export-graph" class="btn" title="Export graph as JSON">Export</button>
         </div>
 
-        <div class="controls-group">
-            <button id="btn-compare" class="btn" title="Compare two algorithms">Compare</button>
+        <div class="controls-group interview-filter controls-hidden">
+            <label for="pattern-filter">Pattern</label>
+            <select id="pattern-filter">
+                <option value="all">All Patterns</option>
+                <optgroup label="─ Essential Interview Patterns ─">
+                <option value="two-pointers">Two Pointers</option>
+                <option value="sliding-window">Sliding Window</option>
+                <option value="modified-binary-search">Modified Binary Search</option>
+                <option value="prefix-sum">Prefix Sum</option>
+                <option value="top-k-elements">Top K Elements</option>
+                </optgroup>
+                <optgroup label="─ Tree & Graph Patterns ─">
+                <option value="binary-tree-traversal">Binary Tree Traversal</option>
+                <option value="bfs">Breadth First Search (BFS)</option>
+                <option value="dfs">Depth First Search (DFS)</option>
+                <option value="backtracking">Backtracking</option>
+                <option value="matrix-traversal">Matrix Traversal</option>
+                </optgroup>
+                <optgroup label="─ Linked List Patterns ─">
+                <option value="fast-slow-pointers">Fast/Slow Pointers</option>
+                <option value="linked-list-reversal">Linked List Reversal</option>
+                </optgroup>
+                <optgroup label="─ Advanced Patterns ─">
+                <option value="monotonic-stack">Monotonic Stack</option>
+                <option value="overlapping-intervals">Overlapping Intervals</option>
+                <option value="dynamic-programming">Dynamic Programming (Coming Soon)</option>
+                </optgroup>
+            </select>
         </div>
 
-        <div class="controls-group benchmark-group controls-hidden">
-            <button id="btn-benchmark" class="btn" title="Benchmark current algorithm">Benchmark</button>
-        </div>
-
+        <!-- ── Action Buttons ── -->
         <div class="controls-group buttons">
             <button id="btn-generate" class="btn" title="Generate new array">Generate</button>
             <button id="btn-play" class="btn btn-success" title="Start visualization">Play</button>
             <button id="btn-pause" class="btn btn-warning" title="Pause visualization" disabled>Pause</button>
             <button id="btn-step" class="btn" title="Step through one operation">Step</button>
             <button id="btn-reset" class="btn" title="Reset to initial state">Reset</button>
+        </div>
+
+        <!-- ── Features ── -->
+        <div class="controls-group">
+            <button id="btn-compare" class="btn" title="Compare two algorithms">Compare</button>
+        </div>
+
+        <div class="controls-group benchmark-group controls-hidden">
+            <button id="btn-benchmark" class="btn" title="Benchmark current algorithm">Benchmark</button>
         </div>
 
         <div class="controls-group">
@@ -185,6 +231,11 @@
             <button id="btn-theme" class="btn" title="Toggle light/dark theme">Light</button>
         </div>
 
+        <div class="controls-group">
+            <button id="btn-interview" class="btn" title="Toggle interview preparation mode">Interview</button>
+        </div>
+
+        <!-- ── Recording & Feedback ── -->
         <div class="controls-group">
             <select id="record-quality" title="Recording quality">
                 <option value="shorts-1080">Shorts 1080p</option>
@@ -225,6 +276,19 @@
             <div class="info-section">
                 <h3 class="info-section-heading">Real World Use Cases</h3>
                 <p class="info-description" id="algo-realworld-text"></p>
+            </div>
+
+            <div class="info-section">
+                <h3 class="info-section-heading">How to Picture It</h3>
+                <p class="info-description" id="algo-mentalmodel-text"></p>
+            </div>
+
+            <div class="info-section interview-section controls-hidden">
+                <h3 class="info-section-heading">Interview Info</h3>
+                <div class="info-description">
+                    <div id="difficulty-badge-container"></div>
+                    <div id="pattern-tags-container"></div>
+                </div>
             </div>
 
             <div class="info-section">

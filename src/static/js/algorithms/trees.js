@@ -1113,6 +1113,12 @@ const TreeAlgorithms = (() => {
                 'Used to build database indexes, implement symbol tables in compilers, and create in-memory sorted collections. ' +
                 'Powers the `std::map` and `std::set` containers in C++, and forms the basis for more advanced tree structures. ' +
                 'Used in file systems for directory indexing and in autocomplete systems for storing sorted word lists.',
+            mentalModel:
+                'Like inserting a new card into a sorted deck. Start at the top, compare your card to the current one, ' +
+                'and go left (smaller) or right (larger) until you find an empty slot to place it.',
+            difficulty: 'Easy',
+            patterns: ['Trees', 'BST', 'Insertion'],
+            leetcodeTags: ['tree', 'bst', 'insertion', 'interview-common']
         },
 
         bstSearch: {
@@ -1138,6 +1144,12 @@ const TreeAlgorithms = (() => {
                 'The fundamental operation behind database queries, dictionary lookups, and symbol table access in compilers. ' +
                 'Used in spell checkers to verify word existence, in IP routing tables for longest-prefix matching, ' +
                 'and in version control systems for efficient file lookup. Powers the `in` operator for sets in many languages.',
+            mentalModel:
+                'Like searching for a name in a phone book. Open to the middle, if your name comes earlier go to the first half, ' +
+                'if later go to the second half. Repeat until you find it or run out of pages.',
+            difficulty: 'Easy',
+            patterns: ['Trees', 'BST', 'Search', 'Binary Search'],
+            leetcodeTags: ['tree', 'bst', 'search', 'interview-common']
         },
 
         bstInorder: {
@@ -1163,6 +1175,11 @@ const TreeAlgorithms = (() => {
                 'Powers the `sorted()` output from tree-based data structures, the "flatten to sorted list" operation in databases, ' +
                 'and the code generation phase in compilers that outputs symbols in alphabetical order. ' +
                 'Also used in expression tree evaluation (infix notation).',
+            mentalModel:
+                'Like reading a book page from left to right. You visit the left chapter first, then the current page, then the right chapter.',
+            difficulty: 'Easy',
+            patterns: ['Binary Tree Traversal', 'DFS', 'Trees'],
+            leetcodeTags: ['tree', 'traversal', 'bst', 'easy', 'interview-common']
         },
 
         bstPreorder: {
@@ -1214,6 +1231,11 @@ const TreeAlgorithms = (() => {
                 'Powers the evaluation of expression trees in compilers and calculators, the "calculate directory sizes" ' +
                 'operation in file systems, and the dependency resolution in build systems (build children before parent). ' +
                 'Also used in memory management for freeing tree-allocated resources.',
+            mentalModel:
+                'Like cleaning up a room - you put away toys before cleaning the floor. Process children (toys) first, then the parent (room).',
+            difficulty: 'Easy',
+            patterns: ['Binary Tree Traversal', 'DFS', 'Trees'],
+            leetcodeTags: ['tree', 'traversal', 'easy', 'interview-common']
         },
 
         bstDelete: {
@@ -1270,6 +1292,12 @@ const TreeAlgorithms = (() => {
                 'real-time inventory management). Powers the `std::map` in some standard library implementations, the Windows NT ' +
                 'kernel\'s virtual memory management, and in-memory indexes for real-time applications. ' +
                 'Preferred over regular BSTs when data ordering is adversarial.',
+            mentalModel:
+                'Like BST insert but with automatic balancing. After inserting, check if any subtree is leaning too much ' +
+                'to one side. If so, rotate nodes to restore balance, similar to how a mobile balances itself.',
+            difficulty: 'Medium',
+            patterns: ['Trees', 'BST', 'Balanced Trees', 'Rotations'],
+            leetcodeTags: ['tree', 'avl', 'balanced-tree', 'medium', 'interview-common']
         },
     };
 
@@ -1784,6 +1812,11 @@ const TreeAlgorithms = (() => {
                 '(process pages by depth), and multiplayer game matchmaking (find players at similar skill levels). ' +
                 'Powers the "Find Nearest" feature in location services, the shortest path in unweighted graphs (maze solving), ' +
                 'and the breadth-first component labeling in image processing.',
+            mentalModel:
+                'Like reading a book page by page from top to bottom. You visit all nodes at level 1, then all at level 2, etc.',
+            difficulty: 'Easy',
+            patterns: ['Binary Tree Traversal', 'BFS', 'Trees'],
+            leetcodeTags: ['tree', 'traversal', 'bfs', 'level-order', 'easy', 'interview-common']
         },
     };
 
@@ -2367,6 +2400,11 @@ const TreeAlgorithms = (() => {
                 'Dijkstra\'s shortest path algorithm, and Huffman coding for data compression. ' +
                 'Powers the "next smallest element" extraction in streaming algorithms, the merge step in external sorting, ' +
                 'and the task scheduler in real-time operating systems.',
+            mentalModel:
+                'Like a priority queue where the most important item (smallest for min-heap) always floats to the top.',
+            difficulty: 'Medium',
+            patterns: ['Top K Elements', 'Heaps', 'Priority Queue'],
+            leetcodeTags: ['heap', 'priority-queue', 'top-k', 'medium', 'interview-common']
         },
         heapExtractMin: {
             name: 'Min-Heap Extract',
@@ -2392,6 +2430,11 @@ const TreeAlgorithms = (() => {
                 'in Dijkstra\'s algorithm for processing the closest unvisited node, in Huffman coding for building ' +
                 'the compression tree, and in streaming median algorithms. Powers the "pop minimum" operation that makes ' +
                 'heaps essential for greedy algorithms.',
+            mentalModel:
+                'Like taking the top card from a deck. After removing it, you reorganize the deck so the next smallest card is on top.',
+            difficulty: 'Medium',
+            patterns: ['Top K Elements', 'Heaps', 'Priority Queue'],
+            leetcodeTags: ['heap', 'priority-queue', 'top-k', 'medium', 'interview-common']
         },
     };
 

@@ -365,6 +365,43 @@ Root cause: `buildMazeGrid()` pre-marks both (1,1) and (rows-2, cols-2) as PASSA
 - [x] Add `refreshStartEnd()` call at the end of `MazeRenderer.render()` so START/END markers appear on initial render (maze-renderer.js)
 - [x] `pnpm build` passes
 
+## Phase 9 - Interview Preparation Mode
+
+### 9.1 Metadata Foundation
+- [x] Add `difficulty` ('Easy' | 'Medium' | 'Hard') to all algorithm COMPLEXITY entries
+- [x] Add `patterns` (string[]) to all algorithm COMPLEXITY entries
+- [x] Add `leetcodeTags` (string[]) to all algorithm COMPLEXITY entries
+- [x] Add `mentalModel` analogy field to all algorithm COMPLEXITY entries
+- [x] Covered files: sorting.js, sorting-extended.js, sorting-meme.js, searching.js, trees.js, graphs.js, linked-lists.js, patterns.js
+
+### 9.2 Classification
+- [x] `EASY_ALGORITHMS` array in main.js (bubble, selection, insertion, linear search, binary search, bst insert/search, ll basic ops, pattern algorithms)
+- [x] `MEDIUM_ALGORITHMS` array in main.js (merge sort, heap sort, avl, bfs, dfs, ll mid-level ops, monotonic stack, overlapping intervals)
+- [x] `HARD_ALGORITHMS` array in main.js (dijkstra, a*, kruskal, bellman-ford, topological sort, ll merge ops)
+- [x] `isInterviewAlgorithm()`, `getDifficulty()`, `getPatterns()` helper functions
+
+### 9.3 Interview Prep UI
+- [x] Interview toggle button in controls bar (shows/hides filter, filters dropdown to interview algorithms)
+- [x] Pattern filter dropdown (two-pointers, sliding-window, prefix-sum, top-k-elements, bfs, dfs, fast-slow-pointers, linked-list-reversal, monotonic-stack, overlapping-intervals, and more)
+- [x] Difficulty badge display in info panel (Easy/Medium/Hard, colour-coded)
+- [x] Pattern tags display in info panel
+- [x] Interview section in info panel (conditionally visible in interview mode)
+- [x] `interviewMode` state persisted via localStorage
+
+### 9.4 Pattern Algorithm Visualizations
+- [x] `twoPointersTargetSum` — sorted array, left/right pointers converge; array pre-sorted before generator runs
+- [x] `slidingWindowMaxSum` — fixed-size window max sum subarray
+- [x] `prefixSumRangeSum` — prefix array build + O(1) range query
+- [x] `monotonicStackNextGreater` — next greater element with monotonic stack
+- [x] `overlappingIntervalsMerge` — sort + merge overlapping intervals
+- [x] All 5 algorithms: full 10-language CODE snippets, COMPLEXITY with all metadata fields, generator functions
+- [x] Registered in `index.html` under "Patterns (Interview)" optgroup
+- [x] Wired in `main.js` `initGenerator()` switch
+
+### 9.5 Edge Case Hardening
+- [x] Empty pattern filter results: `filterByPattern()` auto-switches to first visible algorithm
+- [x] Interview toggle while running: calls `reset()` before toggling mode
+
 ### BF-6: Greedy Best-First pathfinding ends after one step
 Root cause: `pathGreedy` initialises `visited` with `['1,1']` (the start node). The lazy-deletion loop pops (1,1) from the heap, checks `visited.has(key)`, finds it already present, and skips it. The heap is now empty, so the loop terminates after yielding only the initial frontier step.
 - [x] Remove `'1,1'` from the initial `visited` Set in `pathGreedy` -- the start node is correctly added to `visited` when popped from the heap (maze.js line 2281)
