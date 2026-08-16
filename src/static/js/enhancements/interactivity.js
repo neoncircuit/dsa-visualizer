@@ -86,11 +86,8 @@ const Interactivity = {
      * @returns {void}
      */
     injectToggleButton() {
-        const controlsBar = document.querySelector('.controls-bar');
-        if (!controlsBar) return;
-
-        const group = document.createElement('div');
-        group.className = 'controls-group';
+        const enhancements = document.getElementById('controls-enhancements');
+        if (!enhancements || document.getElementById('btn-drag')) return;
 
         const btn = document.createElement('button');
         btn.id = 'btn-drag';
@@ -108,14 +105,7 @@ const Interactivity = {
             }
         });
 
-        group.appendChild(btn);
-
-        const feedbackGroup = document.querySelector('#btn-feedback')?.parentNode;
-        if (feedbackGroup) {
-            controlsBar.insertBefore(group, feedbackGroup);
-        } else {
-            controlsBar.appendChild(group);
-        }
+        enhancements.appendChild(btn);
     },
 
     /**

@@ -274,16 +274,13 @@ const Educational = {
     },
 
     /**
-     * Inject a toggle button into the controls bar.
+     * Inject a toggle button into the controls bar enhancements group.
      *
      * @returns {void}
      */
     injectToggleButton() {
-        const controlsBar = document.querySelector('.controls-bar');
-        if (!controlsBar) return;
-
-        const group = document.createElement('div');
-        group.className = 'controls-group';
+        const enhancements = document.getElementById('controls-enhancements');
+        if (!enhancements || document.getElementById('btn-quiz')) return;
 
         const btn = document.createElement('button');
         btn.id = 'btn-quiz';
@@ -297,29 +294,19 @@ const Educational = {
             this.savePreference();
         });
 
-        group.appendChild(btn);
-
-        const feedbackGroup = document.querySelector('#btn-feedback')?.parentNode;
-        if (feedbackGroup) {
-            controlsBar.insertBefore(group, feedbackGroup);
-        } else {
-            controlsBar.appendChild(group);
-        }
+        enhancements.appendChild(btn);
     },
 
     /**
-     * Inject a Challenge Mode button into the controls bar.
+     * Inject a Challenge Mode button into the controls bar enhancements group.
      *
      * The button triggers a random algorithm run followed by a timed quiz.
      *
      * @returns {void}
      */
     injectChallengeButton() {
-        const controlsBar = document.querySelector('.controls-bar');
-        if (!controlsBar) return;
-
-        const group = document.createElement('div');
-        group.className = 'controls-group';
+        const enhancements = document.getElementById('controls-enhancements');
+        if (!enhancements || document.getElementById('btn-challenge')) return;
 
         const btn = document.createElement('button');
         btn.id = 'btn-challenge';
@@ -329,18 +316,11 @@ const Educational = {
 
         btn.addEventListener('click', () => this.startChallenge());
 
-        group.appendChild(btn);
-
-        const quizGroup = document.querySelector('#btn-quiz')?.parentNode;
-        if (quizGroup) {
-            controlsBar.insertBefore(group, quizGroup);
+        const quizBtn = document.getElementById('btn-quiz');
+        if (quizBtn) {
+            enhancements.insertBefore(btn, quizBtn);
         } else {
-            const feedbackGroup = document.querySelector('#btn-feedback')?.parentNode;
-            if (feedbackGroup) {
-                controlsBar.insertBefore(group, feedbackGroup);
-            } else {
-                controlsBar.appendChild(group);
-            }
+            enhancements.appendChild(btn);
         }
     },
 
