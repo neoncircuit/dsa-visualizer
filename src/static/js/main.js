@@ -76,6 +76,18 @@ import EventBus from './event-bus.js';
     const customArrayInput = document.getElementById('custom-array');
     /** @type {HTMLDivElement} */
     const customArrayGroup = document.querySelector('.custom-array-group');
+    /** @type {HTMLDivElement|null} */
+    const arraySizeGroup = document.querySelector('.array-size-group');
+    /** @type {HTMLDivElement|null} */
+    const arrayTypeGroup = document.querySelector('.array-type-group');
+    /** @type {HTMLDivElement|null} */
+    const vizModeGroup = document.querySelector('.viz-mode-group');
+    /** @type {HTMLSpanElement|null} */
+    const compareGroup = document.querySelector('.compare-group');
+    /** @type {HTMLSpanElement|null} */
+    const benchmarkGroup = document.querySelector('.benchmark-group');
+    /** @type {HTMLDivElement|null} */
+    const analysisGroup = document.querySelector('.controls-group--analysis');
     /** @type {HTMLButtonElement} */
     const btnApplyCustom = document.getElementById('btn-apply-custom');
 
@@ -193,7 +205,7 @@ import EventBus from './event-bus.js';
     /** @type {string[]} */
     const LINKED_LIST_ALGORITHMS = ['llInsertHead', 'llInsertTail', 'llDeleteHead', 'llDeleteTail', 'llSearch', 'llTraverse', 'llReverse', 'llInsertPos', 'llDeletePos', 'llDeleteVal', 'llInsertAfterValue', 'llDetectCycle', 'llMergeSorted', 'llMergeSort'];
 
-    const PATTERN_ALGORITHMS = ['slidingWindowMaxSum', 'prefixSumRangeSum', 'monotonicStackNextGreater', 'overlappingIntervalsMerge'];
+    const PATTERN_ALGORITHMS = ['twoPointersTargetSum', 'slidingWindowMaxSum', 'prefixSumRangeSum', 'monotonicStackNextGreater', 'overlappingIntervalsMerge'];
 
     const MAZE_ALGORITHMS = ['mazeRecursiveDFS', 'mazePrims', 'mazeBinaryTree', 'pathBFS', 'pathDFS', 'pathAStar', 'pathGreedy'];
     const MAZE_GENERATION = ['mazeRecursiveDFS', 'mazePrims', 'mazeBinaryTree'];
@@ -613,26 +625,9 @@ import EventBus from './event-bus.js';
         const isGraph = isGraphAlgorithm(algoKey);
         const isHeap = algoKey === 'heapInsertMin' || algoKey === 'heapExtractMin';
 
-        // Show/hide search target input
+        updateControlVisibility(algoKey);
+
         const needsTarget = isSearch || algoKey === 'bstSearch';
-        searchTargetGroup.classList.toggle('controls-hidden', !needsTarget);
-
-        // Show/hide linked list position input
-        const needsPosition = algoKey === 'llInsertPos' || algoKey === 'llDeletePos';
-        llPositionGroup.classList.toggle('controls-hidden', !needsPosition);
-
-        // Show/hide window size input for pattern algorithms
-        const needsWindowSize = algoKey === 'slidingWindowMaxSum';
-        windowSizeGroup.classList.toggle('controls-hidden', !needsWindowSize);
-
-        // Show/hide graph view selector and edit button
-        const isGraphAlgo = isGraphAlgorithm(algoKey);
-        graphViewGroup.classList.toggle('controls-hidden', !isGraphAlgo);
-        graphEditGroup.classList.toggle('controls-hidden', !isGraphAlgo);
-
-        // Show custom array input only for sort/search (array-based algorithms)
-        const isArrayAlgo = !isGraphAlgo && !isTreeAlgorithm(algoKey) && !isLinkedListAlgorithm(algoKey) && !isMazeAlgorithm(algoKey) && !isPatternAlgorithm(algoKey);
-        customArrayGroup.classList.toggle('controls-hidden', !isArrayAlgo);
 
         // Determine code and complexity source
         let codeSource, complexitySource;
@@ -777,6 +772,93 @@ import EventBus from './event-bus.js';
      */
     function isMazeGeneration(key) {
         return MAZE_GENERATION.includes(key);
+    }
+
+    /**
+     * Check if an algorithm operates on a bar/list array (sorting, searching, patterns).
+     *
+     * @param {string} key - The algorithm key.
+     * @returns {boolean} True when Size / Array Type / View Mode / Custom apply.
+     */
+    function isArrayBasedAlgorithm(key) {
+        return !isTreeAlgorithm(key)
+            && !isGraphAlgorithm(key)
+            && !isLinkedListAlgorithm(key)
+            && !isMazeAlgorithm(key);
+    }
+
+    /**
+     * Check if compare mode is available (sorting and searching only).
+     *
+     * @param {string} key - The algorithm key.
+     * @returns {boolean} True when Compare should be shown.
+     */
+    function isComparableAlgorithm(key) {
+        return isSearchAlgorithm(key) || (
+            !isTreeAlgorithm(key)
+            && !isGraphAlgorithm(key)
+            && !isLinkedListAlgorithm(key)
+            && !isMazeAlgorithm(key)
+            && !isPatternAlgorithm(key)
+        );
+    }
+
+    /**
+     * Show or hide toolbar controls based on the selected algorithm category.
+     *
+     * @param {string} algoKey - The selected algorithm key.
+     * @returns {void}
+     */
+    function updateControlVisibility(algoKey) {
+        const isArrayBased = isArrayBasedAlgorithm(algoKey);
+        const isComparable = isComparableAlgorithm(algoKey);
+        const canBenchmark = isBenchmarkable(algoKey);
+
+        const needsTarget = isSearchAlgorithm(algoKey) || algoKey === 'bstSearch';
+        searchTargetGroup.classList.toggle('controls-hidden', !needsTarget);
+
+        const needsPosition = algoKey === 'llInsertPos' || algoKey === 'llDeletePos';
+        llPositionGroup.classList.toggle('controls-hidden', !needsPosition);
+
+        const needsWindowSize = algoKey === 'slidingWindowMaxSum';
+        windowSizeGroup.classList.toggle('controls-hidden', !needsWindowSize);
+
+        const isGraphAlgo = isGraphAlgorithm(algoKey);
+        graphViewGroup.classList.toggle('controls-hidden', !isGraphAlgo);
+        graphEditGroup.classList.toggle('controls-hidden', !isGraphAlgo);
+
+        if (arraySizeGroup) arraySizeGroup.classList.toggle('controls-hidden', !isArrayBased);
+        if (arrayTypeGroup) arrayTypeGroup.classList.toggle('controls-hidden', !isArrayBased);
+        if (vizModeGroup) vizModeGroup.classList.toggle('controls-hidden', !isArrayBased);
+        customArrayGroup.classList.toggle('controls-hidden', !isArrayBased);
+
+        if (compareGroup) compareGroup.classList.toggle('controls-hidden', !isComparable);
+        if (benchmarkGroup) benchmarkGroup.classList.toggle('controls-hidden', !canBenchmark);
+        if (analysisGroup) {
+            analysisGroup.classList.toggle('controls-hidden', !isComparable && !canBenchmark);
+        }
+
+        const dragBtn = document.getElementById('btn-drag');
+        if (dragBtn) dragBtn.classList.toggle('controls-hidden', !isArrayBased);
+
+        if (isMazeAlgorithm(algoKey)) {
+            btnGenerate.title = 'Generate new maze';
+        } else if (!isArrayBased) {
+            btnGenerate.title = 'Generate new structure';
+        } else {
+            btnGenerate.title = 'Generate new array';
+        }
+    }
+
+    /**
+     * Determine whether the currently selected algorithm is benchmarkable.
+     * Only sorting and searching algorithms are supported.
+     *
+     * @param {string} key - The algorithm key.
+     * @returns {boolean} True if the algorithm can be benchmarked.
+     */
+    function isBenchmarkable(key) {
+        return isComparableAlgorithm(key);
     }
 
     // ─── Graph View & Interactive Builder ───
@@ -1582,7 +1664,7 @@ import EventBus from './event-bus.js';
      */
     function initArrayState(arr) {
         const algoKey = algorithmSelect.value;
-        const isArrayAlgo = !isTreeAlgorithm(algoKey) && !isGraphAlgorithm(algoKey) && !isLinkedListAlgorithm(algoKey) && !isMazeAlgorithm(algoKey);
+        const isArrayAlgo = isArrayBasedAlgorithm(algoKey);
         const isListMode = Visualizer.getMode() === 'list';
 
         arrayStatePanel.style.display = (isArrayAlgo && !isListMode) ? '' : 'none';
@@ -2064,29 +2146,6 @@ import EventBus from './event-bus.js';
     const benchmarkTitle = document.getElementById('benchmark-title');
     /** @type {HTMLDivElement} */
     const benchmarkLoading = document.getElementById('benchmark-loading');
-    /** @type {HTMLDivElement} */
-    const benchmarkGroup = document.querySelector('.benchmark-group');
-
-    /**
-     * Determine whether the currently selected algorithm is benchmarkable.
-     * Only sorting and searching algorithms are supported.
-     *
-     * @param {string} key - The algorithm key.
-     * @returns {boolean} True if the algorithm can be benchmarked.
-     */
-    function isBenchmarkable(key) {
-        return !isTreeAlgorithm(key) && !isGraphAlgorithm(key) && !isLinkedListAlgorithm(key);
-    }
-
-    /**
-     * Show or hide the Benchmark button depending on the selected algorithm.
-     *
-     * @returns {void}
-     */
-    function updateBenchmarkVisibility() {
-        const algoKey = algorithmSelect.value;
-        benchmarkGroup.classList.toggle('controls-hidden', !isBenchmarkable(algoKey));
-    }
 
     /**
      * Open the benchmark modal, run the benchmark for the current algorithm
@@ -2143,17 +2202,26 @@ import EventBus from './event-bus.js';
         }
     });
 
-    // Keep benchmark button visibility in sync with algorithm selection
-    algorithmSelect.addEventListener('change', updateBenchmarkVisibility);
-
-    // Set initial visibility
-    updateBenchmarkVisibility();
-
     // ─── Event Listeners ───
 
     btnGenerate.addEventListener('click', () => {
-        if (isMazeAlgorithm(algorithmSelect.value)) {
+        const algoKey = algorithmSelect.value;
+        if (isMazeAlgorithm(algoKey)) {
             generateMaze();
+        } else if (
+            isTreeAlgorithm(algoKey)
+            || isGraphAlgorithm(algoKey)
+            || isLinkedListAlgorithm(algoKey)
+        ) {
+            stopPlayback();
+            clearArrayState();
+            comparisons = 0;
+            swapCount = 0;
+            updateStats();
+            switchVizMode(algoKey);
+            initCotPanel(algoKey);
+            generator = null;
+            updateButtonStates();
         } else {
             generateArray();
         }
@@ -2193,6 +2261,10 @@ import EventBus from './event-bus.js';
     });
 
     algorithmSelect.addEventListener('change', () => {
+        // Leave compare mode when switching algorithms so the layout stays consistent
+        if (btnCompare.classList.contains('active')) {
+            toggleCompare();
+        }
         reset();
         loadAlgorithm();
         initCotPanel(algorithmSelect.value);

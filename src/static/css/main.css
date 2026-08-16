@@ -175,7 +175,8 @@ body {
     display: none;
 }
 
-.benchmark-group {
+.benchmark-group,
+.compare-group {
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;

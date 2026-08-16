@@ -104,7 +104,7 @@
                     </select>
                 </div>
 
-                <div class="controls-group">
+                <div class="controls-group array-size-group">
                     <label for="array-size">Size</label>
                     <input type="number" id="size-display" class="slider-input" min="5" max="30" value="30">
                     <input type="range" id="array-size" min="5" max="30" value="30">
@@ -116,7 +116,7 @@
                     <input type="range" id="speed-slider" min="1" max="100" value="20">
                 </div>
 
-                <div class="controls-group">
+                <div class="controls-group array-type-group">
                     <label for="array-type">Array Type</label>
                     <select id="array-type">
                         <option value="random">Random</option>
@@ -126,7 +126,7 @@
                     </select>
                 </div>
 
-                <div class="controls-group">
+                <div class="controls-group viz-mode-group">
                     <label for="viz-mode">View Mode</label>
                     <select id="viz-mode">
                         <option value="bars">Bars</option>
@@ -216,7 +216,9 @@
             </div>
 
             <div class="controls-group controls-group--analysis">
-                <button id="btn-compare" class="btn" title="Compare two algorithms">Compare</button>
+                <span class="compare-group">
+                    <button id="btn-compare" class="btn" title="Compare two algorithms">Compare</button>
+                </span>
                 <span class="benchmark-group controls-hidden">
                     <button id="btn-benchmark" class="btn" title="Benchmark current algorithm">Benchmark</button>
                 </span>
