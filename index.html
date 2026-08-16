@@ -8,248 +8,256 @@
 </head>
 <body>
     <header class="controls-bar">
-        <!-- ── Algorithm Controls ── -->
-        <div class="controls-group">
-            <label for="algorithm-select">Algorithm</label>
-            <select id="algorithm-select">
-                <optgroup label="Sorting">
-                    <option value="bubbleSort">Bubble Sort</option>
-                    <option value="selectionSort">Selection Sort</option>
-                    <option value="insertionSort">Insertion Sort</option>
-                    <option value="mergeSort">Merge Sort</option>
-                    <option value="quickSort">Quick Sort</option>
-                    <option value="heapSort">Heap Sort</option>
-                    <option value="shellSort">Shell Sort</option>
-                    <option value="countingSort">Counting Sort</option>
-                    <option value="gnomeSort">Gnome Sort</option>
-                    <option value="cocktailShakerSort">Cocktail Shaker Sort</option>
-                    <option value="pancakeSort">Pancake Sort</option>
-                </optgroup>
-                <optgroup label="Fun Sorting">
-                    <option value="bogoSort">Bogo Sort</option>
-                    <option value="thanosSort">Thanos Sort</option>
-                    <option value="stalinSort">Stalin Sort</option>
-                    <option value="sleepSort">Sleep Sort</option>
-                    <option value="miracleSort">Miracle Sort</option>
-                </optgroup>
-                <optgroup label="Searching">
-                    <option value="linearSearch">Linear Search</option>
-                    <option value="binarySearch">Binary Search</option>
-                    <option value="jumpSearch">Jump Search</option>
-                    <option value="ternarySearch">Ternary Search</option>
-                    <option value="fibonacciSearch">Fibonacci Search</option>
-                    <option value="interpolationSearch">Interpolation Search</option>
-                    <option value="exponentialSearch">Exponential Search</option>
-                    <option value="sentinelLinearSearch">Sentinel Linear Search</option>
-                </optgroup>
-                <optgroup label="Trees (BST)">
-                    <option value="bstInsert">BST Insert</option>
-                    <option value="bstSearch">BST Search</option>
-                    <option value="bstDelete">BST Delete</option>
-                    <option value="bstLevelOrder">Level-Order (BFS) Traversal</option>
-                    <option value="bstInorder">In-Order Traversal</option>
-                    <option value="bstPreorder">Pre-Order Traversal</option>
-                    <option value="bstPostorder">Post-Order Traversal</option>
-                </optgroup>
-                <optgroup label="Trees (AVL)">
-                    <option value="avlInsert">AVL Insert</option>
-                </optgroup>
-                <optgroup label="Heaps">
-                    <option value="heapInsertMin">Min-Heap Insert</option>
-                    <option value="heapExtractMin">Min-Heap Extract</option>
-                </optgroup>
-                <optgroup label="Graphs">
-                    <option value="bfs">BFS (Breadth-First)</option>
-                    <option value="dfs">DFS (Depth-First)</option>
-                    <option value="dijkstra">Dijkstra's Shortest Path</option>
-                    <option value="astar">A* Pathfinding</option>
-                    <option value="bellmanFord">Bellman-Ford</option>
-                    <option value="kruskal">Kruskal's MST</option>
-                    <option value="topologicalSort">Topological Sort</option>
-                </optgroup>
-                <optgroup label="Linked Lists">
-                    <option value="llInsertHead">Insert at Head</option>
-                    <option value="llInsertTail">Insert at Tail</option>
-                    <option value="llInsertPos">Insert at Position</option>
-                    <option value="llInsertAfterValue">Insert After Value</option>
-                    <option value="llDetectCycle">Detect Cycle</option>
-                    <option value="llMergeSorted">Merge Sorted Lists</option>
-                    <option value="llMergeSort">Merge Sort</option>
-                    <option value="llDeleteHead">Delete Head</option>
-                    <option value="llDeleteTail">Delete Tail</option>
-                    <option value="llDeletePos">Delete at Position</option>
-                    <option value="llDeleteVal">Delete by Value</option>
-                    <option value="llSearch">Search Value</option>
-                    <option value="llTraverse">Traverse All</option>
-                    <option value="llReverse">Reverse List</option>
-                </optgroup>
-                <optgroup label="Interesting">
-                    <option value="mazeRecursiveDFS">Maze: Recursive Backtracker</option>
-                    <option value="mazePrims">Maze: Prim's Algorithm</option>
-                    <option value="mazeBinaryTree">Maze: Binary Tree</option>
-                    <option value="pathBFS">Pathfinding: BFS</option>
-                    <option value="pathDFS">Pathfinding: DFS</option>
-                    <option value="pathAStar">Pathfinding: A*</option>
-                    <option value="pathGreedy">Pathfinding: Greedy Best-First</option>
-                </optgroup>
-                <optgroup label="Patterns (Interview)">
-                    <option value="twoPointersTargetSum">Two Pointers: Two Sum (Sorted)</option>
-                    <option value="slidingWindowMaxSum">Sliding Window: Max Sum Subarray</option>
-                    <option value="prefixSumRangeSum">Prefix Sum: Range Sum Query</option>
-                    <option value="monotonicStackNextGreater">Monotonic Stack: Next Greater Element</option>
-                    <option value="overlappingIntervalsMerge">Overlapping Intervals: Merge Intervals</option>
-                </optgroup>
-            </select>
+        <!-- Row 1: algorithm parameters + contextual inputs -->
+        <div class="controls-bar-row controls-bar-row--params" id="controls-params">
+            <div class="controls-params-primary">
+                <div class="controls-group">
+                    <label for="algorithm-select">Algorithm</label>
+                    <select id="algorithm-select">
+                        <optgroup label="Sorting">
+                            <option value="bubbleSort">Bubble Sort</option>
+                            <option value="selectionSort">Selection Sort</option>
+                            <option value="insertionSort">Insertion Sort</option>
+                            <option value="mergeSort">Merge Sort</option>
+                            <option value="quickSort">Quick Sort</option>
+                            <option value="heapSort">Heap Sort</option>
+                            <option value="shellSort">Shell Sort</option>
+                            <option value="countingSort">Counting Sort</option>
+                            <option value="gnomeSort">Gnome Sort</option>
+                            <option value="cocktailShakerSort">Cocktail Shaker Sort</option>
+                            <option value="pancakeSort">Pancake Sort</option>
+                        </optgroup>
+                        <optgroup label="Fun Sorting">
+                            <option value="bogoSort">Bogo Sort</option>
+                            <option value="thanosSort">Thanos Sort</option>
+                            <option value="stalinSort">Stalin Sort</option>
+                            <option value="sleepSort">Sleep Sort</option>
+                            <option value="miracleSort">Miracle Sort</option>
+                        </optgroup>
+                        <optgroup label="Searching">
+                            <option value="linearSearch">Linear Search</option>
+                            <option value="binarySearch">Binary Search</option>
+                            <option value="jumpSearch">Jump Search</option>
+                            <option value="ternarySearch">Ternary Search</option>
+                            <option value="fibonacciSearch">Fibonacci Search</option>
+                            <option value="interpolationSearch">Interpolation Search</option>
+                            <option value="exponentialSearch">Exponential Search</option>
+                            <option value="sentinelLinearSearch">Sentinel Linear Search</option>
+                        </optgroup>
+                        <optgroup label="Trees (BST)">
+                            <option value="bstInsert">BST Insert</option>
+                            <option value="bstSearch">BST Search</option>
+                            <option value="bstDelete">BST Delete</option>
+                            <option value="bstLevelOrder">Level-Order (BFS) Traversal</option>
+                            <option value="bstInorder">In-Order Traversal</option>
+                            <option value="bstPreorder">Pre-Order Traversal</option>
+                            <option value="bstPostorder">Post-Order Traversal</option>
+                        </optgroup>
+                        <optgroup label="Trees (AVL)">
+                            <option value="avlInsert">AVL Insert</option>
+                        </optgroup>
+                        <optgroup label="Heaps">
+                            <option value="heapInsertMin">Min-Heap Insert</option>
+                            <option value="heapExtractMin">Min-Heap Extract</option>
+                        </optgroup>
+                        <optgroup label="Graphs">
+                            <option value="bfs">BFS (Breadth-First)</option>
+                            <option value="dfs">DFS (Depth-First)</option>
+                            <option value="dijkstra">Dijkstra's Shortest Path</option>
+                            <option value="astar">A* Pathfinding</option>
+                            <option value="bellmanFord">Bellman-Ford</option>
+                            <option value="kruskal">Kruskal's MST</option>
+                            <option value="topologicalSort">Topological Sort</option>
+                        </optgroup>
+                        <optgroup label="Linked Lists">
+                            <option value="llInsertHead">Insert at Head</option>
+                            <option value="llInsertTail">Insert at Tail</option>
+                            <option value="llInsertPos">Insert at Position</option>
+                            <option value="llInsertAfterValue">Insert After Value</option>
+                            <option value="llDetectCycle">Detect Cycle</option>
+                            <option value="llMergeSorted">Merge Sorted Lists</option>
+                            <option value="llMergeSort">Merge Sort</option>
+                            <option value="llDeleteHead">Delete Head</option>
+                            <option value="llDeleteTail">Delete Tail</option>
+                            <option value="llDeletePos">Delete at Position</option>
+                            <option value="llDeleteVal">Delete by Value</option>
+                            <option value="llSearch">Search Value</option>
+                            <option value="llTraverse">Traverse All</option>
+                            <option value="llReverse">Reverse List</option>
+                        </optgroup>
+                        <optgroup label="Interesting">
+                            <option value="mazeRecursiveDFS">Maze: Recursive Backtracker</option>
+                            <option value="mazePrims">Maze: Prim's Algorithm</option>
+                            <option value="mazeBinaryTree">Maze: Binary Tree</option>
+                            <option value="pathBFS">Pathfinding: BFS</option>
+                            <option value="pathDFS">Pathfinding: DFS</option>
+                            <option value="pathAStar">Pathfinding: A*</option>
+                            <option value="pathGreedy">Pathfinding: Greedy Best-First</option>
+                        </optgroup>
+                        <optgroup label="Patterns (Interview)">
+                            <option value="twoPointersTargetSum">Two Pointers: Two Sum (Sorted)</option>
+                            <option value="slidingWindowMaxSum">Sliding Window: Max Sum Subarray</option>
+                            <option value="prefixSumRangeSum">Prefix Sum: Range Sum Query</option>
+                            <option value="monotonicStackNextGreater">Monotonic Stack: Next Greater Element</option>
+                            <option value="overlappingIntervalsMerge">Overlapping Intervals: Merge Intervals</option>
+                        </optgroup>
+                    </select>
+                </div>
+
+                <div class="controls-group array-size-group">
+                    <label for="array-size">Size</label>
+                    <input type="number" id="size-display" class="slider-input" min="5" max="30" value="30">
+                    <input type="range" id="array-size" min="5" max="30" value="30">
+                </div>
+
+                <div class="controls-group">
+                    <label for="speed-slider">Speed</label>
+                    <input type="number" id="speed-display" class="slider-input" min="1" max="100" value="20">
+                    <input type="range" id="speed-slider" min="1" max="100" value="20">
+                </div>
+
+                <div class="controls-group array-type-group">
+                    <label for="array-type">Array Type</label>
+                    <select id="array-type">
+                        <option value="random">Random</option>
+                        <option value="nearlySorted">Nearly Sorted</option>
+                        <option value="reversed">Reversed</option>
+                        <option value="fewUnique">Few Unique</option>
+                    </select>
+                </div>
+
+                <div class="controls-group viz-mode-group">
+                    <label for="viz-mode">View Mode</label>
+                    <select id="viz-mode">
+                        <option value="bars">Bars</option>
+                        <option value="list">List[int]</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Contextual controls: own line, collapsed when all hidden -->
+            <div class="controls-params-context">
+                <div class="controls-group search-target-group controls-hidden">
+                    <label for="search-target">Target</label>
+                    <input type="number" id="search-target" min="1" max="100" value="50">
+                </div>
+
+                <div class="controls-group custom-array-group controls-hidden">
+                    <label for="custom-array">Custom</label>
+                    <input type="text" id="custom-array" placeholder="e.g. 5,3,8,1,9" title="Enter comma-separated numbers">
+                    <button id="btn-apply-custom" class="btn" title="Apply custom array">Apply</button>
+                </div>
+
+                <div class="controls-group ll-position-group controls-hidden">
+                    <label for="ll-position">Position</label>
+                    <input type="number" id="ll-position" min="0" max="99" value="0">
+                </div>
+
+                <div class="controls-group window-size-group controls-hidden">
+                    <label for="window-size">Window (K)</label>
+                    <input type="number" id="window-size" min="2" max="10" value="3">
+                </div>
+
+                <div class="controls-group graph-view-group controls-hidden">
+                    <label for="graph-view">Graph View</label>
+                    <select id="graph-view">
+                        <option value="graph">Graph</option>
+                        <option value="matrix">Matrix</option>
+                        <option value="list">Adj List</option>
+                        <option value="both">Both</option>
+                    </select>
+                </div>
+
+                <div class="controls-group graph-edit-group controls-hidden">
+                    <button id="btn-edit-graph" class="btn" title="Toggle interactive graph editing">Edit Graph</button>
+                    <button id="btn-export-graph" class="btn" title="Export graph as JSON">Export</button>
+                </div>
+
+                <div class="controls-group interview-filter controls-hidden">
+                    <label for="pattern-filter">Pattern</label>
+                    <select id="pattern-filter">
+                        <option value="all">All Patterns</option>
+                        <optgroup label="─ Essential Interview Patterns ─">
+                        <option value="two-pointers">Two Pointers</option>
+                        <option value="sliding-window">Sliding Window</option>
+                        <option value="modified-binary-search">Modified Binary Search</option>
+                        <option value="prefix-sum">Prefix Sum</option>
+                        <option value="top-k-elements">Top K Elements</option>
+                        </optgroup>
+                        <optgroup label="─ Tree & Graph Patterns ─">
+                        <option value="binary-tree-traversal">Binary Tree Traversal</option>
+                        <option value="bfs">Breadth First Search (BFS)</option>
+                        <option value="dfs">Depth First Search (DFS)</option>
+                        <option value="backtracking">Backtracking</option>
+                        <option value="matrix-traversal">Matrix Traversal</option>
+                        </optgroup>
+                        <optgroup label="─ Linked List Patterns ─">
+                        <option value="fast-slow-pointers">Fast/Slow Pointers</option>
+                        <option value="linked-list-reversal">Linked List Reversal</option>
+                        </optgroup>
+                        <optgroup label="─ Advanced Patterns ─">
+                        <option value="monotonic-stack">Monotonic Stack</option>
+                        <option value="overlapping-intervals">Overlapping Intervals</option>
+                        <option value="dynamic-programming">Dynamic Programming (Coming Soon)</option>
+                        </optgroup>
+                    </select>
+                </div>
+            </div>
         </div>
 
-        <div class="controls-group">
-            <label for="array-size">Size</label>
-            <input type="number" id="size-display" class="slider-input" min="5" max="30" value="30">
-            <input type="range" id="array-size" min="5" max="30" value="30">
+        <!-- Row 2: playback + analysis -->
+        <div class="controls-bar-row controls-bar-row--actions">
+            <div class="controls-group buttons">
+                <button id="btn-generate" class="btn" title="Generate new array">Generate</button>
+                <button id="btn-play" class="btn btn-success" title="Start visualization">Play</button>
+                <button id="btn-pause" class="btn btn-warning" title="Pause visualization" disabled>Pause</button>
+                <button id="btn-step" class="btn" title="Step through one operation">Step</button>
+                <button id="btn-reset" class="btn" title="Reset to initial state">Reset</button>
+            </div>
+
+            <div class="controls-group controls-group--analysis">
+                <span class="compare-group">
+                    <button id="btn-compare" class="btn" title="Compare two algorithms">Compare</button>
+                </span>
+                <span class="benchmark-group controls-hidden">
+                    <button id="btn-benchmark" class="btn" title="Benchmark current algorithm">Benchmark</button>
+                </span>
+            </div>
         </div>
 
-        <div class="controls-group">
-            <label for="speed-slider">Speed</label>
-            <input type="number" id="speed-display" class="slider-input" min="1" max="100" value="20">
-            <input type="range" id="speed-slider" min="1" max="100" value="20">
-        </div>
+        <!-- Row 3: tools, appearance, recording, enhancements, feedback -->
+        <div class="controls-bar-row controls-bar-row--tools" id="controls-tools">
+            <div class="controls-group">
+                <button id="btn-sound" class="btn" title="Toggle sound">Sound: ON</button>
+                <label for="volume-slider">Vol</label>
+                <input type="range" id="volume-slider" min="0" max="100" value="30">
+            </div>
 
-        <div class="controls-group">
-            <label for="array-type">Array Type</label>
-            <select id="array-type">
-                <option value="random">Random</option>
-                <option value="nearlySorted">Nearly Sorted</option>
-                <option value="reversed">Reversed</option>
-                <option value="fewUnique">Few Unique</option>
-            </select>
-        </div>
+            <div class="controls-group controls-group--appearance">
+                <button id="btn-layout" class="btn" title="Toggle vertical layout for recording">Landscape</button>
+                <button id="btn-theme" class="btn" title="Toggle light/dark theme">Light</button>
+                <button id="btn-interview" class="btn" title="Toggle interview preparation mode">Interview</button>
+            </div>
 
-        <div class="controls-group">
-            <label for="viz-mode">View Mode</label>
-            <select id="viz-mode">
-                <option value="bars">Bars</option>
-                <option value="list">List[int]</option>
-            </select>
-        </div>
+            <div class="controls-group controls-group--record">
+                <select id="record-quality" title="Recording quality">
+                    <option value="shorts-1080">Shorts 1080p</option>
+                    <option value="shorts-720">Shorts 720p</option>
+                    <option value="shorts-4k">Shorts 4K</option>
+                    <option value="landscape-1080" selected>Landscape 1080p</option>
+                    <option value="landscape-720">Landscape 720p</option>
+                    <option value="landscape-4k">Landscape 4K</option>
+                </select>
+                <button id="btn-record" class="btn" title="Start/stop recording">Record</button>
+            </div>
 
-        <!-- ── Contextual Controls (conditionally shown) ── -->
-        <div class="controls-group search-target-group controls-hidden">
-            <label for="search-target">Target</label>
-            <input type="number" id="search-target" min="1" max="100" value="50">
-        </div>
+            <div class="controls-group controls-group--enhancements" id="controls-enhancements">
+                <!-- Challenge, Quiz, Drag injected by enhancement modules -->
+            </div>
 
-        <div class="controls-group custom-array-group controls-hidden">
-            <label for="custom-array">Custom</label>
-            <input type="text" id="custom-array" placeholder="e.g. 5,3,8,1,9" title="Enter comma-separated numbers">
-            <button id="btn-apply-custom" class="btn" title="Apply custom array">Apply</button>
-        </div>
-
-        <div class="controls-group ll-position-group controls-hidden">
-            <label for="ll-position">Position</label>
-            <input type="number" id="ll-position" min="0" max="99" value="0">
-        </div>
-
-        <div class="controls-group window-size-group controls-hidden">
-            <label for="window-size">Window (K)</label>
-            <input type="number" id="window-size" min="2" max="10" value="3">
-        </div>
-
-        <div class="controls-group graph-view-group controls-hidden">
-            <label for="graph-view">Graph View</label>
-            <select id="graph-view">
-                <option value="graph">Graph</option>
-                <option value="matrix">Matrix</option>
-                <option value="list">Adj List</option>
-                <option value="both">Both</option>
-            </select>
-        </div>
-
-        <div class="controls-group graph-edit-group controls-hidden">
-            <button id="btn-edit-graph" class="btn" title="Toggle interactive graph editing">Edit Graph</button>
-            <button id="btn-export-graph" class="btn" title="Export graph as JSON">Export</button>
-        </div>
-
-        <div class="controls-group interview-filter controls-hidden">
-            <label for="pattern-filter">Pattern</label>
-            <select id="pattern-filter">
-                <option value="all">All Patterns</option>
-                <optgroup label="─ Essential Interview Patterns ─">
-                <option value="two-pointers">Two Pointers</option>
-                <option value="sliding-window">Sliding Window</option>
-                <option value="modified-binary-search">Modified Binary Search</option>
-                <option value="prefix-sum">Prefix Sum</option>
-                <option value="top-k-elements">Top K Elements</option>
-                </optgroup>
-                <optgroup label="─ Tree & Graph Patterns ─">
-                <option value="binary-tree-traversal">Binary Tree Traversal</option>
-                <option value="bfs">Breadth First Search (BFS)</option>
-                <option value="dfs">Depth First Search (DFS)</option>
-                <option value="backtracking">Backtracking</option>
-                <option value="matrix-traversal">Matrix Traversal</option>
-                </optgroup>
-                <optgroup label="─ Linked List Patterns ─">
-                <option value="fast-slow-pointers">Fast/Slow Pointers</option>
-                <option value="linked-list-reversal">Linked List Reversal</option>
-                </optgroup>
-                <optgroup label="─ Advanced Patterns ─">
-                <option value="monotonic-stack">Monotonic Stack</option>
-                <option value="overlapping-intervals">Overlapping Intervals</option>
-                <option value="dynamic-programming">Dynamic Programming (Coming Soon)</option>
-                </optgroup>
-            </select>
-        </div>
-
-        <!-- ── Action Buttons ── -->
-        <div class="controls-group buttons">
-            <button id="btn-generate" class="btn" title="Generate new array">Generate</button>
-            <button id="btn-play" class="btn btn-success" title="Start visualization">Play</button>
-            <button id="btn-pause" class="btn btn-warning" title="Pause visualization" disabled>Pause</button>
-            <button id="btn-step" class="btn" title="Step through one operation">Step</button>
-            <button id="btn-reset" class="btn" title="Reset to initial state">Reset</button>
-        </div>
-
-        <!-- ── Features ── -->
-        <div class="controls-group">
-            <button id="btn-compare" class="btn" title="Compare two algorithms">Compare</button>
-        </div>
-
-        <div class="controls-group benchmark-group controls-hidden">
-            <button id="btn-benchmark" class="btn" title="Benchmark current algorithm">Benchmark</button>
-        </div>
-
-        <div class="controls-group">
-            <button id="btn-sound" class="btn" title="Toggle sound">Sound: ON</button>
-            <label for="volume-slider">Vol</label>
-            <input type="range" id="volume-slider" min="0" max="100" value="30">
-        </div>
-
-        <div class="controls-group">
-            <button id="btn-layout" class="btn" title="Toggle vertical layout for recording">Landscape</button>
-        </div>
-
-        <div class="controls-group">
-            <button id="btn-theme" class="btn" title="Toggle light/dark theme">Light</button>
-        </div>
-
-        <div class="controls-group">
-            <button id="btn-interview" class="btn" title="Toggle interview preparation mode">Interview</button>
-        </div>
-
-        <!-- ── Recording & Feedback ── -->
-        <div class="controls-group">
-            <select id="record-quality" title="Recording quality">
-                <option value="shorts-1080">Shorts 1080p</option>
-                <option value="shorts-720">Shorts 720p</option>
-                <option value="shorts-4k">Shorts 4K</option>
-                <option value="landscape-1080" selected>Landscape 1080p</option>
-                <option value="landscape-720">Landscape 720p</option>
-                <option value="landscape-4k">Landscape 4K</option>
-            </select>
-            <button id="btn-record" class="btn" title="Start/stop recording">Record</button>
-        </div>
-
-        <div class="controls-group">
-            <button id="btn-feedback" class="btn" title="Send feedback">Feedback</button>
+            <div class="controls-group">
+                <button id="btn-feedback" class="btn" title="Send feedback">Feedback</button>
+            </div>
         </div>
     </header>
 

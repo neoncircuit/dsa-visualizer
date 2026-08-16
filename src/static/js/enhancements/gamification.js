@@ -310,8 +310,10 @@ const Gamification = {
                 </svg>
                 <span class="streak-value">0</span>
             `;
-            const controlsBar = document.querySelector('.controls-bar');
-            if (controlsBar) controlsBar.prepend(counter);
+            const paramsPrimary = document.querySelector('.controls-params-primary')
+                || document.getElementById('controls-params')
+                || document.querySelector('.controls-bar');
+            if (paramsPrimary) paramsPrimary.prepend(counter);
         }
         counter.querySelector('.streak-value').textContent = this.state.streak;
     },

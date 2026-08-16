@@ -95,13 +95,52 @@ body {
 /* ── Header Controls ── */
 .controls-bar {
     display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 0.45rem 1.2rem;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.45rem;
+    padding: 0.55rem 1.2rem;
     background: var(--bg-secondary);
     border-bottom: 1px solid var(--border-color);
-    flex-wrap: wrap;
     flex-shrink: 0;
+}
+
+.controls-bar-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.55rem 0.85rem;
+    min-height: 2.25rem;
+}
+
+.controls-bar-row--params {
+    flex-direction: column;
+    align-items: stretch;
+    flex-wrap: nowrap;
+    gap: 0.4rem;
+    min-height: 0;
+}
+
+.controls-params-primary,
+.controls-params-context {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.55rem 0.85rem;
+}
+
+/* Hide the contextual strip entirely when every child is collapsed */
+.controls-params-context:not(:has(.controls-group:not(.controls-hidden))) {
+    display: none;
+}
+
+.controls-bar-row--actions {
+    padding-top: 0.35rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.controls-bar-row--tools {
+    padding-top: 0.35rem;
+    border-top: 1px solid var(--border-color);
 }
 
 .controls-group {
@@ -110,20 +149,37 @@ body {
     gap: 0.4rem;
 }
 
-/* Visual separators between major control groups */
-.controls-group:not(.controls-hidden):has(select#algorithm-select),
-.controls-group:not(.controls-hidden):has(button#btn-generate),
-.controls-group:not(.controls-hidden):has(button#btn-compare),
-.controls-group:not(.controls-hidden):has(button#btn-layout) {
-    margin-right: 0.8rem;
-    padding-right: 0.8rem;
-    border-right: 1px solid var(--border-color);
+/* Intentional section dividers within the actions/tools rows */
+.controls-group--analysis,
+.controls-group--appearance,
+.controls-group--record,
+.controls-group--enhancements:not(:empty),
+.controls-bar-row--tools > .controls-group:has(#btn-feedback) {
+    padding-left: 0.75rem;
+    margin-left: 0.15rem;
+    border-left: 1px solid var(--border-color);
 }
 
-/* Conditional groups: keep space in layout so stable controls never shift position */
-.controls-group.controls-hidden {
-    visibility: hidden;
-    pointer-events: none;
+/* Streak badge sits with primary params, not as its own full-width row */
+.controls-params-primary > .streak-badge {
+    margin-right: 0.15rem;
+}
+
+/* Collapse unused contextual controls so they do not reserve flex space */
+.controls-hidden {
+    display: none !important;
+}
+
+/* Hide empty enhancement slot until modules inject buttons */
+.controls-group--enhancements:empty {
+    display: none;
+}
+
+.benchmark-group,
+.compare-group {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
 }
 
 .controls-group label {
@@ -169,6 +225,11 @@ body {
 }
 .controls-group input.slider-input[type="number"] {
     -moz-appearance: textfield;
+}
+
+/* Keep the algorithm dropdown compact so the params row stays on one line at desktop widths */
+#algorithm-select {
+    max-width: 220px;
 }
 
 #custom-array {
@@ -1968,10 +2029,10 @@ body.vertical .cheat-drawer {
     }
 
     .controls-bar {
-        flex-wrap: wrap;
+        flex-direction: column;
         height: auto;
         padding: 0.4rem 0.6rem;
-        gap: 0.4rem;
+        gap: 0.35rem;
         overflow: visible;
     }
 
@@ -1979,6 +2040,7 @@ body.vertical .cheat-drawer {
         flex-wrap: wrap;
         height: auto;
         gap: 0.4rem;
+        min-height: 0;
     }
 
     button, select {

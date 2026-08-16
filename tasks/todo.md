@@ -406,3 +406,15 @@ Root cause: `buildMazeGrid()` pre-marks both (1,1) and (rows-2, cols-2) as PASSA
 Root cause: `pathGreedy` initialises `visited` with `['1,1']` (the start node). The lazy-deletion loop pops (1,1) from the heap, checks `visited.has(key)`, finds it already present, and skips it. The heap is now empty, so the loop terminates after yielding only the initial frontier step.
 - [x] Remove `'1,1'` from the initial `visited` Set in `pathGreedy` -- the start node is correctly added to `visited` when popped from the heap (maze.js line 2281)
 - [x] `pnpm build` passes
+
+## Controls Bar Layout Consistency (In Progress)
+
+### Goal
+Make toolbar button/control placement consistent: predictable rows, no ghost gaps from hidden contextual controls, related actions grouped together.
+
+### Plan
+- [x] Restructure `index.html` header into three rows: params, actions, tools
+- [x] Collapse `.controls-hidden` with `display: none` (remove ghost flex space)
+- [x] Consolidate singleton button groups (compare/benchmark, appearance, enhancements)
+- [x] Point enhancement injectors at `#controls-enhancements` / params row
+- [x] Verify visually at wide and narrow widths; smoke-test unit tests + key e2e
