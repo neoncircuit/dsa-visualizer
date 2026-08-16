@@ -112,6 +112,27 @@ body {
     min-height: 2.25rem;
 }
 
+.controls-bar-row--params {
+    flex-direction: column;
+    align-items: stretch;
+    flex-wrap: nowrap;
+    gap: 0.4rem;
+    min-height: 0;
+}
+
+.controls-params-primary,
+.controls-params-context {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.55rem 0.85rem;
+}
+
+/* Hide the contextual strip entirely when every child is collapsed */
+.controls-params-context:not(:has(.controls-group:not(.controls-hidden))) {
+    display: none;
+}
+
 .controls-bar-row--actions {
     padding-top: 0.35rem;
     border-top: 1px solid var(--border-color);
@@ -139,8 +160,8 @@ body {
     border-left: 1px solid var(--border-color);
 }
 
-/* Streak badge sits with params, not as its own full-width row */
-.controls-bar-row--params > .streak-badge {
+/* Streak badge sits with primary params, not as its own full-width row */
+.controls-params-primary > .streak-badge {
     margin-right: 0.15rem;
 }
 
@@ -203,6 +224,11 @@ body {
 }
 .controls-group input.slider-input[type="number"] {
     -moz-appearance: textfield;
+}
+
+/* Keep the algorithm dropdown compact so the params row stays on one line at desktop widths */
+#algorithm-select {
+    max-width: 220px;
 }
 
 #custom-array {

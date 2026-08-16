@@ -22,6 +22,21 @@ const QUIZ_ENABLED_KEY = 'dsa-visualizer-quiz-enabled';
 const CHALLENGE_TIMER_SECONDS = 15;
 
 /**
+ * Keep enhancement toolbar buttons in a stable left-to-right order.
+ *
+ * @returns {void}
+ */
+function orderEnhancementButtons() {
+    const enhancements = document.getElementById('controls-enhancements');
+    if (!enhancements) return;
+
+    ['btn-challenge', 'btn-quiz', 'btn-drag'].forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) enhancements.appendChild(el);
+    });
+}
+
+/**
  * Pool of algorithms suitable for challenge mode.
  * Only sorting algorithms are included since they auto-complete
  * without user interaction (searching needs a target, trees/graphs
@@ -295,6 +310,7 @@ const Educational = {
         });
 
         enhancements.appendChild(btn);
+        orderEnhancementButtons();
     },
 
     /**
@@ -316,12 +332,8 @@ const Educational = {
 
         btn.addEventListener('click', () => this.startChallenge());
 
-        const quizBtn = document.getElementById('btn-quiz');
-        if (quizBtn) {
-            enhancements.insertBefore(btn, quizBtn);
-        } else {
-            enhancements.appendChild(btn);
-        }
+        enhancements.appendChild(btn);
+        orderEnhancementButtons();
     },
 
     /**

@@ -282,7 +282,14 @@ function init() {
 
     if (!FeedbackService.isReady()) {
         const btn = document.getElementById('btn-feedback');
-        if (btn) btn.style.display = 'none';
+        if (btn) {
+            const group = btn.closest('.controls-group');
+            if (group) {
+                group.style.display = 'none';
+            } else {
+                btn.style.display = 'none';
+            }
+        }
     }
 }
 

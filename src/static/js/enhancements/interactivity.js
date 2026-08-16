@@ -16,6 +16,21 @@
 
 import EventBus from '../event-bus.js';
 
+/**
+ * Keep enhancement toolbar buttons in a stable left-to-right order.
+ *
+ * @returns {void}
+ */
+function orderEnhancementButtons() {
+    const enhancements = document.getElementById('controls-enhancements');
+    if (!enhancements) return;
+
+    ['btn-challenge', 'btn-quiz', 'btn-drag'].forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) enhancements.appendChild(el);
+    });
+}
+
 const Interactivity = {
     /** @type {number[]} */
     _preDragValues: [],
@@ -106,6 +121,7 @@ const Interactivity = {
         });
 
         enhancements.appendChild(btn);
+        orderEnhancementButtons();
     },
 
     /**
