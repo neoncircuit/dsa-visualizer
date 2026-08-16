@@ -417,4 +417,4 @@ Make toolbar button/control placement consistent: predictable rows, no ghost gap
 - [x] Collapse `.controls-hidden` with `display: none` (remove ghost flex space)
 - [x] Consolidate singleton button groups (compare/benchmark, appearance, enhancements)
 - [x] Point enhancement injectors at `#controls-enhancements` / params row
-- [ ] Verify visually at wide and narrow widths; smoke-test unit tests + key e2e
+- [x] Verify visually at wide and narrow widths; smoke-test unit tests + key e2e
